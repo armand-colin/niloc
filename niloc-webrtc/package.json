@@ -1,0 +1,33 @@
+{
+  "name": "vite-library",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/dist.umd.cjs",
+  "module": "./dist/dist.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/dist.js",
+    "require": "./dist/dist.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc",
+    "prepare": "vite build && tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  },
+  "dependencies": {
+    "@types/simple-peer": "^9.11.5",
+    "niloc-core": "file:../niloc-core",
+    "simple-peer": "^9.11.1",
+    "utils": "file:../utils"
+  }
+}

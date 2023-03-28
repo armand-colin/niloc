@@ -1,0 +1,32 @@
+{
+  "name": "niloc-signaling-client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/dist.umd.cjs",
+  "module": "./dist/dist.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/dist.js",
+    "require": "./dist/dist.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc",
+    "prepare": "vite build && tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  },
+  "dependencies": {
+    "@types/socket.io-client": "^3.0.0",
+    "socket.io-client": "^4.6.1",
+    "utils": "file:../utils"
+  }
+}

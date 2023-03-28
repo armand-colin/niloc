@@ -1,0 +1,33 @@
+{
+  "name": "niloc-core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/dist.umd.cjs",
+  "module": "./dist/dist.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/dist.js",
+    "require": "./dist/dist.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc",
+    "prepare": "vite build && tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  },
+  "dependencies": {
+    "@types/chai": "^4.3.4",
+    "chai": "^4.3.7",
+    "jest": "^29.5.0",
+    "utils": "file:../utils"
+  }
+}
