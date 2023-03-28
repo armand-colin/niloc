@@ -1,5 +1,5 @@
 {
-  "name": "niloc-core",
+  "name": "vite-library",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -23,11 +23,5 @@
   "devDependencies": {
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
-  },
-  "dependencies": {
-    "@types/chai": "^4.3.4",
-    "chai": "^4.3.7",
-    "jest": "^29.5.0",
-    "utils": "link:../utils"
   }
 }

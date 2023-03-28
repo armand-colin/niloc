@@ -28,7 +28,7 @@ const init: Partial<StateHandler<Machine.Description>> = {
     },
 }
 
-export function Implementation(): StateMachine<Machine.Description> {
+export function MachineImplementation(): StateMachine<Machine.Description> {
 
     const machine = StateMachineBuilder.create<Machine.Description>()
         .state("init")
