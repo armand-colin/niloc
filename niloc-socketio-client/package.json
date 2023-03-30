@@ -23,5 +23,11 @@
   "devDependencies": {
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
+  },
+  "dependencies": {
+    "@types/socket.io-client": "^3.0.0",
+    "niloc-core": "link:../niloc-core",
+    "socket.io-client": "^4.6.1",
+    "utils": "link:../utils"
   }
 }
