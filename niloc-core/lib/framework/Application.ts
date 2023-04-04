@@ -5,13 +5,13 @@ import { Network } from "../core/Network";
 import { Router } from "../core/Router";
 import { RPC, RPCHandler } from "./RPC";
 
-interface ApplicationEvents {
-    message: Message
+interface ApplicationEvents<T> {
+    message: Message<T>
 }
 
-export interface Application {
-    emitter(): Emitter<ApplicationEvents>
-    send(address: Address, data: any): void
+export interface Application<T = any> {
+    emitter(): Emitter<ApplicationEvents<T>>
+    send(address: Address, data: T): void
     rpc(): RPC
 }
 
@@ -20,10 +20,10 @@ enum ApplicationChannel {
     RPC = 1
 }
 
-export class Application implements Application {
+export class Application<T = any> implements Application<T> {
 
     private _rpc: RPCHandler
-    private _emitter = new Emitter<ApplicationEvents>()
+    private _emitter = new Emitter<ApplicationEvents<T>>()
 
     public readonly router: Router
 
@@ -44,15 +44,15 @@ export class Application implements Application {
         return this._rpc
     }
 
-    emitter(): Emitter<ApplicationEvents> {
+    emitter(): Emitter<ApplicationEvents<T>> {
         return this._emitter
     }
 
-    send(address: Address, data: any): void {
+    send(address: Address, data: T): void {
         this.router.send(address, ApplicationChannel.Data, data)
     }
 
-    private _onMessage(message: Message, channel: number) {
+    private _onMessage(message: Message<T>, channel: number) {
         if (channel === ApplicationChannel.Data) {
             this._emitter.emit('message', message)
             return
