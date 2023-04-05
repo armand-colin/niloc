@@ -1,1 +1,1 @@
-export {};
+export { SocketIONetwork } from "./SocketIONetwork";

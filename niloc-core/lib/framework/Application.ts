@@ -5,8 +5,8 @@ import { Network } from "../core/Network";
 import { Router } from "../core/Router";
 import { RPC, RPCHandler } from "./RPC";
 
-interface ApplicationEvents {
-    message: Message
+interface ApplicationEvents<T> {
+    message: Message<T>
 }
 
 interface ChannelEvents {
@@ -20,9 +20,9 @@ interface Channel extends Emitter<ChannelEvents> {
 
 }
 
-export interface Application {
-    emitter(): Emitter<ApplicationEvents>
-    send(address: Address, data: any): void
+export interface Application<T = any> {
+    emitter(): Emitter<ApplicationEvents<T>>
+    send(address: Address, data: T): void
     rpc(): RPC
     createChannel(channel: number): Channel
     channel(channel: number): Channel
@@ -51,11 +51,10 @@ enum ApplicationChannel {
 }
 
 const RESERVED_CHANNELS = Object.keys(ApplicationChannel).length / 2
-
-export class Application implements Application {
+export class Application<T = any> implements Application<T> {
 
     private _rpc: RPCHandler
-    private _emitter = new Emitter<ApplicationEvents>()
+    private _emitter = new Emitter<ApplicationEvents<T>>()
 
     private _channels: Record<number, (message: Message) => void> = {}
 
@@ -78,11 +77,11 @@ export class Application implements Application {
         return this._rpc
     }
 
-    emitter(): Emitter<ApplicationEvents> {
+    emitter(): Emitter<ApplicationEvents<T>> {
         return this._emitter
     }
 
-    send(address: Address, data: any): void {
+    send(address: Address, data: T): void {
         this.router.send(address, ApplicationChannel.Data, data)
     }
 
@@ -92,7 +91,7 @@ export class Application implements Application {
             return this._channels[id]
     }
 
-    private _onMessage(message: Message, channel: number) {
+    private _onMessage(message: Message<T>, channel: number) {
         if (channel === ApplicationChannel.Data) {
             this._emitter.emit('message', message)
             return
