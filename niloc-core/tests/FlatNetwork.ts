@@ -1,7 +1,7 @@
-import { Address } from "../core/Address";
+import { Address } from "../lib/core/Address";
 import { Emitter } from "utils";
-import { Network, NetworkEvents } from "../core/Network";
-import { Peer, PeerEvents } from "../core/Peer";
+import { Network, NetworkEvents } from "../lib/core/Network";
+import { Peer, PeerEvents } from "../lib/core/Peer";
 
 interface FlatPeer extends Peer {
     _sibling: FlatPeer | null

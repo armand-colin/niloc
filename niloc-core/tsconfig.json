@@ -2,8 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "module": "CommonJS",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": true,
@@ -19,6 +22,10 @@
     "experimentalDecorators": true,
     "outDir": "dist"
   },
-  "exclude": ["node_modules"],
-  "include": ["lib"],
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "lib"
+  ],
 }
