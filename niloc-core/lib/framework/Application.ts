@@ -4,45 +4,17 @@ import { Message } from "../core/Message";
 import { Network } from "../core/Network";
 import { Router } from "../core/Router";
 import { RPC, RPCHandler } from "./RPC";
+import { Channel, DataChannel } from "../channel/DataChannel";
 
 interface ApplicationEvents<T> {
     message: Message<T>
 }
 
-interface ChannelEvents {
-    message: Message
-}
-
-interface Channel extends Emitter<ChannelEvents> {
-
-    id(): number
-    post(data: any): void
-
-}
-
-export interface Application<T = any> {
-    emitter(): Emitter<ApplicationEvents<T>>
-    send(address: Address, data: T): void
+export interface Application<Data = any> {
+    emitter(): Emitter<ApplicationEvents<Data>>
+    send(address: Address, data: Data): void
     rpc(): RPC
-    createChannel(channel: number): Channel
-    channel(channel: number): Channel
-}
-
-
-class Channel implements Channel {
-
-    private _id: number
-
-    constructor(id: number) {
-        this._id = id
-    }
-
-    id(): number { return this._id }
-    
-    post(data: any): void {
-        
-    }
-
+    channel<T>(channel: number): Channel<T>
 }
 
 enum ApplicationChannel {
@@ -51,12 +23,15 @@ enum ApplicationChannel {
 }
 
 const RESERVED_CHANNELS = Object.keys(ApplicationChannel).length / 2
-export class Application<T = any> implements Application<T> {
+
+const CHANNEL_ID = (channel: number) => channel + RESERVED_CHANNELS
+
+export class Application<Data = any> implements Application<Data> {
 
     private _rpc: RPCHandler
-    private _emitter = new Emitter<ApplicationEvents<T>>()
+    private _emitter = new Emitter<ApplicationEvents<Data>>()
 
-    private _channels: Record<number, (message: Message) => void> = {}
+    private _channels: Record<number, DataChannel<any>> = {}
 
     public readonly router: Router
 
@@ -77,21 +52,34 @@ export class Application<T = any> implements Application<T> {
         return this._rpc
     }
 
-    emitter(): Emitter<ApplicationEvents<T>> {
+    emitter(): Emitter<ApplicationEvents<Data>> {
         return this._emitter
     }
 
-    send(address: Address, data: T): void {
+    send(address: Address, data: Data): void {
         this.router.send(address, ApplicationChannel.Data, data)
     }
 
-    channel(channel: number): Channel {
-        const id = channel + RESERVED_CHANNELS
-        if (this._channels[id])
-            return this._channels[id]
+    channel<T>(channel: number): Channel<T> {
+        const channelId = CHANNEL_ID(channel)
+
+        if (!this._channels[channelId])
+            this._channels[channelId] = this._createChannel<T>(channel)
+            
+        return this._channels[channelId].input()
     }
 
-    private _onMessage(message: Message<T>, channel: number) {
+    private _createChannel<T>(channel: number): DataChannel<T> {
+        const dataChannel = new DataChannel<T>(channel)
+
+        dataChannel.output().setListener((address, data) => {
+            this.router.send(address, CHANNEL_ID(channel), data)
+        })
+
+        return dataChannel
+    }
+
+    private _onMessage(message: Message<Data>, channel: number) {
         if (channel === ApplicationChannel.Data) {
             this._emitter.emit('message', message)
             return
@@ -103,6 +91,6 @@ export class Application<T = any> implements Application<T> {
         }
 
         if (this._channels[channel])
-            this._channels[channel](message)
+            this._channels[channel].output().post(message)
     }
 }

@@ -1,7 +1,7 @@
-var p = Object.defineProperty;
-var g = (s, e, t) => e in s ? p(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var a = (s, e, t) => (g(s, typeof e != "symbol" ? e + "" : e, t), t);
-var u;
+var g = Object.defineProperty;
+var w = (s, e, t) => e in s ? g(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
+var o = (s, e, t) => (w(s, typeof e != "symbol" ? e + "" : e, t), t);
+var a;
 ((s) => {
   const e = {
     type: 0
@@ -11,34 +11,34 @@ var u;
     return e;
   }
   s.broadcast = t;
-  function r(n) {
-    return { type: 1, id: n };
+  function r(i) {
+    return { type: 1, id: i };
   }
   s.to = r;
-  function i(n, c) {
-    return n.type === 0 || c.type === 0 ? !0 : n.id === c.id;
+  function n(i, h) {
+    return i.type === 0 || h.type === 0 ? !0 : i.id === h.id;
   }
-  s.match = i;
-  function o(n) {
-    switch (n.type) {
+  s.match = n;
+  function u(i) {
+    switch (i.type) {
       case 0:
         return "*";
       case 1:
-        return `:${n.id}`;
+        return `:${i.id}`;
       default:
         return "?";
     }
   }
-  s.toString = o;
-  function h(n) {
-    return n === "*" ? t() : n.startsWith(":") ? r(n.slice(1)) : null;
+  s.toString = u;
+  function c(i) {
+    return i === "*" ? t() : i.startsWith(":") ? r(i.slice(1)) : null;
   }
-  s.parse = h;
-})(u || (u = {}));
-var w = Object.defineProperty, y = (s, e, t) => e in s ? w(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, f = (s, e, t) => (y(s, typeof e != "symbol" ? e + "" : e, t), t);
+  s.parse = c;
+})(a || (a = {}));
+var R = Object.defineProperty, v = (s, e, t) => e in s ? R(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, m = (s, e, t) => (v(s, typeof e != "symbol" ? e + "" : e, t), t);
 class l {
   constructor() {
-    f(this, "_listeners", {}), f(this, "_onceListeners", {});
+    m(this, "_listeners", {}), m(this, "_onceListeners", {});
   }
   on(e, t) {
     this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
@@ -66,36 +66,36 @@ class l {
     this._listeners = {}, this._onceListeners = {};
   }
 }
-class L {
+class y {
   constructor(e, t) {
-    a(this, "_address");
-    a(this, "_emitter");
-    a(this, "_id");
-    this.network = t, this._id = e, this._address = u.to(e), this._emitter = new l(), t.emitter().on("message", ({ peerId: r, channel: i, message: o }) => this._onMessage(r, i, o));
+    o(this, "_address");
+    o(this, "_emitter");
+    o(this, "_id");
+    this.network = t, this._id = e, this._address = a.to(e), this._emitter = new l(), t.emitter().on("message", ({ peerId: r, channel: n, message: u }) => this._onMessage(r, n, u));
   }
   emitter() {
     return this._emitter;
   }
   send(e, t, r) {
-    const i = {
+    const n = {
       originId: this._id,
       address: e,
       data: r
     };
-    for (const o of this.network.peers())
-      u.match(e, o.address()) && o.send(t, i);
+    for (const u of this.network.peers())
+      a.match(e, u.address()) && u.send(t, n);
   }
   id() {
     return this._id;
   }
   _onMessage(e, t, r) {
-    u.match(r.address, this._address) && this._emitter.emit("message", { message: r, channel: t });
-    for (const i of this.network.peers())
-      i.id() !== e && u.match(r.address, i.address()) && i.send(t, r);
+    a.match(r.address, this._address) && this._emitter.emit("message", { message: r, channel: t });
+    for (const n of this.network.peers())
+      n.id() !== e && a.match(r.address, n.address()) && n.send(t, r);
   }
 }
-let R = (s = 21) => crypto.getRandomValues(new Uint8Array(s)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), "");
-function v(s) {
+let E = (s = 21) => crypto.getRandomValues(new Uint8Array(s)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), "");
+function C(s) {
   try {
     const e = s();
     return Promise.resolve(e);
@@ -105,24 +105,24 @@ function v(s) {
 }
 var _;
 ((s) => {
-  function e(i, o, h) {
-    return { type: 0, id: i, name: o, data: h };
+  function e(n, u, c) {
+    return { type: 0, id: n, name: u, data: c };
   }
   s.request = e;
-  function t(i, o) {
-    return { type: 1, id: i, data: o };
+  function t(n, u) {
+    return { type: 1, id: n, data: u };
   }
   s.response = t;
-  function r(i, o) {
-    return { type: 2, id: i, reason: o };
+  function r(n, u) {
+    return { type: 2, id: n, reason: u };
   }
   s.error = r;
 })(_ || (_ = {}));
-class E {
+class P {
   constructor() {
-    a(this, "_emitter", new l());
-    a(this, "_handlers", {});
-    a(this, "_resultEmitter", new l());
+    o(this, "_emitter", new l());
+    o(this, "_handlers", {});
+    o(this, "_resultEmitter", new l());
   }
   emitter() {
     return this._emitter;
@@ -135,14 +135,14 @@ class E {
     this._handlers[e] = t;
   }
   request(e, t, r) {
-    const i = R(), o = _.request(i, e, r);
-    return new Promise((h, n) => {
-      let c = setTimeout(() => {
-        c = null, this._resultEmitter.emit(i, { type: 2, data: "Timed out" });
+    const n = E(), u = _.request(n, e, r);
+    return new Promise((c, i) => {
+      let h = setTimeout(() => {
+        h = null, this._resultEmitter.emit(n, { type: 2, data: "Timed out" });
       }, 2e4);
-      this._resultEmitter.once(i, ({ type: m, data: d }) => {
-        c && clearTimeout(c), m === 2 ? n(d) : m === 1 && h(d);
-      }), this._emitter.emit("message", { targetId: t, message: o });
+      this._resultEmitter.once(n, ({ type: p, data: d }) => {
+        h && clearTimeout(h), p === 2 ? i(d) : p === 1 && c(d);
+      }), this._emitter.emit("message", { targetId: t, message: u });
     });
   }
   post(e) {
@@ -163,20 +163,20 @@ class E {
     }
   }
   _onRequest(e, t) {
-    const { id: r, name: i, data: o } = e, h = this._handlers[i];
-    if (!h) {
-      console.error(`Received unhandled RPC request '${i}', originated from ${t}`);
-      const n = _.error(r, `Unhandled RPC by the receiver ${i}`);
-      this._emitter.emit("message", { targetId: t, message: n });
+    const { id: r, name: n, data: u } = e, c = this._handlers[n];
+    if (!c) {
+      console.error(`Received unhandled RPC request '${n}', originated from ${t}`);
+      const i = _.error(r, `Unhandled RPC by the receiver ${n}`);
+      this._emitter.emit("message", { targetId: t, message: i });
       return;
     }
-    v(() => h({ data: o, originId: t })).then((n) => {
-      const c = _.response(r, n);
-      this._emitter.emit("message", { targetId: t, message: c });
-    }).catch((n) => {
-      console.error(`Error while handling RPC '${i}':`, n);
-      const c = _.error(r, "Receiver got an error while responding");
-      this._emitter.emit("message", { targetId: t, message: c });
+    C(() => c({ data: u, originId: t })).then((i) => {
+      const h = _.response(r, i);
+      this._emitter.emit("message", { targetId: t, message: h });
+    }).catch((i) => {
+      console.error(`Error while handling RPC '${n}':`, i);
+      const h = _.error(r, "Receiver got an error while responding");
+      this._emitter.emit("message", { targetId: t, message: h });
     });
   }
   _onResponse(e) {
@@ -188,13 +188,64 @@ class E {
     this._resultEmitter.emit(t, { type: 2, data: r });
   }
 }
+class S {
+  constructor() {
+    o(this, "_inputListener", null);
+    o(this, "_outputListeners", /* @__PURE__ */ new Set());
+  }
+  postOutput(...e) {
+    for (const t of this._outputListeners)
+      t(...e);
+  }
+  addOutputListener(e) {
+    this._outputListeners.add(e);
+  }
+  removeOutputListener(e) {
+    this._outputListeners.delete(e);
+  }
+  postInput(...e) {
+    var t;
+    (t = this._inputListener) == null || t.call(this, ...e);
+  }
+  setInputListener(e) {
+    this._inputListener = e;
+  }
+}
+class O {
+  constructor(e) {
+    o(this, "_channel");
+    o(this, "_mpsc", new S());
+    o(this, "_input");
+    o(this, "_output");
+    this._channel = e, this._input = {
+      post: (t, r) => this._mpsc.postInput(t, r),
+      addListener: (t) => this._mpsc.addOutputListener(t),
+      removeListener: (t) => this._mpsc.removeOutputListener(t)
+    }, this._output = {
+      post: (t) => this._mpsc.postOutput(t),
+      setListener: (t) => this._mpsc.setInputListener(t)
+    };
+  }
+  channel() {
+    return this._channel;
+  }
+  input() {
+    return this._input;
+  }
+  output() {
+    return this._output;
+  }
+}
+var L = /* @__PURE__ */ ((s) => (s[s.Data = 0] = "Data", s[s.RPC = 1] = "RPC", s))(L || {});
+const I = Object.keys(L).length / 2, f = (s) => s + I;
 class q {
   constructor(e, t) {
-    a(this, "_rpc");
-    a(this, "_emitter", new l());
-    a(this, "router");
-    this.id = e, this.network = t, this.router = new L(e, t), this.router.emitter().on("message", ({ message: r, channel: i }) => this._onMessage(r, i)), this._rpc = new E(), this._rpc.emitter().on("message", ({ targetId: r, message: i }) => {
-      this.router.send(u.to(r), 1, i);
+    o(this, "_rpc");
+    o(this, "_emitter", new l());
+    o(this, "_channels", {});
+    o(this, "router");
+    this.id = e, this.network = t, this.router = new y(e, t), this.router.emitter().on("message", ({ message: r, channel: n }) => this._onMessage(r, n)), this._rpc = new P(), this._rpc.emitter().on("message", ({ targetId: r, message: n }) => {
+      this.router.send(a.to(r), 1, n);
     });
   }
   rpc() {
@@ -206,6 +257,16 @@ class q {
   send(e, t) {
     this.router.send(e, 0, t);
   }
+  channel(e) {
+    const t = f(e);
+    return this._channels[t] || (this._channels[t] = this._createChannel(e)), this._channels[t].input();
+  }
+  _createChannel(e) {
+    const t = new O(e);
+    return t.output().setListener((r, n) => {
+      this.router.send(r, f(e), n);
+    }), t;
+  }
   _onMessage(e, t) {
     if (t === 0) {
       this._emitter.emit("message", e);
@@ -215,10 +276,11 @@ class q {
       this._rpc.post(e);
       return;
     }
+    this._channels[t] && this._channels[t].output().post(e);
   }
 }
 export {
-  u as Address,
+  a as Address,
   q as Application,
-  L as Router
+  y as Router
 };
