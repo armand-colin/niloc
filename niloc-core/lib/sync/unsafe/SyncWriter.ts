@@ -1,6 +1,6 @@
-import { ModelWriter } from "../Synchronize";
+import { ModelSyncWriter } from "../Synchronize";
 
-export class UnsafeWriter implements ModelWriter {
+export class SyncWriter implements ModelSyncWriter {
 
     private _changes: string[] = []
 
@@ -10,8 +10,6 @@ export class UnsafeWriter implements ModelWriter {
         this._changes.push(objectId)
         this._changes.push(type)
     }
-
-    end(): void { }
 
     collect(): string[] {
         const changes = this._changes

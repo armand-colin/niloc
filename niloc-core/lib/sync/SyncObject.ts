@@ -1,3 +1,5 @@
+import { StringWriter } from "../tools/StringWriter";
+import { ModelHandle } from "./ModelHandle";
 import { ChangeRequester, Reader, Writer } from "./Synchronize";
 import { Field } from "./field/Field";
 
@@ -6,6 +8,28 @@ export class SyncObject {
     static setChangeRequester(object: SyncObject, requester: ChangeRequester) {
         for (const field of object.fields())
             Field.setChangeRequester(field, requester)
+    }
+
+    static setModelHandle(object: SyncObject, handle: ModelHandle) {
+        for (const field of object.fields())
+            Field.setModelHandle(field, handle)
+    }
+
+    static toString(object: SyncObject): string {
+        const writer = new StringWriter()
+        this.write(object, writer)
+        return writer.toString()
+    }
+
+    static write(object: SyncObject, writer: StringWriter) {
+        writer.writeLine(`${object.type()}: ${object.id()} {`)
+        writer.startIndent()
+
+        for (const field of object.fields())
+            Field.write(field, writer)
+
+        writer.endIndent()
+        writer.writeLine('}')
     }
 
     private _id: string

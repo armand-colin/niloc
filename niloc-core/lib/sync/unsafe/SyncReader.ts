@@ -1,6 +1,6 @@
-import { ModelReader } from "../Synchronize";
+import { ModelSyncReader } from "../Synchronize";
 
-export class UnsafeReader implements ModelReader {
+export class SyncReader implements ModelSyncReader {
 
     private _changes: string[] = []
 
@@ -8,6 +8,7 @@ export class UnsafeReader implements ModelReader {
     private _payload = { objectId: "", type: "" }
 
     feed(changes: string[]) {
+        this._cursor = 0
         this._changes = changes
     }
 
@@ -33,7 +34,5 @@ export class UnsafeReader implements ModelReader {
             return null
         }
     }
-
-    end(): void { }
 
 }

@@ -7,17 +7,29 @@ export interface Reader {
 }
 
 export interface ChangeRequester {
-    change(): void
+    change(fieldIndex: number): void
 }
 
-export interface ModelReader extends Reader {
+export interface ModelSyncReader extends Reader {
     feed(changes: string[]): void
     start(): { objectId: string, type: string } | null
-    end(): void
 }
 
-export interface ModelWriter extends Writer {
+export interface ModelSyncWriter extends Writer {
     start(objectId: string, type: string): void
+    collect(): string[]
+}
+
+export interface ModelChangeReader extends Reader {
+    feed(changes: string[]): void
+    start(): { objectId: string, fieldCount: number } | null
+    field(): number
+    skip(): void
+}
+
+export interface ModelChangeWriter extends Writer {
+    start(objectId: string, fieldCount: number): void
     end(): void
+    field(field: number): void
     collect(): string[]
 }
