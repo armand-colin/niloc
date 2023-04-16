@@ -1,7 +1,7 @@
-var f = Object.defineProperty;
-var p = (s, e, t) => e in s ? f(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var o = (s, e, t) => (p(s, typeof e != "symbol" ? e + "" : e, t), t);
-var m = Object.defineProperty, y = (s, e, t) => e in s ? m(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, d = (s, e, t) => (y(s, typeof e != "symbol" ? e + "" : e, t), t);
+var p = Object.defineProperty;
+var m = (r, e, t) => e in r ? p(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var o = (r, e, t) => (m(r, typeof e != "symbol" ? e + "" : e, t), t);
+var y = Object.defineProperty, g = (r, e, t) => e in r ? y(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, d = (r, e, t) => (g(r, typeof e != "symbol" ? e + "" : e, t), t);
 let l = class {
   constructor() {
     d(this, "_listeners", {}), d(this, "_onceListeners", {});
@@ -20,11 +20,11 @@ let l = class {
   }
   emit(e, t) {
     if (this._listeners[e])
-      for (const r of [...this._listeners[e]])
-        r(t);
+      for (const s of [...this._listeners[e]])
+        s(t);
     if (this._onceListeners[e]) {
-      for (const r of [...this._onceListeners[e]])
-        r(t);
+      for (const s of [...this._onceListeners[e]])
+        s(t);
       delete this._onceListeners[e];
     }
   }
@@ -32,8 +32,8 @@ let l = class {
     this._listeners = {}, this._onceListeners = {};
   }
 };
-var h;
-((s) => {
+var a;
+((r) => {
   const e = {
     type: 0
     /* Broadcast */
@@ -41,15 +41,15 @@ var h;
   function t() {
     return e;
   }
-  s.broadcast = t;
-  function r(i) {
+  r.broadcast = t;
+  function s(i) {
     return { type: 1, id: i };
   }
-  s.to = r;
-  function n(i, a) {
-    return i.type === 0 || a.type === 0 ? !0 : i.id === a.id;
+  r.to = s;
+  function n(i, h) {
+    return i.type === 0 || h.type === 0 ? !0 : i.id === h.id;
   }
-  s.match = n;
+  r.match = n;
   function c(i) {
     switch (i.type) {
       case 0:
@@ -60,28 +60,30 @@ var h;
         return "?";
     }
   }
-  s.toString = c;
+  r.toString = c;
   function _(i) {
-    return i === "*" ? t() : i.startsWith(":") ? r(i.slice(1)) : null;
+    return i === "*" ? t() : i.startsWith(":") ? s(i.slice(1)) : null;
   }
-  s.parse = _;
-})(h || (h = {}));
+  r.parse = _;
+})(a || (a = {}));
 var u;
-((s) => {
+((r) => {
   function e(n, c, _) {
     return { type: 0, id: n, name: c, data: _ };
   }
-  s.request = e;
+  r.request = e;
   function t(n, c) {
     return { type: 1, id: n, data: c };
   }
-  s.response = t;
-  function r(n, c) {
+  r.response = t;
+  function s(n, c) {
     return { type: 2, id: n, reason: c };
   }
-  s.error = r;
+  r.error = s;
 })(u || (u = {}));
-class g {
+var f = /* @__PURE__ */ ((r) => (r[r.Data = 0] = "Data", r[r.RPC = 1] = "RPC", r))(f || {});
+Object.keys(f).length / 2;
+class L {
   constructor(e, t) {
     o(this, "_id");
     o(this, "_address");
@@ -90,15 +92,15 @@ class g {
     o(this, "_onMessage", (e, t) => {
       if (typeof e == "number" && typeof t == "string")
         try {
-          const r = JSON.parse(t);
-          if (typeof r != "object")
+          const s = JSON.parse(t);
+          if (typeof s != "object")
             return;
-          this._emitter.emit("message", { channel: e, message: r });
-        } catch (r) {
-          console.error("Error while parsing message", r);
+          this._emitter.emit("message", { channel: e, message: s });
+        } catch (s) {
+          console.error("Error while parsing message", s);
         }
     });
-    this._id = e, this._socket = t, this._address = h.broadcast(), this._socket.on("message", this._onMessage);
+    this._id = e, this._socket = t, this._address = a.broadcast(), this._socket.on("message", this._onMessage);
   }
   id() {
     return this._id;
@@ -113,15 +115,15 @@ class g {
     this._socket.send(e, JSON.stringify(t));
   }
 }
-class w {
+class O {
   constructor(e, t) {
     o(this, "_id");
     o(this, "_emitter", new l());
     o(this, "_peer");
-    this._id = e, this._peer = new g("HOST", t), this._peer.emitter().on("message", ({ channel: r, message: n }) => {
+    this._id = e, this._peer = new L("HOST", t), this._peer.emitter().on("message", ({ channel: s, message: n }) => {
       this._emitter.emit("message", {
         peerId: this._peer.id(),
-        channel: r,
+        channel: s,
         message: n
       });
     });
@@ -137,5 +139,5 @@ class w {
   }
 }
 export {
-  w as SocketIONetwork
+  O as SocketIONetwork
 };

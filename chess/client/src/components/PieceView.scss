@@ -1,0 +1,16 @@
+.PieceView {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: calc(100px * var(--y));
+    left: calc(100px * var(--x));
+    color: var(--color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ShapeView {
+    text-shadow: 0 0 5px black;
+    font-size: 2em;
+}

@@ -1,0 +1,40 @@
+.Grid {
+    width: 800px;
+    height: 800px;
+    position: relative;
+
+    &__row {
+        display: flex;
+    }
+
+    &__row:nth-child(odd) {
+        .Grid__cell:nth-child(odd) {
+            background: white;
+        }
+        .Grid__cell:nth-child(even) {
+            background: lightblue;
+        }
+    }
+
+    &__row:nth-child(even) {
+        .Grid__cell:nth-child(odd) {
+            background: lightblue;
+        }
+        .Grid__cell:nth-child(even) {
+            background: white;
+        }
+    }
+
+    &__cell {
+        width: 100px;
+        height: 100px;
+    }
+
+    &__content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+}
