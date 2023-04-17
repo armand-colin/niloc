@@ -19,6 +19,8 @@ const io = new Server(server, {
 const network = new SocketIONetwork()
 const application = new Application("SERVER", network)
 
+const channel = application.channel(0)
+
 // For now we suppose we only have 1 room
 io.on('connection', socket => {
     const peerId = socket.handshake.query.peerId
@@ -27,9 +29,9 @@ io.on('connection', socket => {
         return
     }
     network.addSocket(socket)
-    application.send(Address.broadcast(), { connected: peerId })
+    channel.post(Address.broadcast(), { connected: peerId })
 })
 
 server.listen(PORT, () => {
-    console.log(`Listening on http://localhost:${PORT}`);
+    console.info(`Listening on http://localhost:${PORT}`);
 })

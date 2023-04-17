@@ -1,8 +1,9 @@
 import "./PieceView.scss"
 import { Piece, PieceColor, PieceShape } from "../game/Piece"
+import { EventManager } from "../game/EventManager";
 
 interface Props {
-    piece: Piece
+    piece: Piece,
 }
 
 const ShapeView = (shape: PieceShape) => {
@@ -37,7 +38,11 @@ export const PieceView = (props: Props) => {
     const x = props.piece.position.get().x.get()
     const y = props.piece.position.get().y.get()
 
-    return <div 
+    function onClick(e: React.MouseEvent) {
+        EventManager.emitter.emit("pieceClick", { event: e, piece: props.piece })
+    }
+
+    return <div
         className="PieceView"
         style={{
             // @ts-ignore
@@ -47,6 +52,7 @@ export const PieceView = (props: Props) => {
             // @ts-ignore
             "--y": y
         }}
+        onClick={onClick}
     >
         {ShapeView(shape)}
     </div>

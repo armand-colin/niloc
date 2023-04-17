@@ -41,7 +41,7 @@ export class Router implements Router {
             address,
             data
         }
-        
+
         for (const peer of this.network.peers()) {
             if (Address.match(address, peer.address())) {
                 peer.send(channel, message)

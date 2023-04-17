@@ -4,9 +4,6 @@ import { WebRTCOpts } from "./WebRTCOpts";
 import { SimplePeer } from "./SimplePeer"
 import type { Instance } from "simple-peer";
 
-
-console.log(SimplePeer)
-
 interface WebRTCPeerEvents {
 
     destroy: void
@@ -37,8 +34,6 @@ export class WebRTCPeer implements Peer {
     constructor(id: string, opts: WebRTCOpts) {
         this._id = id
         this._address = makeAddress(id, opts)
-
-        console.log('build simple peer');
         
         this._rtc = new SimplePeer({
             config: {

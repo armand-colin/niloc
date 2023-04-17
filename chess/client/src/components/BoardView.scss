@@ -1,34 +1,7 @@
 .Grid {
-    width: 800px;
-    height: 800px;
+    width: calc(var(--cell-size) * 8);
+    height: calc(var(--cell-size) * 8);
     position: relative;
-
-    &__row {
-        display: flex;
-    }
-
-    &__row:nth-child(odd) {
-        .Grid__cell:nth-child(odd) {
-            background: white;
-        }
-        .Grid__cell:nth-child(even) {
-            background: lightblue;
-        }
-    }
-
-    &__row:nth-child(even) {
-        .Grid__cell:nth-child(odd) {
-            background: lightblue;
-        }
-        .Grid__cell:nth-child(even) {
-            background: white;
-        }
-    }
-
-    &__cell {
-        width: 100px;
-        height: 100px;
-    }
 
     &__content {
         position: absolute;
@@ -36,5 +9,37 @@
         height: 100%;
         top: 0;
         left: 0;
+    }
+}
+
+.Cells {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    &__row {
+        display: flex;
+    }
+
+    &__cell {
+        width: var(--cell-size);
+        height: var(--cell-size);
+
+        &.odd {
+            background: lightblue;
+        }
+
+        &.even {
+            background: white;
+        }
+
+        &.odd.selected {
+            background: #aa1313;
+        }
+        &.even.selected {
+            background: #e65050;
+        }
     }
 }

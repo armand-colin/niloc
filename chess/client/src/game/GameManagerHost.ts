@@ -12,7 +12,8 @@ export class GameManagerHost extends GameManager {
         this.board = this.model.instantiate(Board.template, "board")
         this._initBoard()
         this.model.tick()
-        this.application.emitter().on('message', this._onMessage)
+        const connectionChannel = this.application.channel<any>(0)
+        connectionChannel.addListener(this._onConnectionMessage)
     }
 
     private _initBoard() {
@@ -62,13 +63,10 @@ export class GameManagerHost extends GameManager {
         return piece
     }
 
-    private _onMessage = (message: Message<any>) => {
-        const peerId = message.data.connected
-        console.log('connected', message);
-        
-        if (peerId && peerId !== this.application.id) {
+    private _onConnectionMessage = (message: Message<any>) => {
+        const peerId = message.data.connected        
+        if (peerId && peerId !== this.application.id)
             this.model.syncTo(Address.to(peerId))
-        }
     }
 
 }

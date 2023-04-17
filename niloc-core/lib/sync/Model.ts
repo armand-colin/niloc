@@ -72,8 +72,6 @@ export class Model {
 
         this._changeQueue.sync(objectId)
 
-        this._emitter.emit('created', object)
-
         return object
     }
 
@@ -107,7 +105,10 @@ export class Model {
         SyncObject.setChangeRequester(object, this._makeChangeRequester(id))
         SyncObject.setModelHandle(object, this._handle)
         this._objects.set(id, object)
+
+        this._emitter.emit('created', object)
         this._objectsEmitter.emit(id, object)
+        
         return object
     }
 

@@ -1,19 +1,59 @@
 import "./BoardView.scss"
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useEffect, useMemo, useState } from "react"
 import { Board } from "../game/Board"
 import { PieceView } from "./PieceView"
+import { EventManager } from "../game/EventManager"
 
 interface Props {
     board: Board
 }
 
-const cells = Array(8).fill(null)
-    .map(_ => Array(8).fill(null).map((_, i) => <div className="Grid__cell" key={i}></div>))
-    .map((array, i) => <div className="Grid__row" key={i}>{array}</div>)
+type CellMetaData = {
+    selected: boolean
+}
+
+const Cells = () => {
+    const [selectedCells, setSelectedCells] = useState<{ x: number, y: number }[]>([])
+
+    useEffect(() => {
+        EventManager.emitter.on('selectCells', setSelectedCells)
+        return () => {
+            EventManager.emitter.off('selectCells', setSelectedCells)
+        }
+    }, [])
+
+    const cells = useMemo(() => {
+        const cells: CellMetaData[][] = Array(8).fill(null).map(() => Array(8).fill(null).map(_ => ({ selected: false })))
+        for (const { x, y } of selectedCells)
+            cells[x][y].selected = true
+        return cells
+    }, [selectedCells])
+
+    return <div className="Cells">
+        {
+            Array(8).fill(null).map((_, i) => {
+                return <div className="Cells__row" key={i}>
+                    {
+                        Array(8).fill(null).map((__, j) => {
+                            const className = [
+                                "Cells__cell",
+                                (i + j) % 2 ? "odd" : "even",
+                                cells[j][i].selected ? "selected" : ""
+                            ].join(' ')
+                            return <div className={className} key={j}>
+
+                            </div>
+                        })
+                    }
+                </div>
+            })
+        }
+    </div>
+}
 
 const Grid = (props: PropsWithChildren<{}>) => {
     return <div className="Grid">
-        {cells}
+        <Cells />
         <div className="Grid__content">
             {props.children}
         </div>

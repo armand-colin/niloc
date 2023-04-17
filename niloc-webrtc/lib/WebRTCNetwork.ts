@@ -65,8 +65,6 @@ export class WebRTCNetwork implements Network {
             delete this._peers[peerId]
         }
 
-        console.log('pass in constructor');
-
         const peer = new WebRTCPeer(peerId, this._opts)
 
         peer.webrtcEmitter().on('signal', signal => this._webrtcEmitter.emit('signal', { peerId, signal }))

@@ -12,7 +12,7 @@ export class SocketIONetwork implements Network {
 
     addSocket(socket: Socket) {
         // TODO: safe check
-        const id = socket.handshake.query.id as string
+        const id = socket.handshake.query.peerId as string
         if (this._peers.has(id))
             return // TODO: disconnect socket ?
 
