@@ -3,16 +3,17 @@ import './App.css'
 import { GameManager } from './game/GameManager'
 import { GameManagerHost } from './game/GameManagerHost'
 import { GameView } from './components/GameView'
+import { PieceColor } from './game/Piece'
 
 export const App = () => {
   const [gameManager, setGameManager] = useState<GameManager | null>(null)
 
   function onHost() {
-    setGameManager(new GameManagerHost())
+    setGameManager(new GameManagerHost(PieceColor.White))
   }
 
   function onJoin() {
-    setGameManager(new GameManager())
+    setGameManager(new GameManager(PieceColor.Black))
   }
 
   return <div className="App">

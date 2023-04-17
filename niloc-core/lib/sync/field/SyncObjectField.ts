@@ -23,6 +23,7 @@ export class SyncObjectField<T extends SyncObject> extends Field {
 
     read(reader: Reader): void {
         this._object.read(reader)
+        this.emitter().emit('changed')
     }
 
     write(writer: Writer): void {
@@ -35,6 +36,7 @@ export class SyncObjectField<T extends SyncObject> extends Field {
             const fieldIndex = reader.readInt()
             this._object.fields()[fieldIndex].readChange(reader)
         }
+        this.emitter().emit('changed')
     }
 
     writeChange(writer: Writer): void {
@@ -56,6 +58,7 @@ export class SyncObjectField<T extends SyncObject> extends Field {
             change: (fieldIndex) => {
                 this._changes.push(fieldIndex)
                 requester.change(this.index())
+                this.emitter().emit('changed')
             },
         })
     }

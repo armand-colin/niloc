@@ -36,6 +36,7 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
             const objectId = reader.readString()
             this._objects.set(objectId, this._modelHandle?.get(objectId) ?? null)
         }
+        this.emitter().emit('changed')
     }
 
     write(writer: Writer): void {
@@ -50,6 +51,7 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
             const objectId = object.id()
             if (this._objects.has(objectId))
                 this._objects.set(objectId, object as T)
+            this.emitter().emit('changed')
         })
     }
 

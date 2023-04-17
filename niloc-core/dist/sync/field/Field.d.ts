@@ -1,8 +1,12 @@
+import { Emitter } from "utils";
 import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";
 import { ChangeRequester } from "../Synchronize";
 import { Writer } from "../Writer";
+interface FieldEvents {
+    changed: void;
+}
 export declare abstract class Field {
     static setIndex(field: Field, index: number): void;
     static setChangeRequester(field: Field, requester: ChangeRequester): void;
@@ -11,7 +15,9 @@ export declare abstract class Field {
     static write(field: Field, writer: StringWriter): void;
     private _index;
     private _changeRequester;
+    private _emitter;
     index(): number;
+    emitter(): Emitter<FieldEvents>;
     abstract read(reader: Reader): void;
     abstract write(writer: Writer): void;
     readChange(reader: Reader): void;
@@ -21,3 +27,4 @@ export declare abstract class Field {
     protected onModelHandle(_handle: ModelHandle): void;
     protected toString(writer: StringWriter): void;
 }
+export {};

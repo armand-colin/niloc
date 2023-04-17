@@ -1,44 +1,68 @@
 import "./PieceView.scss"
 import { Piece, PieceColor, PieceShape } from "../game/Piece"
 import { EventManager } from "../game/EventManager";
+import { useField } from "../hooks/useField";
+import pawn from "../assets/pieces/pawn.svg"
+import bishop from "../assets/pieces/bishop.svg"
+import tower from "../assets/pieces/tower.svg"
+import king from "../assets/pieces/king.svg"
+import queen from "../assets/pieces/queen.svg"
+import knight from "../assets/pieces/knight.svg"
+import { useUrl } from "../hooks/useUrl";
 
 interface Props {
     piece: Piece,
 }
 
-const ShapeView = (shape: PieceShape) => {
-    let letter: string;
+const ShapeView = (shape: PieceShape, color: PieceColor) => {
+    let svgUrl: string;
+
     switch (shape) {
         case PieceShape.Pawn:
-            letter = "P"
+            svgUrl = pawn
             break
         case PieceShape.Bishop:
-            letter = "B"
+            svgUrl = bishop
             break
         case PieceShape.Tower:
-            letter = "T"
+            svgUrl = tower
             break
         case PieceShape.Knight:
-            letter = "C"
+            svgUrl = knight
             break
         case PieceShape.King:
-            letter = "K"
+            svgUrl = king
             break
         case PieceShape.Queen:
-            letter = "Q"
+            svgUrl = queen
             break
     }
 
-    return <div className="ShapeView">{letter}</div>
+    const svg = useUrl(svgUrl)
+    
+    const className = [
+        "ShapeView",
+        color === PieceColor.White ? "white" : "black"
+    ].join(' ')
+
+    return <div className={className} dangerouslySetInnerHTML={{ __html: svg ?? "" }}></div>
 }
 
 export const PieceView = (props: Props) => {
+    useField(props.piece.shape)
+    useField(props.piece.color)
+    useField(props.piece.position)
+
+    console.log('render piece');
+
+
     const shape = props.piece.shape.get()
     const color = props.piece.color.get()
     const x = props.piece.position.get().x.get()
     const y = props.piece.position.get().y.get()
 
     function onClick(e: React.MouseEvent) {
+        EventManager.emitter.emit("cellClick", { x, y })
         EventManager.emitter.emit("pieceClick", { event: e, piece: props.piece })
     }
 
@@ -54,6 +78,6 @@ export const PieceView = (props: Props) => {
         }}
         onClick={onClick}
     >
-        {ShapeView(shape)}
+        {ShapeView(shape, color)}
     </div>
 }

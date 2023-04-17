@@ -20,6 +20,7 @@ export class AnyField<T> extends Field {
 
     read(reader: Reader): void {
         this._value = reader.readJSON()
+        this.emitter().emit('changed')
     }
 
     write(writer: Writer): void {

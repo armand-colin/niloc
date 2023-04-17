@@ -9,6 +9,7 @@
         height: 100%;
         top: 0;
         left: 0;
+        pointer-events: none;
     }
 }
 
@@ -38,6 +39,7 @@
         &.odd.selected {
             background: #aa1313;
         }
+        
         &.even.selected {
             background: #e65050;
         }

@@ -35,6 +35,8 @@ const PawnMoves: Moves = (piece, cells) => {
     const x = piece.position.get().x.get()
     const y = piece.position.get().y.get()
 
+    console.log("get pawn moves", { x, y }, JSON.stringify(cells));
+
     let starting = false
     if (piece.color.get() === PieceColor.White) {
         starting = y === 1
@@ -53,9 +55,9 @@ const PawnMoves: Moves = (piece, cells) => {
 
     const d1 = { x: x + 1, y: y + direction }
     const d2 = { x: x - 1, y: y + direction }
-    if (isEnemy(piece, cells, d1))
+    if (isInBounds(d1) && isEnemy(piece, cells, d1))
         moves.push(d1)
-    if (isEnemy(piece, cells, d2))
+    if (isInBounds(d2) && isEnemy(piece, cells, d2))
         moves.push(d2)
 
     moves = filterNotInBounds(moves)
@@ -115,6 +117,8 @@ const BishopMoves: Moves = (piece, cells) => {
     const x = piece.position.get().x.get()
     const y = piece.position.get().y.get()
 
+    console.log(cells)
+
     const directions = [
         { x: 1, y: 1 },
         { x: -1, y: 1 },
@@ -151,7 +155,7 @@ const KnightMoves: Moves = (piece, cells) => {
         { x: 1, y: 2 },
         { x: 1, y: -2 },
         { x: -1, y: -2 },
-        { x: -1, y: -2 },
+        { x: -1, y: 2 },
     ]
 
     for (const direction of directions) {

@@ -3,6 +3,7 @@ import { PropsWithChildren, useEffect, useMemo, useState } from "react"
 import { Board } from "../game/Board"
 import { PieceView } from "./PieceView"
 import { EventManager } from "../game/EventManager"
+import { useField } from "../hooks/useField"
 
 interface Props {
     board: Board
@@ -23,11 +24,17 @@ const Cells = () => {
     }, [])
 
     const cells = useMemo(() => {
+        console.log("selected changed", selectedCells);
+
         const cells: CellMetaData[][] = Array(8).fill(null).map(() => Array(8).fill(null).map(_ => ({ selected: false })))
         for (const { x, y } of selectedCells)
             cells[x][y].selected = true
         return cells
     }, [selectedCells])
+
+    function onClick(x: number, y: number) {
+        EventManager.emitter.emit('cellClick', { x, y })
+    }
 
     return <div className="Cells">
         {
@@ -38,9 +45,9 @@ const Cells = () => {
                             const className = [
                                 "Cells__cell",
                                 (i + j) % 2 ? "odd" : "even",
-                                cells[j][i].selected ? "selected" : ""
+                                cells[j][7 - i].selected ? "selected" : ""
                             ].join(' ')
-                            return <div className={className} key={j}>
+                            return <div className={className} key={j} onClick={() => onClick(j, 7 - i)}>
 
                             </div>
                         })
@@ -61,6 +68,7 @@ const Grid = (props: PropsWithChildren<{}>) => {
 }
 
 export const BoardView = (props: Props) => {
+    useField(props.board.pieces)
     const pieces = [...props.board.pieces.values()]
     return <div className="BoardView">
         <h1>Board</h1>

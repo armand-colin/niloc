@@ -1,3 +1,7 @@
 :root {
     --cell-size: 40px;
 }
+
+body {
+    font-family: "Archivo"
+}

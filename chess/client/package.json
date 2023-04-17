@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/archivo": "^4.5.11",
     "@types/socket.io-client": "^3.0.0",
     "niloc-core": "link:../../niloc-core",
     "niloc-socketio-client": "link:../../niloc-socketio-client",

@@ -7,8 +7,8 @@ export class GameManagerHost extends GameManager {
 
     public readonly board: Board
 
-    constructor() {
-        super()
+    constructor(color: PieceColor) {
+        super(color)
         this.board = this.model.instantiate(Board.template, "board")
         this._initBoard()
         this.model.tick()

@@ -24,6 +24,7 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
             return
 
         this._setObjectId(objectId)
+        this.emitter().emit('changed')
     }
 
     write(writer: Writer): void {
@@ -58,6 +59,8 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
         } else {
             this._objectRequest = null
         }
+
+        this.emitter().emit('changed')
     }
 
     protected onModelHandle(handle: ModelHandle): void {
