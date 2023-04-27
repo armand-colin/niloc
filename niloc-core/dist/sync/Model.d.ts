@@ -3,12 +3,14 @@ import { SyncObject } from "./SyncObject";
 import { Channel } from "../channel/DataChannel";
 import { Address } from "../main";
 import { Emitter } from "utils";
+import { Plugin } from "./Plugin";
 export interface ModelEvents {
     created: SyncObject;
 }
 export interface Model {
     emitter(): Emitter<ModelEvents>;
     register(template: Template<SyncObject>): void;
+    plugin(plugin: Plugin): void;
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T;
     tick(): void;
     syncTo(address: Address): void;
@@ -33,6 +35,7 @@ export declare class Model {
     private _changeQueue;
     private _reader;
     private _writer;
+    private _plugins;
     constructor(opts: ModelOpts);
     get<T extends SyncObject>(id: string): T | null;
     getAll(): SyncObject[];

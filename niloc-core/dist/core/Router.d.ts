@@ -1,24 +1,16 @@
-import { Emitter } from "utils";
-import { Address } from "./Address";
-import { Message } from "./Message";
 import { Network } from "./Network";
-interface RouterEvents {
-    message: {
-        message: Message;
-        channel: number;
-    };
-}
+import { Channel } from "../channel/DataChannel";
 export interface Router {
     id(): string;
-    send(address: Address, channel: number, data: any): void;
-    emitter(): Emitter<RouterEvents>;
+    channel<T>(channel: number): Channel<T>;
 }
 export declare class Router implements Router {
     readonly network: Network;
-    private readonly _address;
-    private readonly _emitter;
     private readonly _id;
+    private readonly _address;
+    private readonly _channels;
     constructor(id: string, network: Network);
     private _onMessage;
+    private _createChannel;
+    private _send;
 }
-export {};

@@ -2,10 +2,6 @@ import { Channel } from "../../lib/channel/DataChannel"
 import { Message } from "../../lib/main"
 import { Model } from "../../lib/sync/Model"
 import { Template } from "../../lib/sync/Template"
-import { SyncReader } from "../../lib/sync/unsafe/SyncReader"
-import { SyncWriter } from "../../lib/sync/unsafe/SyncWriter"
-import { ChangeReader } from "../../lib/sync/unsafe/ChangeReader"
-import { ChangeWriter } from "../../lib/sync/unsafe/ChangeWriter"
 
 export namespace MockModel {
 
@@ -46,29 +42,13 @@ export namespace MockModel {
 
     export function models(templates?: Template<any>[]): [Model, Model] {
         const [channelA, channelB] = channels("a", "b")
-
+        
         const modelA = new Model({
             channel: channelA,
-            sync: {
-                reader: new SyncReader(),
-                writer: new SyncWriter(),
-            },
-            change: {
-                reader: new ChangeReader(),
-                writer: new ChangeWriter(),
-            }
         })
 
         const modelB = new Model({
             channel: channelB,
-            sync: {
-                reader: new SyncReader(),
-                writer: new SyncWriter(),
-            },
-            change: {
-                reader: new ChangeReader(),
-                writer: new ChangeWriter(),
-            }
         })
 
         for (const template of templates ?? []) {

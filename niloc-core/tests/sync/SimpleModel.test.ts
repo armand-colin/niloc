@@ -89,7 +89,7 @@ describe("Sync / Model", () => {
         appleTree.name.set("My apple tree")
         
         const pearTree = modelA.instantiate(Tree.template, "pearTree")
-        appleTree.name.set("My pear tree")
+        pearTree.name.set("My pear tree")
 
         const apple = modelA.instantiate(Fruit.template, "apple")
         apple.name.set("Granny Smith")

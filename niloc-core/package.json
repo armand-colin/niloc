@@ -19,7 +19,7 @@
     "dev": "vite",
     "build": "vite build && tsc",
     "prepare": "vite build && tsc",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "devDependencies": {
     "typescript": "^5.0.4",

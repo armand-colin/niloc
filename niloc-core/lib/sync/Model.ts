@@ -9,6 +9,7 @@ import { ModelHandle } from "./ModelHandle"
 import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
 import { Writer } from "./Writer"
+import { Plugin } from "./Plugin"
 
 export interface ModelEvents {
     created: SyncObject
@@ -18,6 +19,7 @@ export interface Model {
 
     emitter(): Emitter<ModelEvents>
     register(template: Template<SyncObject>): void
+    plugin(plugin: Plugin): void
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T
     tick(): void
     syncTo(address: Address): void
@@ -48,6 +50,8 @@ export class Model {
 
     private _reader = new Reader()
     private _writer = new Writer()
+    
+    private _plugins = [] as Plugin[]
 
     constructor(opts: ModelOpts) {
         this._channel = opts.channel
@@ -61,6 +65,10 @@ export class Model {
     }
 
     emitter() { return this._emitter }
+
+    plugin(plugin: Plugin) {
+        this._plugins.push(plugin)
+    }
 
     register(template: Template<SyncObject>) {
         this._templates.set(template.type, template)
@@ -105,6 +113,9 @@ export class Model {
         SyncObject.setChangeRequester(object, this._makeChangeRequester(id))
         SyncObject.setModelHandle(object, this._handle)
         this._objects.set(id, object)
+
+        for (const plugin of this._plugins)
+            plugin.beforeCreate?.(object)
 
         this._emitter.emit('created', object)
         this._objectsEmitter.emit(id, object)
