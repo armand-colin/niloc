@@ -4,14 +4,16 @@ import { RPCHandler } from "../../lib/rpc/RPCHandler"
 import { RPC } from "../../lib/rpc/RPC";
 import { RPCPlugin } from "../../lib/rpc/RPCPlugin";
 import { MockModel } from "../sync/MockModel";
-import { Address, SyncObject, Template } from "../../lib/main";
+import { SyncObject, Template } from "../../lib/main";
+import { MockPeers } from "../MockPeers";
 
 describe('RPC', () => {
 
     it("Should handle rpc correctly", async () => {
         const [channelA, channelB] = MockChannels.bounded()
-        const handlerA = new RPCHandler("a", Address.to("a"), channelA)
-        const handlerB = new RPCHandler("b", Address.to("b"), channelB)
+        const [peerA, peerB] = MockPeers.make(["a", "b"])
+        const handlerA = new RPCHandler(peerA, channelA)
+        const handlerB = new RPCHandler(peerB, channelB)
 
         function rpc(id: string) {
             return RPC.target("a", (count: number): string => {
@@ -47,9 +49,10 @@ describe('RPC', () => {
     it('Should work with a model', async () => {
         const [channelA, channelB] = MockModel.channels('a', 'b')
         const [modelA, modelB] = MockModel.models([Avatar.template])
+        const [peerA, peerB] = MockPeers.make(["a", "b"])
 
-        modelA.plugin(new RPCPlugin('a', Address.to("a"), channelA))
-        modelB.plugin(new RPCPlugin('b', Address.to("b"), channelB))
+        modelA.plugin(new RPCPlugin(peerA, channelA))
+        modelB.plugin(new RPCPlugin(peerB, channelB))
 
         const avatarA = modelA.instantiate(Avatar.template, 'avatarA')
         avatarA.isHost = true

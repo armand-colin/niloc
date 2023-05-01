@@ -16,8 +16,8 @@ const io = new Server(server, {
     }
 });
 
-const network = new SocketIONetwork(false)
-const router = new Router(network)
+const network = new SocketIONetwork()
+const router = new Router({ id: "SERVER", network })
 
 const channel = router.channel(0)
 

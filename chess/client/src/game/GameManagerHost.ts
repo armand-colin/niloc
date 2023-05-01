@@ -65,7 +65,7 @@ export class GameManagerHost extends GameManager {
     private _onConnectionMessage = (message: Message<any>) => {
         if (message.data.type === "connected") {
             const { host, peerId } = message.data
-            if (peerId && peerId !== this.router.network.id() && !host)
+            if (peerId && peerId !== this.router.id() && !host)
                 this.model.syncTo(Address.to(peerId))
         }
     }

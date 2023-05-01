@@ -1,3 +1,4 @@
+import { Peer } from "./Peer";
 declare enum AddressType {
     Broadcast = 0,
     Target = 1,
@@ -15,7 +16,7 @@ export declare namespace Address {
     function broadcast(): Address;
     function host(): Address;
     function to(peerId: string): Address;
-    function match(address: Address, peerId: string, peerAddress: Address): boolean;
+    function match(address: Address, peer: Peer): boolean;
     function toString(address: Address): string;
     function parse(string: string): Address | null;
 }

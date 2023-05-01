@@ -3,7 +3,7 @@ import { nanoid } from "nanoid"
 import { Message } from "../core/Message"
 import { RPC, RPCCallHandler } from "./RPC"
 import { Channel } from "../channel/DataChannel"
-import { Address } from "../main"
+import { Address, Peer } from "../main"
 
 enum RPCMessageType {
     Request = 0,
@@ -48,16 +48,14 @@ namespace RPCMessage {
 
 export class RPCHandler {
 
-    private _id: string
-    private _address: Address
+    private _self: Peer
     private _channel: Channel<RPCMessage>
     private _rpcs: Record<string, RPC<any, any>> = {}
 
     private _resultEmitter = new Emitter<{ [key: string]: { type: RPCMessageType, data?: any } }>()
 
-    constructor(id: string, address: Address, channel: Channel<RPCMessage>) {
-        this._id = id
-        this._address = address
+    constructor(self: Peer, channel: Channel<RPCMessage>) {
+        this._self = self
         this._channel = channel
 
         this._channel.addListener(this._onMessage)
@@ -77,7 +75,7 @@ export class RPCHandler {
     private _makeCallHandler(rpc: RPC<any, any>, rpcId: string): RPCCallHandler {
         const handler: RPCCallHandler = {
             call: (address, args) => {
-                if (Address.match(address, this._id, this._address))
+                if (Address.match(address, this._self))
                     return RPC.call(rpc, args)
 
                 const callId = nanoid()

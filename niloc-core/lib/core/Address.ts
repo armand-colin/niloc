@@ -1,3 +1,5 @@
+import { Peer } from "./Peer"
+
 enum AddressType {
     Broadcast = 0,
     Target = 1,
@@ -26,14 +28,14 @@ export namespace Address {
         return { type: AddressType.Target, id: peerId }
     }
 
-    export function match(address: Address, peerId: string, peerAddress: Address): boolean {
-        if (address.type === AddressType.Broadcast || peerAddress.type === AddressType.Broadcast)
+    export function match(address: Address, peer: Peer): boolean {
+        if (address.type === AddressType.Broadcast || peer.address().type === AddressType.Broadcast)
             return true
 
         if (address.type === AddressType.Host)
-            return peerAddress.type === AddressType.Host
+            return peer.address().type === AddressType.Host
 
-        return address.id === peerId
+        return address.id === peer.id()
     }
 
     export function toString(address: Address): string {

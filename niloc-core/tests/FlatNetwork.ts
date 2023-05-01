@@ -7,6 +7,12 @@ interface FlatPeer extends Peer {
     _sibling: FlatPeer | null
 }
 
+export interface FlatNetwork extends Network {
+    
+    id(): string
+
+}
+
 export namespace FlatNetwork {
 
     function bind(a: FlatPeer, b: FlatPeer) {
@@ -30,7 +36,7 @@ export namespace FlatNetwork {
         }
     }
 
-    function network(id: string, peers: Peer[]): Network {
+    function network(id: string, peers: Peer[]): FlatNetwork {
         const emitter = new Emitter<NetworkEvents>()
         for (const peer of peers) {
             peer.emitter().on('message', ({ channel, message }) => {
@@ -40,19 +46,18 @@ export namespace FlatNetwork {
 
         return {
             id() { return id },
-            address() { return Address.to(id) },
             peers() { return peers },
             emitter() { return emitter },
         }
     }
 
-    export function star(guests: number): Network[] {
+    export function star(guests: number): FlatNetwork[] {
         const hostPeers = Array(guests).fill(null).map((_, i) => peer('guest' + i))
-        const host = network('host', hostPeers)
+        const host = network("host", hostPeers)
         const networks = [host]
 
         for (const hostPeer of hostPeers) {
-            const clientPeer = peer(host.id(), false)
+            const clientPeer = peer('host', false)
             bind(hostPeer, clientPeer)
             const client = network(hostPeer.id(), [clientPeer])
             networks.push(client)
@@ -63,11 +68,11 @@ export namespace FlatNetwork {
 
     export function pair(): [Network, Network] {
         const [peerA, peerB] = [peer('a'), peer('b')]
-        
+
         bind(peerA, peerB)
 
-        const a = network('a', [peerB])
-        const b = network('b', [peerA])
+        const a = network("a", [peerB])
+        const b = network("b", [peerA])
 
         return [a, b]
     }
