@@ -2,7 +2,7 @@ import http from "http"
 import { Server } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "niloc-socketio-server";
-import { Address, Application } from "niloc-core"
+import { Address, Router } from "niloc-core"
 
 const PORT = 3456
 
@@ -16,20 +16,23 @@ const io = new Server(server, {
     }
 });
 
-const network = new SocketIONetwork()
-const application = new Application("SERVER", network)
+const network = new SocketIONetwork(false)
+const router = new Router(network)
 
-const channel = application.channel(0)
+const channel = router.channel(0)
 
 // For now we suppose we only have 1 room
 io.on('connection', socket => {
     const peerId = socket.handshake.query.peerId
+    const host = socket.handshake.query.host === "true"
+ 
     if (typeof peerId !== "string") {
         socket.disconnect(true)
         return
     }
-    network.addSocket(socket)
-    channel.post(Address.broadcast(), { connected: peerId })
+
+    network.addSocket(socket, peerId, host)
+    channel.post(Address.broadcast(), { type: "connected", peerId, host })
 })
 
 server.listen(PORT, () => {

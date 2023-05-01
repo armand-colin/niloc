@@ -1,18 +1,17 @@
 import { Address, Message } from "niloc-core"
-import { Board } from "./Board"
 import { GameManager } from "./GameManager"
 import { Piece, PieceColor, PieceShape } from "./Piece"
 
 export class GameManagerHost extends GameManager {
 
-    public readonly board: Board
-
     constructor(color: PieceColor) {
-        super(color)
-        this.board = this.model.instantiate(Board.template, "board")
+        super(color, true)
+
         this._initBoard()
+
         this.model.tick()
-        const connectionChannel = this.application.channel<any>(0)
+
+        const connectionChannel = this.router.channel<any>(0)
         connectionChannel.addListener(this._onConnectionMessage)
     }
 
@@ -34,17 +33,17 @@ export class GameManagerHost extends GameManager {
         this._createPiece(PieceShape.Bishop, PieceColor.White, 5, 0)
         this._createPiece(PieceShape.Bishop, PieceColor.Black, 2, 7)
         this._createPiece(PieceShape.Bishop, PieceColor.Black, 5, 7)
-        
+
         // Knights
         this._createPiece(PieceShape.Knight, PieceColor.White, 1, 0)
         this._createPiece(PieceShape.Knight, PieceColor.White, 6, 0)
         this._createPiece(PieceShape.Knight, PieceColor.Black, 1, 7)
         this._createPiece(PieceShape.Knight, PieceColor.Black, 6, 7)
-        
+
         // Kings
         this._createPiece(PieceShape.King, PieceColor.White, 4, 0)
         this._createPiece(PieceShape.King, PieceColor.Black, 4, 7)
-        
+
         // Queens
         this._createPiece(PieceShape.Queen, PieceColor.White, 3, 0)
         this._createPiece(PieceShape.Queen, PieceColor.Black, 3, 7)
@@ -64,9 +63,11 @@ export class GameManagerHost extends GameManager {
     }
 
     private _onConnectionMessage = (message: Message<any>) => {
-        const peerId = message.data.connected        
-        if (peerId && peerId !== this.application.id)
-            this.model.syncTo(Address.to(peerId))
+        if (message.data.type === "connected") {
+            const { host, peerId } = message.data
+            if (peerId && peerId !== this.router.network.id() && !host)
+                this.model.syncTo(Address.to(peerId))
+        }
     }
 
 }

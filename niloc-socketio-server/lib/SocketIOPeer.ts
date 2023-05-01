@@ -14,9 +14,9 @@ export class SocketIOPeer implements Peer {
     private _socketIOEmitter = new Emitter<SocketIOPeerEvents>()
     private _socket: Socket
 
-    constructor(id: string, socket: Socket) {
+    constructor(socket: Socket, id: string, host: boolean) {
         this._id = id
-        this._address = Address.to(id)
+        this._address = host ? Address.host() : Address.to(id)
         this._socket = socket
 
         socket.on('message', this._onMessage)

@@ -24,8 +24,6 @@ const Cells = () => {
     }, [])
 
     const cells = useMemo(() => {
-        console.log("selected changed", selectedCells);
-
         const cells: CellMetaData[][] = Array(8).fill(null).map(() => Array(8).fill(null).map(_ => ({ selected: false })))
         for (const { x, y } of selectedCells)
             cells[x][y].selected = true

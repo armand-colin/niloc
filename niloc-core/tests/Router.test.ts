@@ -24,14 +24,14 @@ describe("Router", () => {
     it("Should create star", async () => {
         const [host, client1, _client2] = FlatNetwork
             .star(2)
-            .map(network => new Router(network.id(), network))
+            .map(network => new Router(network))
     
         const wait = waitMessage(client1, 0)
-        host.channel(0).post(Address.to(client1.id()), { name: "orange" })
+        host.channel(0).post(Address.to(client1.network.id()), { name: "orange" })
         
         const message = await wait;
         
-        expect(message.originId).to.equal(host.id())
+        expect(message.originId).to.equal(host.network.id())
         expect(message.data.name).to.equal("orange")
     })
 

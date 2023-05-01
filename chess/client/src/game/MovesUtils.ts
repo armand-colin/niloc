@@ -35,8 +35,6 @@ const PawnMoves: Moves = (piece, cells) => {
     const x = piece.position.get().x.get()
     const y = piece.position.get().y.get()
 
-    console.log("get pawn moves", { x, y }, JSON.stringify(cells));
-
     let starting = false
     if (piece.color.get() === PieceColor.White) {
         starting = y === 1
@@ -116,8 +114,6 @@ const BishopMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
     const x = piece.position.get().x.get()
     const y = piece.position.get().y.get()
-
-    console.log(cells)
 
     const directions = [
         { x: 1, y: 1 },

@@ -40,6 +40,7 @@ export namespace FlatNetwork {
 
         return {
             id() { return id },
+            address() { return Address.to(id) },
             peers() { return peers },
             emitter() { return emitter },
         }

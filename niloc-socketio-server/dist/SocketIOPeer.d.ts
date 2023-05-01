@@ -10,7 +10,7 @@ export declare class SocketIOPeer implements Peer {
     private _emitter;
     private _socketIOEmitter;
     private _socket;
-    constructor(id: string, socket: Socket);
+    constructor(socket: Socket, id: string, host: boolean);
     id(): string;
     address(): Address;
     emitter(): Emitter<PeerEvents>;

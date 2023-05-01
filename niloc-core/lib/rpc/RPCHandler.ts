@@ -49,13 +49,15 @@ namespace RPCMessage {
 export class RPCHandler {
 
     private _id: string
+    private _address: Address
     private _channel: Channel<RPCMessage>
     private _rpcs: Record<string, RPC<any, any>> = {}
 
     private _resultEmitter = new Emitter<{ [key: string]: { type: RPCMessageType, data?: any } }>()
 
-    constructor(id: string, channel: Channel<RPCMessage>) {
+    constructor(id: string, address: Address, channel: Channel<RPCMessage>) {
         this._id = id
+        this._address = address
         this._channel = channel
 
         this._channel.addListener(this._onMessage)
@@ -74,8 +76,8 @@ export class RPCHandler {
 
     private _makeCallHandler(rpc: RPC<any, any>, rpcId: string): RPCCallHandler {
         const handler: RPCCallHandler = {
-            call: (owner, args) => {
-                if (owner === this._id)
+            call: (address, args) => {
+                if (Address.match(address, this._id, this._address))
                     return RPC.call(rpc, args)
 
                 const callId = nanoid()
@@ -97,7 +99,7 @@ export class RPCHandler {
                             resolve(data)
                     })
 
-                    this._channel.post(Address.to(owner), message)
+                    this._channel.post(address, message)
                 })
             }
         }

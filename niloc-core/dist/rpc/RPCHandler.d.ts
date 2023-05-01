@@ -1,5 +1,6 @@
 import { RPC } from "./RPC";
 import { Channel } from "../channel/DataChannel";
+import { Address } from "../main";
 declare enum RPCMessageType {
     Request = 0,
     Response = 1,
@@ -29,10 +30,11 @@ declare namespace RPCMessage {
 }
 export declare class RPCHandler {
     private _id;
+    private _address;
     private _channel;
     private _rpcs;
     private _resultEmitter;
-    constructor(id: string, channel: Channel<RPCMessage>);
+    constructor(id: string, address: Address, channel: Channel<RPCMessage>);
     register(rpc: RPC<any, any>, id: string): void;
     private _makeCallHandler;
     private _onMessage;

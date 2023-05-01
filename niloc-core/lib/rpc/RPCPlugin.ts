@@ -1,15 +1,15 @@
 import { Channel } from "../channel/DataChannel";
-import { SyncObject } from "../main";
+import { Address, SyncObject } from "../main";
 import { Plugin } from "../sync/Plugin";
 import { RPC } from "./RPC";
 import { RPCHandler } from "./RPCHandler";
 
 export class RPCPlugin implements Plugin {
-    
+
     private _handler: RPCHandler
 
-    constructor(id: string, channel: Channel<any>) {
-        this._handler = new RPCHandler(id, channel)
+    constructor(id: string, address: Address, channel: Channel<any>) {
+        this._handler = new RPCHandler(id, address, channel)
     }
 
     beforeCreate<T extends SyncObject>(object: T): void {

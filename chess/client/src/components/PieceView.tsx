@@ -53,9 +53,6 @@ export const PieceView = (props: Props) => {
     useField(props.piece.color)
     useField(props.piece.position)
 
-    console.log('render piece');
-
-
     const shape = props.piece.shape.get()
     const color = props.piece.color.get()
     const x = props.piece.position.get().x.get()
