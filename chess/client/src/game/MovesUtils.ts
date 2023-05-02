@@ -32,8 +32,8 @@ function filterNotInBounds(moves: { x: number, y: number }[]) {
 
 const PawnMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x.get()
-    const y = piece.position.get().y.get()
+    const x = piece.position.get().x
+    const y = piece.position.get().y
 
     let starting = false
     if (piece.color.get() === PieceColor.White) {
@@ -65,8 +65,8 @@ const PawnMoves: Moves = (piece, cells) => {
 
 const KingMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x.get()
-    const y = piece.position.get().y.get()
+    const x = piece.position.get().x
+    const y = piece.position.get().y
 
     for (let i = -1; i < 2; i++) {
         for (let j = -1; j < 2; j++) {
@@ -84,8 +84,8 @@ const KingMoves: Moves = (piece, cells) => {
 
 const TowerMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x.get()
-    const y = piece.position.get().y.get()
+    const x = piece.position.get().x
+    const y = piece.position.get().y
 
     const directions = [
         { x: 1, y: 0 },
@@ -112,8 +112,8 @@ const TowerMoves: Moves = (piece, cells) => {
 
 const BishopMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x.get()
-    const y = piece.position.get().y.get()
+    const x = piece.position.get().x
+    const y = piece.position.get().y
 
     const directions = [
         { x: 1, y: 1 },
@@ -140,8 +140,8 @@ const BishopMoves: Moves = (piece, cells) => {
 
 const KnightMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x.get()
-    const y = piece.position.get().y.get()
+    const x = piece.position.get().x
+    const y = piece.position.get().y
 
     const directions = [
         { x: 2, y: 1 },

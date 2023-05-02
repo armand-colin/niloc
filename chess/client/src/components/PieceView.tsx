@@ -55,10 +55,11 @@ export const PieceView = (props: Props) => {
 
     const shape = props.piece.shape.get()
     const color = props.piece.color.get()
-    const x = props.piece.position.get().x.get()
-    const y = props.piece.position.get().y.get()
+    const x = props.piece.position.get().x
+    const y = props.piece.position.get().y
 
     function onClick(e: React.MouseEvent) {
+        console.log('click', props.piece.id());
         EventManager.emitter.emit("cellClick", { x, y })
         EventManager.emitter.emit("pieceClick", { event: e, piece: props.piece })
     }

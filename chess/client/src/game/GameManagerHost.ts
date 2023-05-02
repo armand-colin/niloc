@@ -4,8 +4,8 @@ import { Piece, PieceColor, PieceShape } from "./Piece"
 
 export class GameManagerHost extends GameManager {
 
-    constructor(color: PieceColor) {
-        super(color, true)
+    constructor(url: string, color: PieceColor) {
+        super(url, color, true)
 
         this._initBoard()
 
@@ -54,8 +54,8 @@ export class GameManagerHost extends GameManager {
 
         piece.color.set(color)
         piece.shape.set(shape)
-        piece.position.get().x.set(x)
-        piece.position.get().y.set(y)
+        piece.position.get().x = x
+        piece.position.get().y = y
 
         this.board.pieces.add(piece)
 

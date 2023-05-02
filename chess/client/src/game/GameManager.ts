@@ -18,20 +18,22 @@ export class GameManager {
     private _pieceColor: PieceColor
     private _selectedPiece: Piece | null = null
 
-    constructor(color: PieceColor, host = false) {
+    constructor(url: string, color: PieceColor, host = false) {
+        console.log('build', url);
+
         this._pieceColor = color
 
         const id = Math.random().toString().slice(3, 7)
 
-        const socket = io("https://chess-server-67dk.onrender.com", {
+        const socket = io(url, {
             query: {
                 peerId: id,
                 host
             }
         })
 
-        const network = new SocketIONetwork(id, socket, host)
-        const router = new Router({ id, network })
+        const network = new SocketIONetwork(socket)
+        const router = new Router({ id, network, host })
 
         const modelChannel = router.channel<any>(1)
         const model = new Model({ channel: modelChannel })
@@ -62,8 +64,8 @@ export class GameManager {
         const cells = Array(8).fill(null).map(_ => Array(8).fill(null))
 
         for (const piece of this.board.pieces.values()) {
-            const x = piece.position.get().x.get()
-            const y = piece.position.get().y.get()
+            const x = piece.position.get().x
+            const y = piece.position.get().y
             cells[x][y] = piece
         }
 
@@ -83,6 +85,8 @@ export class GameManager {
     }
 
     private _onPieceClick = (data: { piece: Piece }) => {
+        console.log('on piece click', data.piece.color.get(), this._pieceColor);
+
         if (data.piece.color.get() !== this._pieceColor)
             return
 
@@ -97,6 +101,8 @@ export class GameManager {
         // Not in play mode
         if (!this._selectedPiece)
             return
+
+        console.log('play move');
 
         this.playMoveRPC.call(this._pieceColor, this._selectedPiece.id(), data.x, data.y)
 
@@ -172,8 +178,8 @@ export class GameManager {
         if (!king || !tower)
             return
 
-        king.position.get().x.set(6)
-        tower.position.get().x.set(5)
+        king.position.get().x = 6
+        tower.position.get().x = 5
 
         this._consumeRock(playerColor)
 
@@ -182,6 +188,8 @@ export class GameManager {
     })
 
     protected playMoveRPC = RPC.host((playerColor: PieceColor, pieceId: string, x: number, y: number) => {
+        console.log("asking to play move", playerColor, pieceId, x, y, this.board.turn.get())
+
         // Not our turn
         if (this.board.turn.get() !== playerColor)
             return
@@ -197,22 +205,22 @@ export class GameManager {
 
         if (
             piece.shape.get() === PieceShape.King ||
-            (piece.shape.get() === PieceShape.Tower && piece.position.get().x.get() === 7)
+            (piece.shape.get() === PieceShape.Tower && piece.position.get().x === 7)
         ) {
             this._consumeRock(playerColor)
         }
 
         // Kill old piece
         for (const piece of this.board.pieces.values()) {
-            if (piece.position.get().x.get() === x && piece.position.get().y.get() === y) {
+            if (piece.position.get().x === x && piece.position.get().y === y) {
                 this.board.pieces.remove(piece)
                 break
             }
         }
 
         // Move piece
-        piece.position.get().x.set(x)
-        piece.position.get().y.set(y)
+        piece.position.get().x = x
+        piece.position.get().y = y
 
         this._nextTurn()
     })
