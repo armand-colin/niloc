@@ -1,5 +1,5 @@
 {
-  "name": "vite-library",
+  "name": "niloc-signaling-server",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,12 +22,12 @@
   },
   "devDependencies": {
     "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "vite": "^4.0.4",
+    "@types/socket.io": "^3.0.2"
   },
   "dependencies": {
-    "@types/socket.io": "^3.0.2",
-    "niloc-core": "file:../niloc-core",
+    "niloc-core": "link:../niloc-core",
     "socket.io": "^4.6.1",
-    "utils": "file:../utils"
+    "utils": "link:../utils"
   }
 }

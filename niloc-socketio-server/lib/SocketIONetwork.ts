@@ -23,7 +23,7 @@ export class SocketIONetwork implements Network {
                 this._peers.delete(peerId)
         })
 
-        peer.emitter().on('message', (data) => {
+        peer.emitter().on('message', data => {
             this._emitter.emit('message', { peerId, ...data })
         })
 

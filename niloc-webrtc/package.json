@@ -17,15 +17,14 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc",
-    "prepare": "vite build && tsc"
+    "build": "vite build && tsc"
   },
   "devDependencies": {
     "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "vite": "^4.0.4",
+    "@types/simple-peer": "^9.11.5"
   },
   "dependencies": {
-    "@types/simple-peer": "^9.11.5",
     "niloc-core": "file:../niloc-core",
     "simple-peer": "^9.11.1",
     "utils": "file:../utils"

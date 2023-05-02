@@ -1,6 +1,6 @@
 export interface WebRTCOpts {
 
     stun: string,
-    configuration: { type: "star", isHost: boolean }
+    configuration: { type: "star", host: boolean }
 
 }

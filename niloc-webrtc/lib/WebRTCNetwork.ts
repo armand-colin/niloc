@@ -11,7 +11,6 @@ interface WebRTCNetworkEvents {
 
 export class WebRTCNetwork implements Network {
 
-    private readonly _id: string
     private readonly _opts: WebRTCOpts
     private readonly _emitter = new Emitter<NetworkEvents>()
     private readonly _webrtcEmitter = new Emitter<WebRTCNetworkEvents>()
@@ -19,13 +18,8 @@ export class WebRTCNetwork implements Network {
     private _peers: Record<string, WebRTCPeer> = { }
     private _connected: Record<string, boolean> = {}
 
-    constructor(id: string, opts: WebRTCOpts) {
-        this._id = id
+    constructor(opts: WebRTCOpts) {
         this._opts = { ...opts }
-    }
-
-    id(): string {
-        return this._id
     }
 
     *peers(): Iterable<Peer> {
@@ -75,7 +69,7 @@ export class WebRTCNetwork implements Network {
 
             this._setPeerConnected(peerId, false)
 
-            if (this._opts.configuration.isHost)
+            if (this._opts.configuration.host)
                 this.connect(peerId)
         })
 

@@ -14,7 +14,7 @@ interface WebRTCPeerEvents {
 
 function makeAddress(id: string, opts: WebRTCOpts): Address {
     if (opts.configuration.type === "star") {
-        if (opts.configuration.isHost)
+        if (opts.configuration.host)
             return Address.to(id)
         return Address.broadcast()
     }
@@ -41,7 +41,7 @@ export class WebRTCPeer implements Peer {
                     { urls: [opts.stun] }
                 ]
             },
-            initiator: opts.configuration.isHost,
+            initiator: opts.configuration.host,
         })
 
         this._rtc.on('end', () => this._onError())
