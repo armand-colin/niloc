@@ -2,25 +2,26 @@ import { Address } from "./Address";
 import { Message } from "./Message";
 import { Network } from "./Network";
 import { Channel, DataChannel } from "../channel/DataChannel";
-import { Peer, PeerEvents } from "./Peer";
-import { Emitter } from "utils";
-
-export interface Router {
-
-    id(): string
-    address(): Address
-    self(): Peer
-    channel<T>(channel: number): Channel<T>
-
-}
+import { Peer } from "./Peer";
 
 export interface RouterOpts {
-    network: Network,
+
     id: string,
+
+    /**
+     * peerId of this router
+     */
+    network: Network,
+
+    /**
+     * Whether this router is a host or not
+     * @default false
+     */
     host?: boolean
+
 }
 
-export class Router implements Router {
+export class Router {
 
     private _id: string
     private _address: Address
@@ -34,11 +35,9 @@ export class Router implements Router {
         this._id = opts.id
         this._address = opts.host ? Address.host() : Address.to(opts.id)
 
-        const emitter = new Emitter<PeerEvents>()
         this._self = {
             id: () => this._id,
             address: () => this._address,
-            emitter: () => emitter,
             send: (channel, message) => {
                 this._onMessage(this._id, channel, message)
             }
@@ -49,11 +48,37 @@ export class Router implements Router {
         this.network.emitter().on('message', ({ peerId, channel, message }) => this._onMessage(peerId, channel, message))
     }
 
+    /**
+     * @returns peerId of the router
+     */
     id(): string { return this._id }
+    
+    /**
+     * @returns address of the router
+     */
     address(): Address { return this._address }
+
+    /**
+     * Gives a peer representing this router. This could be useful to test is an address matches a router for example.
+     * 
+     * @example
+     * ```ts
+     * Address.match(address, router.self())
+     * ```
+     */
     self(): Peer { return this._self }
 
-    channel<T>(channel: number): Channel<T> {
+    /**
+     * Get a channel by index, creating it if needed. This will then be usefull to send / retrieve data from the network
+     * @param channel index of the desired channel
+     * @example
+     * ```ts
+     * // Getting channel 0
+     * const channel = router.channel<string>(0)
+     * channel.post(Address.to("friend"), "Hello world")
+     * ```
+     */
+    channel<T = any>(channel: number): Channel<T> {
         if (!this._channels[channel])
             this._channels[channel] = this._createChannel<T>(channel)
 

@@ -12,7 +12,14 @@ export interface NetworkEvents {
 
 export interface Network {
 
+    /**
+     * Returns the list of connected peers to this network
+     */
     peers(): Iterable<Peer>
+
+    /**
+     * 
+     */
     emitter(): Emitter<NetworkEvents>
 
 }

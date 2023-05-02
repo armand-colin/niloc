@@ -46,7 +46,14 @@ namespace RPCMessage {
     }
 }
 
-export class RPCHandler {
+export interface RPCHandler {
+    
+    register(rpc: RPC<any, any>, id: string): void
+    infuse(object: any, id: string): void
+
+}
+
+export class RPCHandler implements RPCHandler {
 
     private _self: Peer
     private _channel: Channel<RPCMessage>
@@ -70,6 +77,13 @@ export class RPCHandler {
         this._rpcs[id] = rpc
 
         RPC.setCallHandler(rpc, this._makeCallHandler(rpc, id))
+    }
+
+    infuse(object: any, id: string) {
+        for (const key in object) {
+            if (object[key] instanceof RPC)
+                this.register(object[key], `${id}.${key}`)
+        }
     }
 
     private _makeCallHandler(rpc: RPC<any, any>, rpcId: string): RPCCallHandler {

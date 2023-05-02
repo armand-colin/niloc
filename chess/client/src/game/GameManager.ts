@@ -55,6 +55,7 @@ export class GameManager {
 
         EventManager.emitter.on('pieceClick', this._onPieceClick)
         EventManager.emitter.on('cellClick', this._onCellClick)
+
     }
 
     private _computeCells(): (Piece | null)[][] {
