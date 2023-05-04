@@ -6,6 +6,7 @@ import { Router } from "./core/Router";
 
 export * from "./sync/main"
 export * from "./rpc/main"
+export * from "./tools/main"
 
 export { Address, Router }
 export type { Message, Network, Peer, PeerEvents, NetworkEvents }

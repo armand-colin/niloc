@@ -1,4 +1,4 @@
-import { Emitter } from "utils";
+import { Emitter } from "../main";
 import { ModelEvents } from "./Model";
 import { SyncObject } from "./SyncObject";
 

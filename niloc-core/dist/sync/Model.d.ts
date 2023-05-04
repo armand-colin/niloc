@@ -1,8 +1,7 @@
 import { Template } from "./Template";
 import { SyncObject } from "./SyncObject";
 import { Channel } from "../channel/DataChannel";
-import { Address } from "../main";
-import { Emitter } from "utils";
+import { Address, Emitter } from "../main";
 import { Plugin } from "./Plugin";
 export interface ModelEvents {
     created: SyncObject;

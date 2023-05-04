@@ -576,10 +576,6 @@ ufo@^1.1.1:
   resolved "https://registry.yarnpkg.com/ufo/-/ufo-1.1.1.tgz#e70265e7152f3aba425bd013d150b2cdf4056d7c"
   integrity sha512-MvlCc4GHrmZdAllBc0iUDowff36Q9Ndw/UzqmEKyrfSzokTd9ZCy1i+IIk5hrYKkjoYVQyNbrw7/F8XJ2rEwTg==
 
-"utils@link:../utils":
-  version "0.0.0"
-  uid ""
-
 vite-node@0.30.1:
   version "0.30.1"
   resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.30.1.tgz#ab0ed1553019c7d81ac95529c57ab8ac9e82347d"

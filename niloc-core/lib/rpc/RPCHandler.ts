@@ -1,9 +1,8 @@
-import { Emitter } from "utils"
 import { nanoid } from "nanoid"
 import { Message } from "../core/Message"
 import { RPC, RPCCallHandler } from "./RPC"
 import { Channel } from "../channel/DataChannel"
-import { Address, Peer } from "../main"
+import { Address, Emitter, Peer } from "../main"
 
 enum RPCMessageType {
     Request = 0,

@@ -1,4 +1,4 @@
-import { Emitter } from "utils";
+import { Emitter } from "../main";
 import { Message } from "./Message";
 import { Peer } from "./Peer";
 

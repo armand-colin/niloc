@@ -1,4 +1,4 @@
-import { Emitter } from "utils";
+import { Emitter } from "../../main";
 import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";

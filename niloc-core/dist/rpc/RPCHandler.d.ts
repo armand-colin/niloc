@@ -28,13 +28,16 @@ declare namespace RPCMessage {
     function response(id: string, result: any): RPCMessage;
     function error(id: string, reason?: any): RPCMessage;
 }
-export declare class RPCHandler {
+export interface RPCHandler {
+    register(rpc: RPC<any, any>, id: string): void;
+    infuse(object: any, id: string): void;
+}
+export declare class RPCHandler implements RPCHandler {
     private _self;
     private _channel;
     private _rpcs;
     private _resultEmitter;
     constructor(self: Peer, channel: Channel<RPCMessage>);
-    register(rpc: RPC<any, any>, id: string): void;
     private _makeCallHandler;
     private _onMessage;
     private _onRequest;
