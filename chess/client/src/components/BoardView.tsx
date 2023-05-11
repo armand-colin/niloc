@@ -4,16 +4,18 @@ import { Board } from "../game/Board"
 import { PieceView } from "./PieceView"
 import { EventManager } from "../game/EventManager"
 import { useField } from "../hooks/useField"
+import { PieceColor } from "../game/Piece"
 
 interface Props {
-    board: Board
+    board: Board,
+    color: PieceColor
 }
 
 type CellMetaData = {
     selected: boolean
 }
 
-const Cells = () => {
+const Cells = (props: { reverse?: boolean }) => {
     const [selectedCells, setSelectedCells] = useState<{ x: number, y: number }[]>([])
 
     useEffect(() => {
@@ -37,17 +39,30 @@ const Cells = () => {
     return <div className="Cells">
         {
             Array(8).fill(null).map((_, i) => {
+                if (props.reverse) {
+                    // Reversing y axis
+                    i = 7 - i
+                }
+
                 return <div className="Cells__row" key={i}>
                     {
                         Array(8).fill(null).map((__, j) => {
+                            if (props.reverse) {
+                                // Reversing y axis
+                                j = 7 - j
+                            }
+
                             const className = [
                                 "Cells__cell",
                                 (i + j) % 2 ? "odd" : "even",
                                 cells[j][7 - i].selected ? "selected" : ""
                             ].join(' ')
-                            return <div className={className} key={j} onClick={() => onClick(j, 7 - i)}>
 
-                            </div>
+                            return <div 
+                                className={className} 
+                                key={j} 
+                                onClick={() => onClick(j, 7 - i)}
+                            ></div>
                         })
                     }
                 </div>
@@ -56,9 +71,9 @@ const Cells = () => {
     </div>
 }
 
-const Grid = (props: PropsWithChildren<{}>) => {
+const Grid = (props: PropsWithChildren<{ reverse?: boolean }>) => {
     return <div className="Grid">
-        <Cells />
+        <Cells reverse={props.reverse} />
         <div className="Grid__content">
             {props.children}
         </div>
@@ -67,13 +82,21 @@ const Grid = (props: PropsWithChildren<{}>) => {
 
 export const BoardView = (props: Props) => {
     useField(props.board.pieces)
+
     const pieces = [...props.board.pieces.values()]
+    const reverse = props.color !== PieceColor.White
+
     return <div className="BoardView">
-        <h1>Board</h1>
-        <Grid>
+        <Grid
+            reverse={reverse}
+        >
             {
                 pieces.map(piece => {
-                    return <PieceView key={piece.id()} piece={piece} />
+                    return <PieceView
+                        reverse={reverse}
+                        key={piece.id()}
+                        piece={piece}
+                    />
                 })
             }
         </Grid>

@@ -12,6 +12,7 @@ import { useUrl } from "../hooks/useUrl";
 
 interface Props {
     piece: Piece,
+    reverse?: boolean
 }
 
 const ShapeView = (shape: PieceShape, color: PieceColor) => {
@@ -64,15 +65,18 @@ export const PieceView = (props: Props) => {
         EventManager.emitter.emit("pieceClick", { event: e, piece: props.piece })
     }
 
+    const displayX = props.reverse ? 7 - x : x
+    const displayY = props.reverse ? 7 - y : y
+
     return <div
         className="PieceView"
         style={{
             // @ts-ignore
             "--color": color === PieceColor.White ? "white" : "black",
             // @ts-ignore
-            "--x": x,
+            "--x": displayX,
             // @ts-ignore
-            "--y": y
+            "--y": displayY
         }}
         onClick={onClick}
     >
