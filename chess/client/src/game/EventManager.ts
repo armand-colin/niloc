@@ -1,4 +1,4 @@
-import { Emitter } from "utils"
+import { Emitter } from "niloc-core"
 import { Piece } from "./Piece"
 
 interface Events {
