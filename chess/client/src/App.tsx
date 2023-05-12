@@ -3,7 +3,13 @@ import './App.css'
 import { GameManager } from './game/GameManager'
 import { GameManagerHost } from './game/GameManagerHost'
 import { GameView } from './components/GameView'
-import { PieceColor } from './game/Piece'
+import { PieceColor, PieceShape } from './game/Piece'
+import { Button } from './components/atoms/Button'
+import { useUrl } from './hooks/useUrl'
+import pawn from "../assets/pieces/pawn.svg"
+import { PieceView } from './components/PieceView'
+import { RawPieceView } from './components/RawPieceView'
+import { Input } from './components/atoms/Input'
 
 enum Phase {
   Config,
@@ -62,16 +68,29 @@ const ConfigPhase = (props: { submit: (url: string) => void }) => {
 
   return <div className="ConfigPhase">
     <form onSubmit={onSubmit}>
-      <input type="text" placeholder='URL' value={url} onChange={e => setUrl(e.target.value)} />
-      <button>Validate</button>
+      <Input type="text" placeholder='URL' value={url} onChange={e => setUrl(e.target.value)} />
+      <Button>Validate</Button>
     </form>
   </div>
 }
 
 const HostPhase = (props: { submit: (host: boolean) => void }) => {
+
   return <div className="HostPhase">
-    <button onClick={() => props.submit(true)}>Host</button>
-    <button onClick={() => props.submit(false)}>Join</button>
+    <Button onClick={() => props.submit(true)}>
+      <RawPieceView
+        shape={PieceShape.Queen}
+        color={PieceColor.White}
+      />
+      Host
+    </Button>
+    <Button onClick={() => props.submit(false)}>
+      <RawPieceView
+        shape={PieceShape.King}
+        color={PieceColor.Black}
+      />
+      Join
+    </Button>
   </div>
 }
 
@@ -82,13 +101,13 @@ const GamePhase = (props: { url: string, host: boolean }) => {
       gameManagerInstance = props.host ?
         new GameManagerHost(props.url, PieceColor.White) :
         new GameManager(props.url, PieceColor.Black)
-        
+
     return gameManagerInstance
   }, [])
 
   return <div className="GamePhase">
-    <GameView 
-      gameManager={gameManager} 
+    <GameView
+      gameManager={gameManager}
     />
   </div>
 }

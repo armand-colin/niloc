@@ -5,3 +5,26 @@
     justify-content: center;
     align-items: center;
 }
+
+.HostPhase {
+    display: flex;
+    gap: 10px;
+}
+
+.HostPhase .Button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+}
+
+.HostPhase .RawPieceView {
+    width: 40px;
+    height: 40px;
+    margin-left: -10px;
+}
+
+.ConfigPhase form {
+    display: flex;
+    gap: 10px;
+}

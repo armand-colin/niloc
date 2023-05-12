@@ -1,52 +1,12 @@
 import "./PieceView.scss"
-import { Piece, PieceColor, PieceShape } from "../game/Piece"
+import { Piece, PieceColor } from "../game/Piece"
 import { EventManager } from "../game/EventManager";
 import { useField } from "../hooks/useField";
-import pawn from "../assets/pieces/pawn.svg"
-import bishop from "../assets/pieces/bishop.svg"
-import tower from "../assets/pieces/tower.svg"
-import king from "../assets/pieces/king.svg"
-import queen from "../assets/pieces/queen.svg"
-import knight from "../assets/pieces/knight.svg"
-import { useUrl } from "../hooks/useUrl";
+import { RawPieceView } from "./RawPieceView";
 
 interface Props {
     piece: Piece,
     reverse?: boolean
-}
-
-const ShapeView = (shape: PieceShape, color: PieceColor) => {
-    let svgUrl: string;
-
-    switch (shape) {
-        case PieceShape.Pawn:
-            svgUrl = pawn
-            break
-        case PieceShape.Bishop:
-            svgUrl = bishop
-            break
-        case PieceShape.Tower:
-            svgUrl = tower
-            break
-        case PieceShape.Knight:
-            svgUrl = knight
-            break
-        case PieceShape.King:
-            svgUrl = king
-            break
-        case PieceShape.Queen:
-            svgUrl = queen
-            break
-    }
-
-    const svg = useUrl(svgUrl)
-    
-    const className = [
-        "ShapeView",
-        color === PieceColor.White ? "white" : "black"
-    ].join(' ')
-
-    return <div className={className} dangerouslySetInnerHTML={{ __html: svg ?? "" }}></div>
 }
 
 export const PieceView = (props: Props) => {
@@ -68,7 +28,10 @@ export const PieceView = (props: Props) => {
     const displayX = props.reverse ? 7 - x : x
     const displayY = props.reverse ? 7 - y : y
 
-    return <div
+    return <RawPieceView
+        color={color}        
+        shape={shape}
+        onClick={onClick}
         className="PieceView"
         style={{
             // @ts-ignore
@@ -78,8 +41,5 @@ export const PieceView = (props: Props) => {
             // @ts-ignore
             "--y": displayY
         }}
-        onClick={onClick}
-    >
-        {ShapeView(shape, color)}
-    </div>
+    />
 }

@@ -1,0 +1,30 @@
+.RawPieceView {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ShapeView {
+    text-shadow: 0 0 5px black;
+    width: 80%;
+    height: 80%;
+
+    &.white svg *[fill] {
+        fill: white;
+    }
+
+    &.black svg *[fill] {
+        fill: #535353;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        * {
+            stroke: black;
+            stroke-width: 1;
+        }
+    }
+}
