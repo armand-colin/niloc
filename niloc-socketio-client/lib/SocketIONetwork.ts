@@ -1,5 +1,4 @@
-import { Network, NetworkEvents, Peer } from "niloc-core";
-import { Emitter } from "utils";
+import { Emitter, Network, NetworkEvents, Peer } from "niloc-core";
 import { Socket } from "socket.io-client"
 import { SocketIOPeer } from "./SocketIOPeer";
 

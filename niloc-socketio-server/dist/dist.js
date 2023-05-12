@@ -1,38 +1,7 @@
 var g = Object.defineProperty;
 var L = (s, e, t) => e in s ? g(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
 var c = (s, e, t) => (L(s, typeof e != "symbol" ? e + "" : e, t), t);
-var k = Object.defineProperty, O = (s, e, t) => e in s ? k(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, d = (s, e, t) => (O(s, typeof e != "symbol" ? e + "" : e, t), t);
-class a {
-  constructor() {
-    d(this, "_listeners", {}), d(this, "_onceListeners", {});
-  }
-  on(e, t) {
-    this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
-  }
-  off(e, t) {
-    this._listeners[e] && (this._listeners[e].delete(t), this._listeners[e].size === 0 && delete this._listeners[e]);
-  }
-  once(e, t) {
-    this._onceListeners[e] || (this._onceListeners[e] = /* @__PURE__ */ new Set()), this._onceListeners[e].add(t);
-  }
-  offOnce(e, t) {
-    this._onceListeners[e] && (this._onceListeners[e].delete(t), this._onceListeners[e].size === 0 && delete this._onceListeners[e]);
-  }
-  emit(e, t) {
-    if (this._listeners[e])
-      for (const r of [...this._listeners[e]])
-        r(t);
-    if (this._onceListeners[e]) {
-      for (const r of [...this._onceListeners[e]])
-        r(t);
-      delete this._onceListeners[e];
-    }
-  }
-  removeAllListeners() {
-    this._listeners = {}, this._onceListeners = {};
-  }
-}
-var h;
+var k = Object.defineProperty, O = (s, e, t) => e in s ? k(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, d = (s, e, t) => (O(s, typeof e != "symbol" ? e + "" : e, t), t), h;
 ((s) => {
   const e = {
     type: 0
@@ -119,7 +88,37 @@ var f;
   }
   s.error = r;
 })(f || (f = {}));
-class v {
+class a {
+  constructor() {
+    d(this, "_listeners", {}), d(this, "_onceListeners", {});
+  }
+  on(e, t) {
+    this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
+  }
+  off(e, t) {
+    this._listeners[e] && (this._listeners[e].delete(t), this._listeners[e].size === 0 && delete this._listeners[e]);
+  }
+  once(e, t) {
+    this._onceListeners[e] || (this._onceListeners[e] = /* @__PURE__ */ new Set()), this._onceListeners[e].add(t);
+  }
+  offOnce(e, t) {
+    this._onceListeners[e] && (this._onceListeners[e].delete(t), this._onceListeners[e].size === 0 && delete this._onceListeners[e]);
+  }
+  emit(e, t) {
+    if (this._listeners[e])
+      for (const r of [...this._listeners[e]])
+        r(t);
+    if (this._onceListeners[e]) {
+      for (const r of [...this._onceListeners[e]])
+        r(t);
+      delete this._onceListeners[e];
+    }
+  }
+  removeAllListeners() {
+    this._listeners = {}, this._onceListeners = {};
+  }
+}
+class b {
   constructor(e, t, r) {
     c(this, "_id");
     c(this, "_address");
@@ -160,7 +159,7 @@ class v {
     this._socket.removeAllListeners();
   }
 }
-class b {
+class w {
   constructor() {
     c(this, "_peers", /* @__PURE__ */ new Map());
     c(this, "_emitter", new a());
@@ -174,7 +173,7 @@ class b {
   addSocket(e, t, r) {
     if (this._peers.has(t))
       return;
-    const i = new v(e, t, r);
+    const i = new b(e, t, r);
     i.socketIOEmitter().on("disconnect", () => {
       this._peers.get(t) === i && this._peers.delete(t);
     }), i.emitter().on("message", (o) => {
@@ -183,5 +182,5 @@ class b {
   }
 }
 export {
-  b as SocketIONetwork
+  w as SocketIONetwork
 };

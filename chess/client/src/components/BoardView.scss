@@ -2,6 +2,9 @@
     width: calc(var(--cell-size) * 8);
     height: calc(var(--cell-size) * 8);
     position: relative;
+    border-radius: calc(var(--cell-size) * 0.25);
+    overflow: hidden;
+    isolation: isolate;
 
     &__content {
         position: absolute;
@@ -29,7 +32,7 @@
         height: var(--cell-size);
 
         &.odd {
-            background: lightblue;
+            background: #85AEFF;
         }
 
         &.even {

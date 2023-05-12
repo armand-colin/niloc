@@ -1,7 +1,14 @@
 :root {
-    --cell-size: 40px;
+    --cell-size: 50px;
 }
 
 body {
-    font-family: "Archivo"
+    font-family: "Archivo";
+    background: #2D2D2D;
+    color: white;
+}
+
+html, body, p {
+    margin: 0;
+    padding: 0;
 }

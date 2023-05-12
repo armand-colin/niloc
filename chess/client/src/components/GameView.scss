@@ -1,0 +1,19 @@
+.GameView {
+    display: grid;
+    grid-template-columns: 250px calc(var(--cell-size) * 8) 250px;
+    grid-template-rows: calc(var(--cell-size) * 8) 40px;
+    gap: 10px;
+
+    .BoardView {
+        grid-row: 1;
+        grid-column: 2;
+    }
+    .RockView {
+        grid-row: 2;
+        grid-column: 2;
+    }
+    .TurnView {
+        grid-row: 1;
+        grid-column: 3;
+    }
+}

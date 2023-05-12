@@ -1,0 +1,30 @@
+.Button {
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #f4f4f4;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    padding: 0 20px;
+    transition: 90ms ease-in-out;
+    transition-property: background, transform;
+    
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+
+    &:not(:disabled):hover {
+        background: white;
+        transform: scale(1.05);
+    }
+
+    &:not(:disabled):active {
+        background: #e5e5e5;
+        transform: scale(1);
+    }
+}

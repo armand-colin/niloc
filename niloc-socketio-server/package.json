@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "niloc-core": "link:../niloc-core",
-    "socket.io": "^4.6.1",
-    "utils": "link:../utils"
+    "socket.io": "^4.6.1"
   }
 }

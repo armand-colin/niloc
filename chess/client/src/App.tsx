@@ -87,6 +87,8 @@ const GamePhase = (props: { url: string, host: boolean }) => {
   }, [])
 
   return <div className="GamePhase">
-    <GameView gameManager={gameManager} />
+    <GameView 
+      gameManager={gameManager} 
+    />
   </div>
 }

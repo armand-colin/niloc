@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "niloc-core": "link:../niloc-core",
-    "socket.io-client": "^4.6.1",
-    "utils": "link:../utils"
+    "socket.io-client": "^4.6.1"
   }
 }

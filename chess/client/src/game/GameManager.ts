@@ -15,13 +15,14 @@ export class GameManager {
 
     public readonly board: Board
 
-    private _pieceColor: PieceColor
+    public readonly pieceColor: PieceColor
+    
     private _selectedPiece: Piece | null = null
 
     constructor(url: string, color: PieceColor, host = false) {
         console.log('build', url);
 
-        this._pieceColor = color
+        this.pieceColor = color
 
         const id = Math.random().toString().slice(3, 7)
 
@@ -85,12 +86,12 @@ export class GameManager {
     }
 
     private _onPieceClick = (data: { piece: Piece }) => {
-        console.log('on piece click', data.piece.color.get(), this._pieceColor);
+        console.log('on piece click', data.piece.color.get(), this.pieceColor);
 
-        if (data.piece.color.get() !== this._pieceColor)
+        if (data.piece.color.get() !== this.pieceColor)
             return
 
-        if (this._pieceColor !== this.board.turn.get())
+        if (this.pieceColor !== this.board.turn.get())
             return
 
         const moves = this._getPieceMoves(data.piece)
@@ -104,13 +105,13 @@ export class GameManager {
 
         console.log('play move');
 
-        this.playMoveRPC.call(this._pieceColor, this._selectedPiece.id(), data.x, data.y)
+        this.playMoveRPC.call(this.pieceColor, this._selectedPiece.id(), data.x, data.y)
 
         this._resetSelection()
     }
 
     isRockAvailable() {
-        return this.isRockAvailableBy(this._pieceColor)
+        return this.isRockAvailableBy(this.pieceColor)
     }
 
     isRockAvailableBy(playerColor: PieceColor) {
@@ -122,7 +123,7 @@ export class GameManager {
     }
 
     isRockPlayable() {
-        return this.isRockPlayableBy(this._pieceColor)
+        return this.isRockPlayableBy(this.pieceColor)
     }
 
     isRockPlayableBy(playerColor: PieceColor) {
@@ -142,7 +143,7 @@ export class GameManager {
     }
 
     playRock() {
-        this.playRockRPC.call(this._pieceColor)
+        this.playRockRPC.call(this.pieceColor)
         this._resetSelection()
     }
 
