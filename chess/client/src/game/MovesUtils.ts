@@ -1,16 +1,23 @@
 import { Piece, PieceColor, PieceShape } from "./Piece"
 
-type Moves = (piece: Piece, cells: (Piece | null)[][]) => { x: number, y: number }[]
-
-function isAlly(piece: Piece, cells: (Piece | null)[][], move: { x: number, y: number }) {
-    return cells[move.x][move.y] !== null && cells[move.x][move.y]!.color.get() === piece.color.get()
+type PieceData = {
+    shape: PieceShape,
+    color: PieceColor
+    x: number,
+    y: number,
 }
 
-function isEnemy(piece: Piece, cells: (Piece | null)[][], move: { x: number, y: number }) {
-    return cells[move.x][move.y] !== null && cells[move.x][move.y]!.color.get() !== piece.color.get()
+type Moves = (piece: PieceData, cells: (PieceData | null)[][]) => { x: number, y: number }[]
+
+function isAlly(piece: PieceData, cells: (PieceData | null)[][], move: { x: number, y: number }) {
+    return cells[move.x][move.y] !== null && cells[move.x][move.y]!.color === piece.color
 }
 
-function isOccupied(cells: (Piece | null)[][], move: { x: number, y: number }) {
+function isEnemy(piece: PieceData, cells: (PieceData | null)[][], move: { x: number, y: number }) {
+    return cells[move.x][move.y] !== null && cells[move.x][move.y]!.color !== piece.color
+}
+
+function isOccupied(cells: (PieceData | null)[][], move: { x: number, y: number }) {
     return cells[move.x][move.y] !== null
 }
 
@@ -18,11 +25,11 @@ function isInBounds(move: { x: number, y: number }) {
     return move.x >= 0 && move.x < 8 && move.y >= 0 && move.y < 8
 }
 
-function filterAlly(piece: Piece, cells: (Piece | null)[][], moves: { x: number, y: number }[]) {
+function filterAlly(piece: PieceData, cells: (PieceData | null)[][], moves: { x: number, y: number }[]) {
     return moves.filter(move => !isAlly(piece, cells, move))
 }
 
-function filterOccupied(cells: (Piece | null)[][], moves: { x: number, y: number }[]) {
+function filterOccupied(cells: (PieceData | null)[][], moves: { x: number, y: number }[]) {
     return moves.filter(move => !isOccupied(cells, move))
 }
 
@@ -32,17 +39,17 @@ function filterNotInBounds(moves: { x: number, y: number }[]) {
 
 const PawnMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x
-    const y = piece.position.get().y
+    const x = piece.x
+    const y = piece.y
 
     let starting = false
-    if (piece.color.get() === PieceColor.White) {
+    if (piece.color === PieceColor.White) {
         starting = y === 1
     } else {
         starting = y === 6
     }
 
-    let direction = piece.color.get() === PieceColor.White ? 1 : -1
+    let direction = piece.color === PieceColor.White ? 1 : -1
 
     moves.push({ x: x, y: y + direction })
     if (starting)
@@ -65,8 +72,8 @@ const PawnMoves: Moves = (piece, cells) => {
 
 const KingMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x
-    const y = piece.position.get().y
+    const x = piece.x
+    const y = piece.y
 
     for (let i = -1; i < 2; i++) {
         for (let j = -1; j < 2; j++) {
@@ -84,8 +91,8 @@ const KingMoves: Moves = (piece, cells) => {
 
 const TowerMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x
-    const y = piece.position.get().y
+    const x = piece.x
+    const y = piece.y
 
     const directions = [
         { x: 1, y: 0 },
@@ -112,8 +119,8 @@ const TowerMoves: Moves = (piece, cells) => {
 
 const BishopMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x
-    const y = piece.position.get().y
+    const x = piece.x
+    const y = piece.y
 
     const directions = [
         { x: 1, y: 1 },
@@ -140,8 +147,8 @@ const BishopMoves: Moves = (piece, cells) => {
 
 const KnightMoves: Moves = (piece, cells) => {
     let moves: { x: number, y: number }[] = []
-    const x = piece.position.get().x
-    const y = piece.position.get().y
+    const x = piece.x
+    const y = piece.y
 
     const directions = [
         { x: 2, y: 1 },
@@ -170,8 +177,24 @@ const QueenMoves: Moves = (piece, cells) => {
     return [...TowerMoves(piece, cells), ...BishopMoves(piece, cells)]
 }
 
-export const PieceMoves: Moves = (piece, cells) => {
-    switch (piece.shape.get()) {
+function pieceToPieceData(piece: Piece): PieceData {
+    const data: PieceData = {
+        color: piece.color.get(),
+        shape: piece.shape.get(),
+        x: piece.position.get().x,
+        y: piece.position.get().y,
+    }
+    return data
+}
+
+export const PieceMoves = (piece: Piece, cells: (Piece | null)[][]) => {
+    const pieceData: PieceData = pieceToPieceData(piece)
+    const cellsData = cells.map(array => array.map(value => value ? pieceToPieceData(value) : null))
+    return PieceDataMoves(pieceData, cellsData)
+}
+
+export const PieceDataMoves: Moves = (piece, cells) => {
+    switch (piece.shape) {
         case PieceShape.Bishop: return BishopMoves(piece, cells);
         case PieceShape.Tower: return TowerMoves(piece, cells);
         case PieceShape.Pawn: return PawnMoves(piece, cells);
