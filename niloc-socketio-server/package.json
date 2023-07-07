@@ -1,6 +1,5 @@
 {
-  "name": "niloc-socketio-server",
-  "private": true,
+  "name": "@niloc/socketio-server",
   "version": "0.0.0",
   "type": "module",
   "files": [
@@ -26,5 +25,11 @@
   "dependencies": {
     "niloc-core": "link:../niloc-core",
     "socket.io": "^4.6.1"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
