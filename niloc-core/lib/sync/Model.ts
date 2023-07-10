@@ -9,6 +9,8 @@ import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
 import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
+import { Context } from "../core/Context"
+import { Authority } from "./Authority"
 
 export interface ModelEvents {
     created: SyncObject
@@ -30,12 +32,14 @@ type ModelData =
     { type: "sync", changes: string[] }
 
 interface ModelOpts {
+    context: Context,
     channel: Channel<ModelData>,
 }
 
 export class Model {
 
     private _channel: Channel<ModelData>
+    private _context: Context
 
     private _emitter = new Emitter<ModelEvents>()
     private _objectsEmitter = new Emitter<{ [key: string]: SyncObject | null }>()
@@ -49,12 +53,14 @@ export class Model {
 
     private _reader = new Reader()
     private _writer = new Writer()
-    
+
     private _plugins = [] as Plugin[]
 
     constructor(opts: ModelOpts) {
         this._channel = opts.channel
         this._channel.addListener(this._onMessage)
+
+        this._context = opts.context
 
         this._handle = ModelHandle.make({
             emitter: this._emitter,
@@ -118,7 +124,7 @@ export class Model {
 
         this._emitter.emit('created', object)
         this._objectsEmitter.emit(id, object)
-        
+
         return object
     }
 
@@ -133,19 +139,26 @@ export class Model {
     }
 
     private _collectGlobalSyncs(): any[] {
-        return this._connectSyncsForObjects(this._objects.keys())
+        return this._collectSyncsForObjects(this._objects.keys())
     }
 
     private _collectSyncs(): any[] {
-        return this._connectSyncsForObjects(this._changeQueue.syncs())
+        return this._collectSyncsForObjects(this._changeQueue.syncs())
     }
 
-    private _connectSyncsForObjects(objectIds: Iterable<string>): any[] {
+    private _collectSyncsForObjects(objectIds: Iterable<string>): any[] {
         const writer = this._writer;
 
         for (const objectId of objectIds) {
             const object = this._objects.get(objectId)
             if (!object)
+                continue
+
+            const template = this._templates.get(object.type())
+            if (!template)
+                continue
+
+            if (!Authority.allows(template.authority, object, this._context))
                 continue
 
             writer.writeString(object.id())
@@ -162,6 +175,13 @@ export class Model {
         for (const { objectId, fields } of this._changeQueue.changes()) {
             const object = this._objects.get(objectId)
             if (!object)
+                continue
+
+            const template = this._templates.get(object.type())
+            if (!template)
+                continue
+
+            if (!Authority.allows(template.authority, object, this._context))
                 continue
 
             writer.writeString(objectId)

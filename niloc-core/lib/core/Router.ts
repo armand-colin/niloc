@@ -3,6 +3,7 @@ import { Message } from "./Message";
 import { Network } from "./Network";
 import { Channel, DataChannel } from "../channel/DataChannel";
 import { Peer } from "./Peer";
+import { Context } from "./Context";
 
 export interface RouterOpts {
 
@@ -27,6 +28,8 @@ export class Router {
     private _address: Address
     private _self: Peer
 
+    private _context: Context
+
     private readonly _channels: Record<number, DataChannel<any>> = {}
 
     public readonly network: Network
@@ -34,6 +37,8 @@ export class Router {
     constructor(opts: RouterOpts) {
         this._id = opts.id
         this._address = opts.host ? Address.host() : Address.to(opts.id)
+
+        this._context = new Context(opts.id, opts.host ?? false)
 
         this._self = {
             id: () => this._id,
@@ -83,6 +88,10 @@ export class Router {
             this._channels[channel] = this._createChannel<T>(channel)
 
         return this._channels[channel].input()
+    }
+
+    context(): Context {
+        return this._context
     }
 
     private _onMessage(peerId: string, channel: number, message: Message) {
