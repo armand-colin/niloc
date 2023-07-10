@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "check": "node src/check.js"
+    "check": "node src/check.js",
+    "test": "node src/test.js"
   }
 }

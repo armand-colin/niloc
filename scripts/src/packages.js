@@ -4,6 +4,7 @@ const packages = [
     },
     {
         name: "niloc-core",
+        test: true,
         requires: ["utils"]
     },
     {
