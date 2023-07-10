@@ -1,14 +1,22 @@
 import { Address } from "../lib/core/Address";
-import { Emitter } from "utils";
+import { Emitter } from "@niloc/utils";
 import { Network, NetworkEvents } from "../lib/core/Network";
-import { Peer, PeerEvents } from "../lib/core/Peer";
+import { Peer } from "../lib/core/Peer";
+
+interface PeerEvents {
+    message: {
+        channel: number,
+        message: any
+    }
+}
 
 interface FlatPeer extends Peer {
+    emitter(): Emitter<PeerEvents>
     _sibling: FlatPeer | null
 }
 
 export interface FlatNetwork extends Network {
-    
+
     id(): string
 
 }
@@ -36,7 +44,7 @@ export namespace FlatNetwork {
         }
     }
 
-    function network(id: string, peers: Peer[]): FlatNetwork {
+    function network(id: string, peers: FlatPeer[]): FlatNetwork {
         const emitter = new Emitter<NetworkEvents>()
         for (const peer of peers) {
             peer.emitter().on('message', ({ channel, message }) => {

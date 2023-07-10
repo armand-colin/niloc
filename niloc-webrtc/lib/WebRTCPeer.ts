@@ -1,5 +1,5 @@
 import { Emitter } from "utils"
-import { Address, Message, Peer, PeerEvents } from "niloc-core";
+import { Address, Message, Peer } from "niloc-core";
 import { WebRTCOpts } from "./WebRTCOpts";
 import { SimplePeer } from "./SimplePeer"
 import type { Instance } from "simple-peer";
@@ -10,6 +10,13 @@ interface WebRTCPeerEvents {
     signal: any
     connect: void
 
+}
+
+interface PeerEvents {
+    message: {
+        channel: number,
+        message: Message
+    }
 }
 
 function makeAddress(id: string, opts: WebRTCOpts): Address {

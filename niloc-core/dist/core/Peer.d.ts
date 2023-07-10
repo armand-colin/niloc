@@ -1,11 +1,5 @@
 import { Address } from "./Address";
 import { Message } from "./Message";
-export interface PeerEvents {
-    message: {
-        channel: number;
-        message: Message;
-    };
-}
 export interface Peer {
     /**
      * Id of the peer

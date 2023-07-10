@@ -1,8 +1,15 @@
-import { Address, Emitter, Message, Peer, PeerEvents } from "niloc-core";
+import { Address, Emitter, Message, Peer } from "niloc-core";
 import { Socket } from "socket.io";
 
 interface SocketIOPeerEvents {
     disconnect: void
+}
+
+interface PeerEvents {
+    message: {
+        channel: number,
+        message: Message
+    }
 }
 
 export class SocketIOPeer implements Peer {

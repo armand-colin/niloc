@@ -2,6 +2,7 @@ import { Address } from "./Address";
 import { Network } from "./Network";
 import { Channel } from "../channel/DataChannel";
 import { Peer } from "./Peer";
+import { Context } from "./Context";
 export interface RouterOpts {
     id: string;
     /**
@@ -18,6 +19,7 @@ export declare class Router {
     private _id;
     private _address;
     private _self;
+    private _context;
     private readonly _channels;
     readonly network: Network;
     constructor(opts: RouterOpts);
@@ -49,6 +51,7 @@ export declare class Router {
      * ```
      */
     channel<T = any>(channel: number): Channel<T>;
+    context(): Context;
     private _onMessage;
     private _createChannel;
     private _send;

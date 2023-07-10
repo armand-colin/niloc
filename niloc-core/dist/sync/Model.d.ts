@@ -3,6 +3,7 @@ import { SyncObject } from "./SyncObject";
 import { Channel } from "../channel/DataChannel";
 import { Address, Emitter } from "../main";
 import { Plugin } from "./Plugin";
+import { Context } from "../core/Context";
 export interface ModelEvents {
     created: SyncObject;
 }
@@ -22,10 +23,12 @@ type ModelData = {
     changes: string[];
 };
 interface ModelOpts {
+    context: Context;
     channel: Channel<ModelData>;
 }
 export declare class Model {
     private _channel;
+    private _context;
     private _emitter;
     private _objectsEmitter;
     private _templates;
@@ -43,7 +46,7 @@ export declare class Model {
     private _onChangeRequest;
     private _collectGlobalSyncs;
     private _collectSyncs;
-    private _connectSyncsForObjects;
+    private _collectSyncsForObjects;
     private _collectChanges;
     private _onMessage;
     private _onSync;

@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { Address } from "../lib/core/Address";
 import { Message } from "../lib/core/Message";
 import { Router } from "../lib/core/Router";
 import { FlatNetwork } from "./FlatNetwork";

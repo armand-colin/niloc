@@ -23,7 +23,9 @@ class Color extends SyncObject {
 
 class Fruit extends SyncObject {
 
-    static template = Template.create<Fruit>("fruit", Fruit)
+    static template = Template.create("fruit", Fruit, (fruit, context) => {
+        return true
+    })
 
     tree = new SyncObjectRefField<Tree>(null)
     name = new AnyField<string>("")
