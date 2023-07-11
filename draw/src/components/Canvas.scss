@@ -1,3 +1,26 @@
 .Canvas {
-    
+    width: 500px;
+    height: 300px;
+    border: 1px solid black;
+    position: relative;
+}
+
+.Cursor {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--color);
+    position: absolute;
+
+    left: calc(var(--left) * 1px);
+    top: calc(var(--top) * 1px);
+
+    p {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 3px;
+        background: var(--color);
+        color: white;
+    }
 }

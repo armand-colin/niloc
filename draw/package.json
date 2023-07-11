@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@niloc/core": "link:../niloc-core",
     "@niloc/socketio-client": "link:../niloc-socketio-client",
     "nanoid": "^4.0.2",

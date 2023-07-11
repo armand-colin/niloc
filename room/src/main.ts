@@ -2,7 +2,7 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { Router } from "@niloc/core"
+import { Channel, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 
@@ -20,6 +20,7 @@ class Room {
 
     private readonly _network: SocketIONetwork
     private readonly _router: Router
+    private readonly _presence: Channel<{}>
 
     private _sockets: Socket[] = []
 
@@ -52,7 +53,7 @@ io.on('connection', socket => {
     const peerId = socket.handshake.query.peerId
     const host = socket.handshake.query.host === "true"
     const roomId = socket.handshake.query.roomId
- 
+
     if (
         typeof peerId !== "string" ||
         typeof roomId !== "string"

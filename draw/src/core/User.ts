@@ -6,5 +6,6 @@ export class User extends SyncObject {
 
     readonly position = field.any({ x: 0, y: 0 })
     readonly name = field.any("anonymous")
+    readonly color = field.any("red")
 
 }
