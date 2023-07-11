@@ -1,5 +1,6 @@
-import { Channel } from "../channel/DataChannel";
-import { Peer, SyncObject } from "../main";
+import { Channel } from "../channel/Channel";
+import { Peer } from "../core/Peer";
+import { SyncObject } from "../sync/SyncObject";
 import { Plugin } from "../sync/Plugin";
 export declare class RPCPlugin implements Plugin {
     private _handler;

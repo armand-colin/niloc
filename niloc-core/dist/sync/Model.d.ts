@@ -1,9 +1,10 @@
 import { Template } from "./Template";
 import { SyncObject } from "./SyncObject";
-import { Channel } from "../channel/DataChannel";
-import { Address, Emitter } from "../main";
+import { Channel } from "../channel/Channel";
 import { Plugin } from "./Plugin";
 import { Context } from "../core/Context";
+import { Emitter } from "@niloc/utils";
+import { Address } from "../core/Address";
 export interface ModelEvents {
     created: SyncObject;
 }

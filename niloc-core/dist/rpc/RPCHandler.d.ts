@@ -1,6 +1,6 @@
 import { RPC } from "./RPC";
-import { Channel } from "../channel/DataChannel";
-import { Peer } from "../main";
+import { Channel } from "../channel/Channel";
+import { Peer } from "../core/Peer";
 declare enum RPCMessageType {
     Request = 0,
     Response = 1,
