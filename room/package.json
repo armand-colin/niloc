@@ -13,6 +13,7 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
-    "start": "tsc && node dist/main.js"
+    "start": "tsc && node dist/main.js",
+    "dev": "tsc && node dist/main.js 3456"
   }
 }

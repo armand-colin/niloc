@@ -19,7 +19,7 @@ export interface ModelEvents {
 export interface Model {
 
     emitter(): Emitter<ModelEvents>
-    register(template: Template<SyncObject>): void
+    register<T extends SyncObject>(template: Template<T>): void
     plugin(plugin: Plugin): void
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T
     tick(): void
@@ -75,8 +75,8 @@ export class Model {
         this._plugins.push(plugin)
     }
 
-    register(template: Template<SyncObject>) {
-        this._templates.set(template.type, template)
+    register<T extends SyncObject>(template: Template<T>) {
+        this._templates.set(template.type, template as Template<any>)
     }
 
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T {

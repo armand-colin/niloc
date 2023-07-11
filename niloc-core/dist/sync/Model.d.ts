@@ -9,7 +9,7 @@ export interface ModelEvents {
 }
 export interface Model {
     emitter(): Emitter<ModelEvents>;
-    register(template: Template<SyncObject>): void;
+    register<T extends SyncObject>(template: Template<T>): void;
     plugin(plugin: Plugin): void;
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T;
     tick(): void;
