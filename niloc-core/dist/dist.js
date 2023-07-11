@@ -1,85 +1,85 @@
 var k = Object.defineProperty;
-var v = (o, e, t) => e in o ? k(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t;
-var i = (o, e, t) => (v(o, typeof e != "symbol" ? e + "" : e, t), t);
-var a;
+var q = (o, t, e) => t in o ? k(o, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : o[t] = e;
+var r = (o, t, e) => (q(o, typeof t != "symbol" ? t + "" : t, e), e);
+var u;
 ((o) => {
-  const e = {
+  const t = {
     type: 0
     /* Broadcast */
-  }, t = {
+  }, e = {
     type: 2
     /* Host */
   };
   function s() {
-    return e;
+    return t;
   }
   o.broadcast = s;
   function n() {
-    return t;
+    return e;
   }
   o.host = n;
-  function r(h) {
-    return { type: 1, id: h };
+  function i(a) {
+    return { type: 1, id: a };
   }
-  o.to = r;
-  function c(h, f) {
-    return h.type === 0 || f.address().type === 0 ? !0 : h.type === 2 ? f.address().type === 2 : h.id === f.id();
+  o.to = i;
+  function c(a, f) {
+    return a.type === 0 || f.address().type === 0 ? !0 : a.type === 2 ? f.address().type === 2 : a.id === f.id();
   }
   o.match = c;
-  function l(h) {
-    switch (h.type) {
+  function h(a) {
+    switch (a.type) {
       case 0:
         return "*";
       case 1:
-        return `:${h.id}`;
+        return `:${a.id}`;
       case 2:
         return "host";
       default:
         return "?";
     }
   }
-  o.toString = l;
-  function u(h) {
-    return h === "*" ? s() : h === "host" ? n() : h.startsWith(":") ? r(h.slice(1)) : null;
+  o.toString = h;
+  function l(a) {
+    return a === "*" ? s() : a === "host" ? n() : a.startsWith(":") ? i(a.slice(1)) : null;
   }
-  o.parse = u;
-})(a || (a = {}));
-class q {
+  o.parse = l;
+})(u || (u = {}));
+class x {
   constructor() {
-    i(this, "_inputListener", null);
-    i(this, "_outputListeners", /* @__PURE__ */ new Set());
+    r(this, "_inputListener", null);
+    r(this, "_outputListeners", /* @__PURE__ */ new Set());
   }
-  postOutput(...e) {
-    for (const t of this._outputListeners)
-      t(...e);
+  postOutput(...t) {
+    for (const e of this._outputListeners)
+      e(...t);
   }
-  addOutputListener(e) {
-    this._outputListeners.add(e);
+  addOutputListener(t) {
+    this._outputListeners.add(t);
   }
-  removeOutputListener(e) {
-    this._outputListeners.delete(e);
+  removeOutputListener(t) {
+    this._outputListeners.delete(t);
   }
-  postInput(...e) {
-    var t;
-    (t = this._inputListener) == null || t.call(this, ...e);
+  postInput(...t) {
+    var e;
+    (e = this._inputListener) == null || e.call(this, ...t);
   }
-  setInputListener(e) {
-    this._inputListener = e;
+  setInputListener(t) {
+    this._inputListener = t;
   }
 }
-class x {
-  constructor(e) {
-    i(this, "_channel");
-    i(this, "_mpsc", new q());
-    i(this, "_input");
-    i(this, "_output");
-    this._channel = e, this._input = {
-      post: (t, s) => this._mpsc.postInput(t, s),
-      addListener: (t) => this._mpsc.addOutputListener(t),
-      removeListener: (t) => this._mpsc.removeOutputListener(t)
+class H {
+  constructor(t) {
+    r(this, "_channel");
+    r(this, "_mpsc", new x());
+    r(this, "_input");
+    r(this, "_output");
+    this._channel = t, this._input = {
+      post: (e, s) => this._mpsc.postInput(e, s),
+      addListener: (e) => this._mpsc.addOutputListener(e),
+      removeListener: (e) => this._mpsc.removeOutputListener(e)
     }, this._output = {
-      post: (t) => this._mpsc.postOutput(t),
-      setListener: (t) => this._mpsc.setInputListener(t)
+      post: (e) => this._mpsc.postOutput(e),
+      setListener: (e) => this._mpsc.setInputListener(e)
     };
   }
   channel() {
@@ -92,28 +92,28 @@ class x {
     return this._output;
   }
 }
-class H {
-  constructor(e, t) {
-    i(this, "host");
-    i(this, "userId");
-    this.host = t, this.userId = e;
+class M {
+  constructor(t, e) {
+    r(this, "host");
+    r(this, "userId");
+    this.host = e, this.userId = t;
   }
 }
-class U {
-  constructor(e) {
-    i(this, "_id");
-    i(this, "_address");
-    i(this, "_self");
-    i(this, "_context");
-    i(this, "_channels", {});
-    i(this, "network");
-    this._id = e.id, this._address = e.host ? a.host() : a.to(e.id), this._context = new H(e.id, e.host ?? !1), this._self = {
+class W {
+  constructor(t) {
+    r(this, "_id");
+    r(this, "_address");
+    r(this, "_self");
+    r(this, "_context");
+    r(this, "_channels", {});
+    r(this, "network");
+    this._id = t.id, this._address = t.host ? u.host() : u.to(t.id), this._context = new M(t.id, t.host ?? !1), this._self = {
       id: () => this._id,
       address: () => this._address,
-      send: (t, s) => {
-        this._onMessage(this._id, t, s);
+      send: (e, s) => {
+        this._onMessage(this._id, e, s);
       }
-    }, this.network = e.network, this.network.emitter().on("message", ({ peerId: t, channel: s, message: n }) => this._onMessage(t, s, n));
+    }, this.network = t.network, this.network.emitter().on("message", ({ peerId: e, channel: s, message: n }) => this._onMessage(e, s, n));
   }
   /**
    * @returns peerId of the router
@@ -148,74 +148,129 @@ class U {
    * channel.post(Address.to("friend"), "Hello world")
    * ```
    */
-  channel(e) {
-    return this._channels[e] || (this._channels[e] = this._createChannel(e)), this._channels[e].input();
+  channel(t) {
+    return this._channels[t] || (this._channels[t] = this._createChannel(t)), this._channels[t].input();
   }
   context() {
     return this._context;
   }
-  _onMessage(e, t, s) {
-    a.match(s.address, this._self) && this._channels[t] && this._channels[t].output().post(s);
+  _onMessage(t, e, s) {
+    u.match(s.address, this._self) && this._channels[e] && this._channels[e].output().post(s);
     for (const n of this.network.peers())
-      n.id() !== e && a.match(s.address, n) && n.send(t, s);
+      n.id() !== t && u.match(s.address, n) && n.send(e, s);
   }
-  _createChannel(e) {
-    const t = new x(e);
-    return t.output().setListener((s, n) => {
-      this._send(s, e, n);
-    }), t;
+  _createChannel(t) {
+    const e = new H(t);
+    return e.output().setListener((s, n) => {
+      this._send(s, t, n);
+    }), e;
   }
-  _send(e, t, s) {
+  _send(t, e, s) {
     const n = {
       originId: this._id,
-      address: e,
+      address: t,
       data: s
     };
-    for (const r of this.network.peers())
-      a.match(e, r) && r.send(t, n);
+    for (const i of this.network.peers())
+      u.match(t, i) && i.send(e, n);
   }
 }
-var b;
+var E = Object.defineProperty, F = (o, t, e) => t in o ? E(o, t, { enumerable: !0, configurable: !0, writable: !0, value: e }) : o[t] = e, S = (o, t, e) => (F(o, typeof t != "symbol" ? t + "" : t, e), e);
+class b {
+  constructor() {
+    S(this, "_listeners", {}), S(this, "_onceListeners", {});
+  }
+  on(t, e) {
+    this._listeners[t] || (this._listeners[t] = /* @__PURE__ */ new Set()), this._listeners[t].add(e);
+  }
+  off(t, e) {
+    this._listeners[t] && (this._listeners[t].delete(e), this._listeners[t].size === 0 && delete this._listeners[t]);
+  }
+  once(t, e) {
+    this._onceListeners[t] || (this._onceListeners[t] = /* @__PURE__ */ new Set()), this._onceListeners[t].add(e);
+  }
+  offOnce(t, e) {
+    this._onceListeners[t] && (this._onceListeners[t].delete(e), this._onceListeners[t].size === 0 && delete this._onceListeners[t]);
+  }
+  emit(t, e) {
+    if (this._listeners[t])
+      for (const s of [...this._listeners[t]])
+        s(e);
+    if (this._onceListeners[t]) {
+      for (const s of [...this._onceListeners[t]])
+        s(e);
+      delete this._onceListeners[t];
+    }
+  }
+  removeAllListeners() {
+    this._listeners = {}, this._onceListeners = {};
+  }
+}
+var I;
 ((o) => {
-  function e() {
-    return (n, r) => r.host;
+  function t(e, s) {
+    const n = [], i = new b();
+    e.addListener((c) => {
+      const [h, l] = c.data;
+      i.emit(h.toString(), { ...c, data: l });
+    });
+    for (let c = 0; c < s; c++)
+      n.push({
+        post: (h, l) => {
+          e.post(h, [c, l]);
+        },
+        addListener: (h) => {
+          i.on(c.toString(), h);
+        },
+        removeListener: (h) => {
+          i.off(c.toString(), h);
+        }
+      });
+    return n;
   }
-  o.host = e;
+  o.split = t;
+})(I || (I = {}));
+var w;
+((o) => {
   function t() {
-    return (n, r) => n.id() === r.userId;
+    return (n, i) => i.host;
   }
-  o.own = t;
-  function s(n, r, c) {
-    return n === !0 || n(r, c);
+  o.host = t;
+  function e() {
+    return (n, i) => n.id() === i.userId;
+  }
+  o.own = e;
+  function s(n, i, c) {
+    return n === !0 || n(i, c);
   }
   o.allows = s;
-})(b || (b = {}));
-class S {
+})(w || (w = {}));
+class C {
   constructor() {
-    i(this, "_string", "");
+    r(this, "_string", "");
   }
-  write(e) {
-    this._string += e;
+  write(t) {
+    this._string += t;
   }
-  toString(e) {
-    return "  ".repeat(e) + this._string;
+  toString(t) {
+    return "  ".repeat(t) + this._string;
   }
 }
-class R {
+class v {
   constructor() {
-    i(this, "_indent", 0);
-    i(this, "_string", "");
-    i(this, "_line", new S());
+    r(this, "_indent", 0);
+    r(this, "_string", "");
+    r(this, "_line", new C());
   }
-  write(e) {
-    this._line.write(e);
+  write(t) {
+    this._line.write(t);
   }
-  writeLine(e) {
-    this._line.write(e), this.nextLine();
+  writeLine(t) {
+    this._line.write(t), this.nextLine();
   }
   nextLine() {
     this._string += this._line.toString(this._indent) + `
-`, this._line = new S();
+`, this._line = new C();
   }
   startIndent() {
     this._indent++;
@@ -229,25 +284,25 @@ class R {
 }
 class _ {
   constructor() {
-    i(this, "_index", -1);
-    i(this, "_changeRequester", null);
-    i(this, "_emitter", new w());
+    r(this, "_index", -1);
+    r(this, "_changeRequester", null);
+    r(this, "_emitter", new b());
   }
-  static setIndex(e, t) {
-    e._index = t;
+  static setIndex(t, e) {
+    t._index = e;
   }
-  static setChangeRequester(e, t) {
-    e._changeRequester = t, e.onChangeRequester(t);
+  static setChangeRequester(t, e) {
+    t._changeRequester = e, t.onChangeRequester(e);
   }
-  static setModelHandle(e, t) {
-    e.onModelHandle(t);
+  static setModelHandle(t, e) {
+    t.onModelHandle(e);
   }
-  static toString(e) {
-    const t = new R();
-    return this.write(e, t), t.toString();
+  static toString(t) {
+    const e = new v();
+    return this.write(t, e), e.toString();
   }
-  static write(e, t) {
-    e.toString(t);
+  static write(t, e) {
+    t.toString(e);
   }
   index() {
     return this._index;
@@ -255,48 +310,48 @@ class _ {
   emitter() {
     return this._emitter;
   }
-  readChange(e) {
-    this.read(e);
+  readChange(t) {
+    this.read(t);
   }
-  writeChange(e) {
-    this.write(e);
+  writeChange(t) {
+    this.write(t);
   }
   changed() {
-    var e;
-    (e = this._changeRequester) == null || e.change(this._index), this._emitter.emit("changed");
+    var t;
+    (t = this._changeRequester) == null || t.change(this._index), this._emitter.emit("changed");
   }
-  onChangeRequester(e) {
+  onChangeRequester(t) {
   }
-  onModelHandle(e) {
+  onModelHandle(t) {
   }
-  toString(e) {
-    e.writeLine("???");
+  toString(t) {
+    t.writeLine("???");
   }
 }
 class p {
-  constructor(e, t) {
-    i(this, "_id");
-    i(this, "_type");
-    i(this, "_fields", null);
-    this._id = e, this._type = t;
+  constructor(t, e) {
+    r(this, "_id");
+    r(this, "_type");
+    r(this, "_fields", null);
+    this._id = t, this._type = e;
   }
-  static setChangeRequester(e, t) {
-    for (const s of e.fields())
-      _.setChangeRequester(s, t);
+  static setChangeRequester(t, e) {
+    for (const s of t.fields())
+      _.setChangeRequester(s, e);
   }
-  static setModelHandle(e, t) {
-    for (const s of e.fields())
-      _.setModelHandle(s, t);
+  static setModelHandle(t, e) {
+    for (const s of t.fields())
+      _.setModelHandle(s, e);
   }
-  static toString(e) {
-    const t = new R();
-    return this.write(e, t), t.toString();
+  static toString(t) {
+    const e = new v();
+    return this.write(t, e), e.toString();
   }
-  static write(e, t) {
-    t.writeLine(`${e.type()}: ${e.id()} {`), t.startIndent();
-    for (const s of e.fields())
-      _.write(s, t);
-    t.endIndent(), t.writeLine("}");
+  static write(t, e) {
+    e.writeLine(`${t.type()}: ${t.id()} {`), e.startIndent();
+    for (const s of t.fields())
+      _.write(s, e);
+    e.endIndent(), e.writeLine("}");
   }
   id() {
     return this._id;
@@ -307,96 +362,96 @@ class p {
   fields() {
     return this._fields || (this._fields = this._initFields()), this._fields;
   }
-  read(e) {
-    for (const t of this.fields())
-      t.read(e);
+  read(t) {
+    for (const e of this.fields())
+      e.read(t);
   }
-  write(e) {
-    for (const t of this.fields())
-      t.write(e);
+  write(t) {
+    for (const e of this.fields())
+      e.write(t);
   }
   _initFields() {
-    const e = [];
-    for (const t in this) {
-      const s = this[t];
-      s instanceof _ && (_.setIndex(s, e.length), e.push(s));
+    const t = [];
+    for (const e in this) {
+      const s = this[e];
+      s instanceof _ && (_.setIndex(s, t.length), t.push(s));
     }
-    return e;
+    return t;
   }
 }
-let O = (o = 21) => crypto.getRandomValues(new Uint8Array(o)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), "");
+let O = (o = 21) => crypto.getRandomValues(new Uint8Array(o)).reduce((t, e) => (e &= 63, e < 36 ? t += e.toString(36) : e < 62 ? t += (e - 26).toString(36).toUpperCase() : e > 62 ? t += "-" : t += "_", t), "");
 var m;
 ((o) => {
-  function e(t) {
+  function t(e) {
     return {
       emitter() {
-        return t.emitter;
+        return e.emitter;
       },
-      get: t.get,
-      requestObject(n, r) {
-        return t.objectsEmitter.on(n, r), r(t.get(n)), {
+      get: e.get,
+      requestObject(n, i) {
+        return e.objectsEmitter.on(n, i), i(e.get(n)), {
           destroy() {
-            t.objectsEmitter.off(n, r);
+            e.objectsEmitter.off(n, i);
           }
         };
       }
     };
   }
-  o.make = e;
+  o.make = t;
 })(m || (m = {}));
-class M {
+class P {
   constructor() {
-    i(this, "_changes", /* @__PURE__ */ new Map());
-    i(this, "_syncs", /* @__PURE__ */ new Set());
+    r(this, "_changes", /* @__PURE__ */ new Map());
+    r(this, "_syncs", /* @__PURE__ */ new Set());
   }
-  change(e, t) {
-    if (this._syncs.has(e))
+  change(t, e) {
+    if (this._syncs.has(t))
       return;
-    let s = this._changes.get(e);
-    s || (s = [], this._changes.set(e, s)), !s.includes(t) && s.push(t);
+    let s = this._changes.get(t);
+    s || (s = [], this._changes.set(t, s)), !s.includes(e) && s.push(e);
   }
-  sync(e) {
-    this._syncs.add(e), this._changes.delete(e);
+  sync(t) {
+    this._syncs.add(t), this._changes.delete(t);
   }
   *changes() {
-    const e = { objectId: "", fields: [] };
-    for (const [t, s] of this._changes)
-      e.objectId = t, e.fields = s, yield e;
+    const t = { objectId: "", fields: [] };
+    for (const [e, s] of this._changes)
+      t.objectId = e, t.fields = s, yield t;
     this._changes.clear();
   }
   *syncs() {
-    for (const e of this._syncs)
-      yield e;
+    for (const t of this._syncs)
+      yield t;
     this._syncs.clear();
   }
 }
-class E {
+class $ {
   constructor() {
-    i(this, "_buffer", []);
-    i(this, "_cursor", 0);
+    r(this, "_buffer", []);
+    r(this, "_cursor", 0);
   }
-  feed(e) {
-    this._buffer = e, this._cursor = 0;
+  feed(t) {
+    this._buffer = t, this._cursor = 0;
   }
   cursor() {
     return this._cursor;
   }
-  setCursor(e) {
-    this._cursor = e;
+  setCursor(t) {
+    this._cursor = t;
   }
-  skip(e) {
-    this._cursor += e;
+  skip(t) {
+    this._cursor += t;
   }
   empty() {
     return this._cursor >= this._buffer.length;
   }
   readJSON() {
-    const e = this._buffer[this._cursor];
+    const t = this._buffer[this._cursor];
     this._cursor++;
     try {
-      return JSON.parse(e);
-    } catch (t) {
-      return console.error("Failed to parse JSON", t), null;
+      return JSON.parse(t);
+    } catch (e) {
+      return console.error("Failed to parse JSON", e), null;
     }
   }
   readString() {
@@ -412,116 +467,116 @@ class E {
     return this._buffer[this._cursor++] === "1";
   }
 }
-class F {
+class J {
   constructor() {
-    i(this, "_buffer", []);
-    i(this, "_cursor", -1);
+    r(this, "_buffer", []);
+    r(this, "_cursor", -1);
   }
   collect() {
-    const e = this._buffer;
-    return this._buffer = [], e;
+    const t = this._buffer;
+    return this._buffer = [], t;
   }
   cursor() {
     return this._cursor === -1 ? this._buffer.length : this._cursor;
   }
-  setCursor(e) {
-    e === this._buffer.length && (e = -1), this._cursor = e;
+  setCursor(t) {
+    t === this._buffer.length && (t = -1), this._cursor = t;
   }
   resume() {
     this.setCursor(-1);
   }
-  _write(e) {
-    this._cursor === -1 ? this._buffer.push(e) : this._buffer[this._cursor++] = e;
+  _write(t) {
+    this._cursor === -1 ? this._buffer.push(t) : this._buffer[this._cursor++] = t;
   }
-  writeJSON(e) {
-    this._write(JSON.stringify(e));
+  writeJSON(t) {
+    this._write(JSON.stringify(t));
   }
-  writeString(e) {
-    this._write(e);
+  writeString(t) {
+    this._write(t);
   }
-  writeInt(e) {
-    this._write(e.toString(36));
+  writeInt(t) {
+    this._write(t.toString(36));
   }
-  writeFloat(e) {
-    this._write(e.toString());
+  writeFloat(t) {
+    this._write(t.toString());
   }
-  writeBoolean(e) {
-    this._write(e ? "1" : "0");
+  writeBoolean(t) {
+    this._write(t ? "1" : "0");
   }
 }
-class W {
-  constructor(e) {
-    i(this, "_channel");
-    i(this, "_context");
-    i(this, "_emitter", new w());
-    i(this, "_objectsEmitter", new w());
-    i(this, "_templates", /* @__PURE__ */ new Map());
-    i(this, "_objects", /* @__PURE__ */ new Map());
-    i(this, "_handle");
-    i(this, "_changeQueue", new M());
-    i(this, "_reader", new E());
-    i(this, "_writer", new F());
-    i(this, "_plugins", []);
-    i(this, "_onMessage", (e) => {
-      switch (e.data.type) {
+class D {
+  constructor(t) {
+    r(this, "_channel");
+    r(this, "_context");
+    r(this, "_emitter", new b());
+    r(this, "_objectsEmitter", new b());
+    r(this, "_templates", /* @__PURE__ */ new Map());
+    r(this, "_objects", /* @__PURE__ */ new Map());
+    r(this, "_handle");
+    r(this, "_changeQueue", new P());
+    r(this, "_reader", new $());
+    r(this, "_writer", new J());
+    r(this, "_plugins", []);
+    r(this, "_onMessage", (t) => {
+      switch (t.data.type) {
         case "sync": {
-          this._onSync(e.data.changes);
+          this._onSync(t.data.changes);
           break;
         }
         case "change": {
-          this._onChange(e.data.changes);
+          this._onChange(t.data.changes);
           break;
         }
       }
     });
-    this._channel = e.channel, this._channel.addListener(this._onMessage), this._context = e.context, this._handle = m.make({
+    this._channel = t.channel, this._channel.addListener(this._onMessage), this._context = t.context, this._handle = m.make({
       emitter: this._emitter,
       objectsEmitter: this._objectsEmitter,
-      get: (t) => this.get(t)
+      get: (e) => this.get(e)
     });
   }
   emitter() {
     return this._emitter;
   }
-  plugin(e) {
-    this._plugins.push(e);
+  plugin(t) {
+    this._plugins.push(t);
   }
-  register(e) {
-    this._templates.set(e.type, e);
+  register(t) {
+    this._templates.set(t.type, t);
   }
-  instantiate(e, t) {
-    const s = t ?? O(), n = this._create(e, s);
+  instantiate(t, e) {
+    const s = e ?? O(), n = this._create(t, s);
     return this._changeQueue.sync(s), n;
   }
   tick() {
-    const e = this._collectSyncs(), t = this._collectChanges();
-    e.length > 0 && this._channel.post(a.broadcast(), { type: "sync", changes: e }), t.length > 0 && this._channel.post(a.broadcast(), { type: "change", changes: t });
+    const t = this._collectSyncs(), e = this._collectChanges();
+    t.length > 0 && this._channel.post(u.broadcast(), { type: "sync", changes: t }), e.length > 0 && this._channel.post(u.broadcast(), { type: "change", changes: e });
   }
-  syncTo(e) {
-    const t = this._collectGlobalSyncs();
-    t.length > 0 && this._channel.post(e, { type: "sync", changes: t });
+  syncTo(t) {
+    const e = this._collectGlobalSyncs();
+    e.length > 0 && this._channel.post(t, { type: "sync", changes: e });
   }
-  get(e) {
-    return this._objects.get(e) ?? null;
+  get(t) {
+    return this._objects.get(t) ?? null;
   }
   getAll() {
     return [...this._objects.values()];
   }
-  _create(e, t) {
+  _create(t, e) {
     var n;
-    const s = e.create(t);
-    p.setChangeRequester(s, this._makeChangeRequester(t)), p.setModelHandle(s, this._handle), this._objects.set(t, s);
-    for (const r of this._plugins)
-      (n = r.beforeCreate) == null || n.call(r, s);
-    return this._emitter.emit("created", s), this._objectsEmitter.emit(t, s), s;
+    const s = t.create(e);
+    p.setChangeRequester(s, this._makeChangeRequester(e)), p.setModelHandle(s, this._handle), this._objects.set(e, s);
+    for (const i of this._plugins)
+      (n = i.beforeCreate) == null || n.call(i, s);
+    return this._emitter.emit("created", s), this._objectsEmitter.emit(e, s), s;
   }
-  _makeChangeRequester(e) {
+  _makeChangeRequester(t) {
     return {
-      change: (t) => this._onChangeRequest(e, t)
+      change: (e) => this._onChangeRequest(t, e)
     };
   }
-  _onChangeRequest(e, t) {
-    this._changeQueue.change(e, t);
+  _onChangeRequest(t, e) {
+    this._changeQueue.change(t, e);
   }
   _collectGlobalSyncs() {
     return this._collectSyncsForObjects(this._objects.keys());
@@ -529,45 +584,45 @@ class W {
   _collectSyncs() {
     return this._collectSyncsForObjects(this._changeQueue.syncs());
   }
-  _collectSyncsForObjects(e) {
-    const t = this._writer;
-    for (const s of e) {
+  _collectSyncsForObjects(t) {
+    const e = this._writer;
+    for (const s of t) {
       const n = this._objects.get(s);
       if (!n)
         continue;
-      const r = this._templates.get(n.type());
-      r && b.allows(r.authority, n, this._context) && (t.writeString(n.id()), t.writeString(n.type()), n.write(t));
-    }
-    return t.collect();
-  }
-  _collectChanges() {
-    const e = this._writer;
-    for (const { objectId: t, fields: s } of this._changeQueue.changes()) {
-      const n = this._objects.get(t);
-      if (!n)
-        continue;
-      const r = this._templates.get(n.type());
-      if (!r || !b.allows(r.authority, n, this._context))
-        continue;
-      e.writeString(t), e.writeInt(s.length);
-      const c = e.cursor();
-      e.writeInt(0);
-      for (const u of s) {
-        const h = n.fields()[u];
-        e.writeInt(u), h.writeChange(e);
-      }
-      const l = e.cursor();
-      e.setCursor(c), e.writeInt(l - c - 1), e.resume();
+      const i = this._templates.get(n.type());
+      i && w.allows(i.authority, n, this._context) && (e.writeString(n.id()), e.writeString(n.type()), n.write(e));
     }
     return e.collect();
   }
-  _onSync(e) {
-    const t = this._reader;
-    for (t.feed(e); !t.empty(); ) {
-      const s = t.readString(), n = t.readString();
-      let r = this._objects.get(s);
-      if (r) {
-        r.read(t);
+  _collectChanges() {
+    const t = this._writer;
+    for (const { objectId: e, fields: s } of this._changeQueue.changes()) {
+      const n = this._objects.get(e);
+      if (!n)
+        continue;
+      const i = this._templates.get(n.type());
+      if (!i || !w.allows(i.authority, n, this._context))
+        continue;
+      t.writeString(e), t.writeInt(s.length);
+      const c = t.cursor();
+      t.writeInt(0);
+      for (const l of s) {
+        const a = n.fields()[l];
+        t.writeInt(l), a.writeChange(t);
+      }
+      const h = t.cursor();
+      t.setCursor(c), t.writeInt(h - c - 1), t.resume();
+    }
+    return t.collect();
+  }
+  _onSync(t) {
+    const e = this._reader;
+    for (e.feed(t); !e.empty(); ) {
+      const s = e.readString(), n = e.readString();
+      let i = this._objects.get(s);
+      if (i) {
+        i.read(e);
         continue;
       }
       const c = this._templates.get(n);
@@ -575,391 +630,361 @@ class W {
         console.error("Could not create object with type", n);
         return;
       }
-      r = this._create(c, s), r.read(t);
+      i = this._create(c, s), i.read(e);
     }
   }
-  _onChange(e) {
-    const t = this._reader;
-    for (t.feed(e); !t.empty(); ) {
-      const s = t.readString(), n = t.readInt(), r = t.readInt(), c = this._objects.get(s);
+  _onChange(t) {
+    const e = this._reader;
+    for (e.feed(t); !e.empty(); ) {
+      const s = e.readString(), n = e.readInt(), i = e.readInt(), c = this._objects.get(s);
       if (!c) {
-        t.skip(r);
+        e.skip(i);
         continue;
       }
-      for (let l = 0; l < n; l++) {
-        const u = t.readInt();
-        c.fields()[u].readChange(t);
+      for (let h = 0; h < n; h++) {
+        const l = e.readInt();
+        c.fields()[l].readChange(e);
       }
     }
   }
 }
-var I;
+var L;
 ((o) => {
-  function e(t, s, n) {
+  function t(e, s, n) {
     return {
-      type: t,
-      create: (r) => new s(r, t),
+      type: e,
+      create: (i) => new s(i, e),
       authority: n ?? !0
     };
   }
-  o.create = e;
-})(I || (I = {}));
-class P extends _ {
-  constructor(t) {
+  o.create = t;
+})(L || (L = {}));
+class N extends _ {
+  constructor(e) {
     super();
-    i(this, "_value");
-    this._value = t;
+    r(this, "_value");
+    this._value = e;
   }
   get() {
     return this._value;
   }
-  set(t) {
-    this._value = t, this.changed();
+  set(e) {
+    this._value = e, this.changed();
   }
-  read(t) {
-    this._value = t.readJSON(), this.emitter().emit("changed");
+  read(e) {
+    this._value = e.readJSON(), this.emitter().emit("changed");
   }
-  write(t) {
-    t.writeJSON(this._value);
+  write(e) {
+    e.writeJSON(this._value);
   }
-  toString(t) {
+  toString(e) {
     switch (typeof this._value) {
       case "function":
-        t.writeLine("[Function]");
+        e.writeLine("[Function]");
         break;
       case "object":
-        t.write(JSON.stringify(this._value));
+        e.write(JSON.stringify(this._value));
         break;
       default:
-        t.writeLine("" + this._value);
+        e.writeLine("" + this._value);
         break;
     }
   }
 }
-class $ extends _ {
-  constructor(t, s) {
+class T extends _ {
+  constructor(e, s) {
     super();
-    i(this, "_object");
-    i(this, "_changes", []);
-    this._object = t.create(s ?? "sub");
+    r(this, "_object");
+    r(this, "_changes", []);
+    this._object = e.create(s ?? "sub");
   }
   get() {
     return this._object;
   }
-  read(t) {
-    this._object.read(t), this.emitter().emit("changed");
+  read(e) {
+    this._object.read(e), this.emitter().emit("changed");
   }
-  write(t) {
-    this._object.write(t);
+  write(e) {
+    this._object.write(e);
   }
-  readChange(t) {
-    const s = t.readInt();
+  readChange(e) {
+    const s = e.readInt();
     for (let n = 0; n < s; n++) {
-      const r = t.readInt();
-      this._object.fields()[r].readChange(t);
+      const i = e.readInt();
+      this._object.fields()[i].readChange(e);
     }
     this.emitter().emit("changed");
   }
-  writeChange(t) {
+  writeChange(e) {
     const s = this._changes.length;
-    t.writeInt(s);
+    e.writeInt(s);
     for (const n of this._changes)
-      t.writeInt(n), this._object.fields()[n].writeChange(t);
+      e.writeInt(n), this._object.fields()[n].writeChange(e);
     this._changes = [];
   }
-  onModelHandle(t) {
-    p.setModelHandle(this._object, t);
+  onModelHandle(e) {
+    p.setModelHandle(this._object, e);
   }
-  onChangeRequester(t) {
+  onChangeRequester(e) {
     p.setChangeRequester(this._object, {
       change: (s) => {
-        this._changes.push(s), t.change(this.index()), this.emitter().emit("changed");
+        this._changes.push(s), e.change(this.index()), this.emitter().emit("changed");
       }
     });
   }
-  toString(t) {
-    p.write(this._object, t);
+  toString(e) {
+    p.write(this._object, e);
   }
 }
-class J extends _ {
-  constructor(t) {
+class Q extends _ {
+  constructor(e) {
     super();
-    i(this, "_objectId");
-    i(this, "_object", null);
-    i(this, "_modelHandle", null);
-    i(this, "_objectRequest", null);
-    this._objectId = t;
+    r(this, "_objectId");
+    r(this, "_object", null);
+    r(this, "_modelHandle", null);
+    r(this, "_objectRequest", null);
+    this._objectId = e;
   }
-  read(t) {
-    const s = t.readJSON();
+  read(e) {
+    const s = e.readJSON();
     s !== this._objectId && (this._setObjectId(s), this.emitter().emit("changed"));
   }
-  write(t) {
-    t.writeJSON(this._objectId);
+  write(e) {
+    e.writeJSON(this._objectId);
   }
-  set(t) {
-    const s = (t == null ? void 0 : t.id()) ?? null;
+  set(e) {
+    const s = (e == null ? void 0 : e.id()) ?? null;
     s !== this._objectId && (this._setObjectId(s), this.changed());
   }
   get() {
     return this._object;
   }
-  _setObjectId(t) {
+  _setObjectId(e) {
     var s, n;
-    (s = this._objectRequest) == null || s.destroy(), this._objectId = t, this._object = null, t ? this._objectRequest = ((n = this._modelHandle) == null ? void 0 : n.requestObject(t, (r) => {
-      this._object = r;
+    (s = this._objectRequest) == null || s.destroy(), this._objectId = e, this._object = null, e ? this._objectRequest = ((n = this._modelHandle) == null ? void 0 : n.requestObject(e, (i) => {
+      this._object = i;
     })) ?? null : this._objectRequest = null, this.emitter().emit("changed");
   }
-  onModelHandle(t) {
-    this._modelHandle = t, this._objectId && this._setObjectId(this._objectId);
+  onModelHandle(e) {
+    this._modelHandle = e, this._objectId && this._setObjectId(this._objectId);
   }
-  toString(t) {
-    t.write("ref "), this._object ? p.write(this._object, t) : t.writeLine(`${this._objectId} (null)`);
+  toString(e) {
+    e.write("ref "), this._object ? p.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
   }
 }
-class N extends _ {
+class z extends _ {
   constructor() {
     super(...arguments);
-    i(this, "_objects", /* @__PURE__ */ new Map());
-    i(this, "_modelHandle", null);
+    r(this, "_objects", /* @__PURE__ */ new Map());
+    r(this, "_modelHandle", null);
   }
-  add(t) {
-    this._objects.set(t.id(), t), this.changed();
+  add(e) {
+    this._objects.set(e.id(), e), this.changed();
   }
-  remove(t) {
-    this._objects.delete(t.id()), this.changed();
+  remove(e) {
+    this._objects.delete(e.id()), this.changed();
   }
-  has(t) {
-    return this._objects.has(t.id());
+  has(e) {
+    return this._objects.has(e.id());
   }
   *values() {
-    for (const t of this._objects.values())
-      t !== null && (yield t);
+    for (const e of this._objects.values())
+      e !== null && (yield e);
   }
-  read(t) {
+  read(e) {
     var n;
-    const s = t.readInt();
+    const s = e.readInt();
     this._objects.clear();
-    for (let r = 0; r < s; r++) {
-      const c = t.readString();
+    for (let i = 0; i < s; i++) {
+      const c = e.readString();
       this._objects.set(c, ((n = this._modelHandle) == null ? void 0 : n.get(c)) ?? null);
     }
     this.emitter().emit("changed");
   }
-  write(t) {
-    t.writeInt(this._objects.size);
+  write(e) {
+    e.writeInt(this._objects.size);
     for (const s of this._objects.keys())
-      t.writeString(s);
+      e.writeString(s);
   }
-  onModelHandle(t) {
-    this._modelHandle = t, this._modelHandle.emitter().on("created", (s) => {
+  onModelHandle(e) {
+    this._modelHandle = e, this._modelHandle.emitter().on("created", (s) => {
       const n = s.id();
       this._objects.has(n) && this._objects.set(n, s), this.emitter().emit("changed");
     });
   }
 }
-var C;
+var R;
 ((o) => {
-  function e(r) {
-    return new P(r);
+  function t(i) {
+    return new N(i);
   }
-  o.any = e;
-  function t(r) {
-    return new J(r);
+  o.any = t;
+  function e(i) {
+    return new Q(i);
   }
-  o.ref = t;
-  function s(r) {
-    return new $(r);
+  o.ref = e;
+  function s(i) {
+    return new T(i);
   }
   o.object = s;
   function n() {
-    return new N();
+    return new z();
   }
   o.refSet = n;
-})(C || (C = {}));
+})(R || (R = {}));
 class d {
-  constructor(e, t) {
-    i(this, "_callback");
-    i(this, "_callHandler", null);
-    i(this, "address");
-    this._callback = t, this.address = e;
+  constructor(t, e) {
+    r(this, "_callback");
+    r(this, "_callHandler", null);
+    r(this, "address");
+    this._callback = e, this.address = t;
   }
-  static setCallHandler(e, t) {
-    e._callHandler = t;
+  static setCallHandler(t, e) {
+    t._callHandler = e;
   }
-  static host(e) {
-    return new d(a.host(), e);
+  static host(t) {
+    return new d(u.host(), t);
   }
-  static target(e, t) {
-    return new d(a.to(e), t);
+  static target(t, e) {
+    return new d(u.to(t), e);
   }
   // Called by the RPC Handler to execute the real code
-  static call(e, t) {
+  static call(t, e) {
     try {
-      const s = e._callback(...t);
+      const s = t._callback(...e);
       return s instanceof Promise ? s : Promise.resolve(s);
     } catch (s) {
       return Promise.reject(s);
     }
   }
-  call(...e) {
-    return this._callHandler === null ? Promise.reject("Trying to call RPC without initialization") : this._callHandler.call(this.address, e);
+  call(...t) {
+    return this._callHandler === null ? Promise.reject("Trying to call RPC without initialization") : this._callHandler.call(this.address, t);
   }
 }
 var g;
 ((o) => {
-  function e(n, r, c) {
-    return { type: 0, id: n, name: r, args: c };
+  function t(n, i, c) {
+    return { type: 0, id: n, name: i, args: c };
   }
-  o.request = e;
-  function t(n, r) {
-    return { type: 1, id: n, result: r };
+  o.request = t;
+  function e(n, i) {
+    return { type: 1, id: n, result: i };
   }
-  o.response = t;
-  function s(n, r) {
-    return { type: 2, id: n, reason: r };
+  o.response = e;
+  function s(n, i) {
+    return { type: 2, id: n, reason: i };
   }
   o.error = s;
 })(g || (g = {}));
-class T {
-  constructor(e, t) {
-    i(this, "_self");
-    i(this, "_channel");
-    i(this, "_rpcs", {});
-    i(this, "_resultEmitter", new w());
-    i(this, "_onMessage", (e) => {
-      const t = e.data, s = e.originId;
-      switch (t.type) {
+class B {
+  constructor(t, e) {
+    r(this, "_self");
+    r(this, "_channel");
+    r(this, "_rpcs", {});
+    r(this, "_resultEmitter", new b());
+    r(this, "_onMessage", (t) => {
+      const e = t.data, s = t.originId;
+      switch (e.type) {
         case 0: {
-          this._onRequest(t, s);
+          this._onRequest(e, s);
           break;
         }
         case 1: {
-          this._onResponse(t);
+          this._onResponse(e);
           break;
         }
         case 2: {
-          this._onError(t);
+          this._onError(e);
           break;
         }
       }
     });
-    this._self = e, this._channel = t, this._channel.addListener(this._onMessage);
+    this._self = t, this._channel = e, this._channel.addListener(this._onMessage);
   }
-  register(e, t) {
-    if (this._rpcs[t]) {
-      console.error("Trying to register rpc twice:", t);
+  register(t, e) {
+    if (this._rpcs[e]) {
+      console.error("Trying to register rpc twice:", e);
       return;
     }
-    this._rpcs[t] = e, d.setCallHandler(e, this._makeCallHandler(e, t));
+    this._rpcs[e] = t, d.setCallHandler(t, this._makeCallHandler(t, e));
   }
-  infuse(e, t) {
-    for (const s in e)
-      e[s] instanceof d && this.register(e[s], `${t}.${s}`);
+  infuse(t, e) {
+    for (const s in t)
+      t[s] instanceof d && this.register(t[s], `${e}.${s}`);
   }
-  _makeCallHandler(e, t) {
+  _makeCallHandler(t, e) {
     return {
-      call: (n, r) => {
-        if (a.match(n, this._self))
-          return d.call(e, r);
-        const c = O(), l = g.request(c, t, r);
-        return new Promise((u, h) => {
+      call: (n, i) => {
+        if (u.match(n, this._self))
+          return d.call(t, i);
+        const c = O(), h = g.request(c, e, i);
+        return new Promise((l, a) => {
           let f = setTimeout(() => {
             f = null, this._resultEmitter.emit(c, { type: 2, data: "Timed out" });
           }, 2e4);
           this._resultEmitter.once(c, ({ type: y, data: j }) => {
-            f && clearTimeout(f), y === 2 ? h(j) : y === 1 && u(j);
-          }), this._channel.post(n, l);
+            f && clearTimeout(f), y === 2 ? a(j) : y === 1 && l(j);
+          }), this._channel.post(n, h);
         });
       }
     };
   }
-  _onRequest(e, t) {
-    const { id: s, name: n, args: r } = e, c = this._rpcs[n];
+  _onRequest(t, e) {
+    const { id: s, name: n, args: i } = t, c = this._rpcs[n];
     if (!c) {
-      console.error(`Received unhandled RPC request '${n}', originated from ${t}`);
-      const l = g.error(s, `Unhandled RPC by the receiver ${n}`);
-      this._channel.post(a.to(t), l);
+      console.error(`Received unhandled RPC request '${n}', originated from ${e}`);
+      const h = g.error(s, `Unhandled RPC by the receiver ${n}`);
+      this._channel.post(u.to(e), h);
       return;
     }
-    d.call(c, r).then((l) => {
-      const u = g.response(s, l);
-      this._channel.post(a.to(t), u);
-    }).catch((l) => {
-      console.error(`Error while handling RPC '${n}':`, l);
-      const u = g.error(s, "Receiver got an error while responding");
-      this._channel.post(a.to(t), u);
+    d.call(c, i).then((h) => {
+      const l = g.response(s, h);
+      this._channel.post(u.to(e), l);
+    }).catch((h) => {
+      console.error(`Error while handling RPC '${n}':`, h);
+      const l = g.error(s, "Receiver got an error while responding");
+      this._channel.post(u.to(e), l);
     });
   }
-  _onResponse(e) {
-    const { id: t, result: s } = e;
-    this._resultEmitter.emit(t, { type: 1, data: s });
+  _onResponse(t) {
+    const { id: e, result: s } = t;
+    this._resultEmitter.emit(e, { type: 1, data: s });
   }
-  _onError(e) {
-    const { id: t, reason: s } = e;
-    this._resultEmitter.emit(t, { type: 2, data: s });
-  }
-}
-class D {
-  constructor(e, t) {
-    i(this, "_handler");
-    this._handler = new T(e, t);
-  }
-  beforeCreate(e) {
-    let t = 0;
-    for (const s in e) {
-      const n = e[s];
-      n instanceof d && this._handler.register(n, `${e.id()}.${t++}`);
-    }
+  _onError(t) {
+    const { id: e, reason: s } = t;
+    this._resultEmitter.emit(e, { type: 2, data: s });
   }
 }
-var Q = Object.defineProperty, z = (o, e, t) => e in o ? Q(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t, L = (o, e, t) => (z(o, typeof e != "symbol" ? e + "" : e, t), t);
-class w {
-  constructor() {
-    L(this, "_listeners", {}), L(this, "_onceListeners", {});
+class G {
+  constructor(t, e) {
+    r(this, "_handler");
+    this._handler = new B(t, e);
   }
-  on(e, t) {
-    this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
-  }
-  off(e, t) {
-    this._listeners[e] && (this._listeners[e].delete(t), this._listeners[e].size === 0 && delete this._listeners[e]);
-  }
-  once(e, t) {
-    this._onceListeners[e] || (this._onceListeners[e] = /* @__PURE__ */ new Set()), this._onceListeners[e].add(t);
-  }
-  offOnce(e, t) {
-    this._onceListeners[e] && (this._onceListeners[e].delete(t), this._onceListeners[e].size === 0 && delete this._onceListeners[e]);
-  }
-  emit(e, t) {
-    if (this._listeners[e])
-      for (const s of [...this._listeners[e]])
-        s(t);
-    if (this._onceListeners[e]) {
-      for (const s of [...this._onceListeners[e]])
-        s(t);
-      delete this._onceListeners[e];
+  beforeCreate(t) {
+    let e = 0;
+    for (const s in t) {
+      const n = t[s];
+      n instanceof d && this._handler.register(n, `${t.id()}.${e++}`);
     }
-  }
-  removeAllListeners() {
-    this._listeners = {}, this._onceListeners = {};
   }
 }
 export {
-  a as Address,
-  P as AnyField,
-  b as Authority,
-  H as Context,
-  w as Emitter,
+  u as Address,
+  N as AnyField,
+  w as Authority,
+  I as Channel,
+  M as Context,
+  b as Emitter,
   _ as Field,
-  W as Model,
+  D as Model,
   d as RPC,
-  T as RPCHandler,
-  D as RPCPlugin,
-  U as Router,
+  B as RPCHandler,
+  G as RPCPlugin,
+  W as Router,
   p as SyncObject,
-  $ as SyncObjectField,
-  J as SyncObjectRefField,
-  N as SyncObjectRefSetField,
-  I as Template,
-  C as field
+  T as SyncObjectField,
+  Q as SyncObjectRefField,
+  z as SyncObjectRefSetField,
+  L as Template,
+  R as field
 };

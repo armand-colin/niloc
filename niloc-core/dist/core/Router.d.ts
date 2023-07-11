@@ -1,6 +1,6 @@
 import { Address } from "./Address";
 import { Network } from "./Network";
-import { Channel } from "../channel/DataChannel";
+import { Channel } from "../channel/Channel";
 import { Peer } from "./Peer";
 import { Context } from "./Context";
 export interface RouterOpts {

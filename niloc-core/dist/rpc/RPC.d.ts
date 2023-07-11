@@ -1,4 +1,4 @@
-import { Address } from "../main";
+import { Address } from "../core/Address";
 export interface RPCCallHandler {
     call(address: Address, args: any[]): Promise<any>;
 }

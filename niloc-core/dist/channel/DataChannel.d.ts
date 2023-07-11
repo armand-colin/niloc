@@ -1,9 +1,5 @@
 import { Address, Message } from "../main";
-export interface Channel<T> {
-    post(address: Address, message: T): void;
-    addListener(callback: (message: Message<T>) => void): void;
-    removeListener(callback: (message: Message<T>) => void): void;
-}
+import { Channel } from "./Channel";
 export interface OutputChannel<T> {
     post(message: Message<T>): void;
     setListener(callback: (address: Address, message: T) => void): void;
