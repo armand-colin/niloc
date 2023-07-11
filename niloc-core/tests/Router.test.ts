@@ -27,7 +27,6 @@ describe("Router", () => {
 
         const wait = waitMessage(client1, 0)
 
-        console.log("c1addr", client1.address())
         host.channel(0).post(client1.address(), { name: "orange" })
 
         const message = await wait;

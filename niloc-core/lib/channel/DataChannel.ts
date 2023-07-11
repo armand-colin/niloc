@@ -1,13 +1,6 @@
 import { Address, Message } from "../main";
+import { Channel } from "./Channel";
 import { MPSC } from "./MPSC";
-
-export interface Channel<T> {
-    
-    post(address: Address, message: T): void
-    addListener(callback: (message: Message<T>) => void): void
-    removeListener(callback: (message: Message<T>) => void): void
-
-}
 
 export interface OutputChannel<T> {
     

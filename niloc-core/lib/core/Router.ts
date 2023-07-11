@@ -1,7 +1,8 @@
 import { Address } from "./Address";
 import { Message } from "./Message";
 import { Network } from "./Network";
-import { Channel, DataChannel } from "../channel/DataChannel";
+import { DataChannel } from "../channel/DataChannel";
+import { Channel } from "../channel/Channel";
 import { Peer } from "./Peer";
 import { Context } from "./Context";
 
