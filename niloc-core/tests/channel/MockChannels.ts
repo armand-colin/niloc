@@ -1,4 +1,5 @@
-import { Channel, DataChannel } from "../../lib/channel/DataChannel";
+import { DataChannel } from "../../lib/channel/DataChannel";
+import { Channel } from "../../lib/channel/Channel";
 
 export namespace MockChannels {
     

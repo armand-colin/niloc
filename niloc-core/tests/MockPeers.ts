@@ -1,5 +1,12 @@
-import { Emitter } from "utils";
-import { Address, Peer, PeerEvents } from "../lib/main";
+import { Emitter } from "@niloc/utils";
+import { Address, Peer } from "../lib/main";
+
+interface PeerEvents {
+    message: {
+        channel: number,
+        message: any
+    }
+}
 
 export namespace MockPeers {
 

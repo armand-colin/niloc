@@ -1,9 +1,8 @@
 import { Template } from "./Template"
 import { SyncObject } from "./SyncObject"
-import { Channel } from "../channel/DataChannel"
+import { Channel } from "../channel/Channel"
 import { nanoid } from "nanoid"
 import { ChangeRequester } from "./Synchronize"
-import { Address, Emitter, Message } from "../main"
 import { ModelHandle } from "./ModelHandle"
 import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
@@ -11,6 +10,9 @@ import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
 import { Context } from "../core/Context"
 import { Authority } from "./Authority"
+import { Emitter } from "@niloc/utils"
+import { Address } from "../core/Address"
+import { Message } from "../core/Message"
 
 export interface ModelEvents {
     created: SyncObject

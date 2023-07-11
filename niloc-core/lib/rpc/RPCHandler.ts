@@ -1,8 +1,10 @@
 import { nanoid } from "nanoid"
 import { Message } from "../core/Message"
 import { RPC, RPCCallHandler } from "./RPC"
-import { Channel } from "../channel/DataChannel"
-import { Address, Emitter, Peer } from "../main"
+import { Channel } from "../channel/Channel"
+import { Address } from "../core/Address"
+import { Emitter } from "@niloc/utils"
+import { Peer } from "../core/Peer"
 
 enum RPCMessageType {
     Request = 0,
@@ -46,7 +48,7 @@ namespace RPCMessage {
 }
 
 export interface RPCHandler {
-    
+
     register(rpc: RPC<any, any>, id: string): void
     infuse(object: any, id: string): void
 
