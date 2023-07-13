@@ -23,8 +23,7 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
-    "niloc-core": "link:../niloc-core",
-    "socket.io": "^4.6.1"
+    "niloc-core": "link:../niloc-core"
   },
   "directories": {
     "lib": "lib"

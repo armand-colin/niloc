@@ -1,5 +1,5 @@
 import { Address, Emitter, Message, Peer } from "niloc-core";
-import { Socket } from "socket.io-client";
+import { Socket } from "./Socket";
 interface PeerEvents {
     message: {
         channel: number;

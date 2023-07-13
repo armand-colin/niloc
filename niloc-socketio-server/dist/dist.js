@@ -1,7 +1,7 @@
-var L = Object.defineProperty;
-var O = (s, e, t) => e in s ? L(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var h = (s, e, t) => (O(s, typeof e != "symbol" ? e + "" : e, t), t);
-var k = Object.defineProperty, q = (s, e, t) => e in s ? k(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, o = (s, e, t) => (q(s, typeof e != "symbol" ? e + "" : e, t), t), _;
+var k = Object.defineProperty;
+var q = (s, e, t) => e in s ? k(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
+var a = (s, e, t) => (q(s, typeof e != "symbol" ? e + "" : e, t), t);
+var x = Object.defineProperty, H = (s, e, t) => e in s ? x(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, o = (s, e, t) => (H(s, typeof e != "symbol" ? e + "" : e, t), t), f;
 ((s) => {
   const e = {
     type: 0
@@ -18,33 +18,88 @@ var k = Object.defineProperty, q = (s, e, t) => e in s ? k(s, e, { enumerable: !
     return t;
   }
   s.host = n;
-  function r(c) {
-    return { type: 1, id: c };
+  function r(h) {
+    return { type: 1, id: h };
   }
   s.to = r;
-  function d(c, g) {
-    return c.type === 0 || g.address().type === 0 ? !0 : c.type === 2 ? g.address().type === 2 : c.id === g.id();
+  function c(h, m) {
+    return h.type === 0 || m.address().type === 0 ? !0 : h.type === 2 ? m.address().type === 2 : h.id === m.id();
   }
-  s.match = d;
-  function I(c) {
-    switch (c.type) {
+  s.match = c;
+  function d(h) {
+    switch (h.type) {
       case 0:
         return "*";
       case 1:
-        return `:${c.id}`;
+        return `:${h.id}`;
       case 2:
         return "host";
       default:
         return "?";
     }
   }
-  s.toString = I;
-  function S(c) {
-    return c === "*" ? i() : c === "host" ? n() : c.startsWith(":") ? r(c.slice(1)) : null;
+  s.toString = d;
+  function u(h) {
+    return h === "*" ? i() : h === "host" ? n() : h.startsWith(":") ? r(h.slice(1)) : null;
   }
-  s.parse = S;
-})(_ || (_ = {}));
-var f;
+  s.parse = u;
+})(f || (f = {}));
+var R = Object.defineProperty, C = (s, e, t) => e in s ? R(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, b = (s, e, t) => (C(s, typeof e != "symbol" ? e + "" : e, t), t);
+class _ {
+  constructor() {
+    b(this, "_listeners", {}), b(this, "_onceListeners", {});
+  }
+  on(e, t) {
+    this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
+  }
+  off(e, t) {
+    this._listeners[e] && (this._listeners[e].delete(t), this._listeners[e].size === 0 && delete this._listeners[e]);
+  }
+  once(e, t) {
+    this._onceListeners[e] || (this._onceListeners[e] = /* @__PURE__ */ new Set()), this._onceListeners[e].add(t);
+  }
+  offOnce(e, t) {
+    this._onceListeners[e] && (this._onceListeners[e].delete(t), this._onceListeners[e].size === 0 && delete this._onceListeners[e]);
+  }
+  emit(e, t) {
+    if (this._listeners[e])
+      for (const i of [...this._listeners[e]])
+        i(t);
+    if (this._onceListeners[e]) {
+      for (const i of [...this._onceListeners[e]])
+        i(t);
+      delete this._onceListeners[e];
+    }
+  }
+  removeAllListeners() {
+    this._listeners = {}, this._onceListeners = {};
+  }
+}
+var w;
+((s) => {
+  function e(t, i) {
+    const n = [], r = new _();
+    t.addListener((c) => {
+      const [d, u] = c.data;
+      r.emit(d.toString(), { ...c, data: u });
+    });
+    for (let c = 0; c < i; c++)
+      n.push({
+        post: (d, u) => {
+          t.post(d, [c, u]);
+        },
+        addListener: (d) => {
+          r.on(c.toString(), d);
+        },
+        removeListener: (d) => {
+          r.off(c.toString(), d);
+        }
+      });
+    return n;
+  }
+  s.split = e;
+})(w || (w = {}));
+var j;
 ((s) => {
   function e() {
     return (n, r) => r.host;
@@ -54,12 +109,12 @@ var f;
     return (n, r) => n.id() === r.userId;
   }
   s.own = t;
-  function i(n, r, d) {
-    return n === !0 || n(r, d);
+  function i(n, r, c) {
+    return n === !0 || n(r, c);
   }
   s.allows = i;
-})(f || (f = {}));
-class m {
+})(j || (j = {}));
+class p {
   constructor() {
     o(this, "_string", "");
   }
@@ -70,9 +125,9 @@ class m {
     return "  ".repeat(e) + this._string;
   }
 }
-class v {
+class O {
   constructor() {
-    o(this, "_indent", 0), o(this, "_string", ""), o(this, "_line", new m());
+    o(this, "_indent", 0), o(this, "_string", ""), o(this, "_line", new p());
   }
   write(e) {
     this._line.write(e);
@@ -82,7 +137,7 @@ class v {
   }
   nextLine() {
     this._string += this._line.toString(this._indent) + `
-`, this._line = new m();
+`, this._line = new p();
   }
   startIndent() {
     this._indent++;
@@ -94,9 +149,9 @@ class v {
     return this.nextLine(), this._string;
   }
 }
-class a {
+class l {
   constructor() {
-    o(this, "_index", -1), o(this, "_changeRequester", null), o(this, "_emitter", new u());
+    o(this, "_index", -1), o(this, "_changeRequester", null), o(this, "_emitter", new _());
   }
   static setIndex(e, t) {
     e._index = t;
@@ -108,7 +163,7 @@ class a {
     e.onModelHandle(t);
   }
   static toString(e) {
-    const t = new v();
+    const t = new O();
     return this.write(e, t), t.toString();
   }
   static write(e, t) {
@@ -138,26 +193,26 @@ class a {
     e.writeLine("???");
   }
 }
-class l {
+class g {
   constructor(e, t) {
     o(this, "_id"), o(this, "_type"), o(this, "_fields", null), this._id = e, this._type = t;
   }
   static setChangeRequester(e, t) {
     for (const i of e.fields())
-      a.setChangeRequester(i, t);
+      l.setChangeRequester(i, t);
   }
   static setModelHandle(e, t) {
     for (const i of e.fields())
-      a.setModelHandle(i, t);
+      l.setModelHandle(i, t);
   }
   static toString(e) {
-    const t = new v();
+    const t = new O();
     return this.write(e, t), t.toString();
   }
   static write(e, t) {
     t.writeLine(`${e.type()}: ${e.id()} {`), t.startIndent();
     for (const i of e.fields())
-      a.write(i, t);
+      l.write(i, t);
     t.endIndent(), t.writeLine("}");
   }
   id() {
@@ -181,12 +236,12 @@ class l {
     const e = [];
     for (const t in this) {
       const i = this[t];
-      i instanceof a && (a.setIndex(i, e.length), e.push(i));
+      i instanceof l && (l.setIndex(i, e.length), e.push(i));
     }
     return e;
   }
 }
-var b;
+var y;
 ((s) => {
   function e(t) {
     return {
@@ -204,8 +259,8 @@ var b;
     };
   }
   s.make = e;
-})(b || (b = {}));
-var w;
+})(y || (y = {}));
+var v;
 ((s) => {
   function e(t, i, n) {
     return {
@@ -215,8 +270,8 @@ var w;
     };
   }
   s.create = e;
-})(w || (w = {}));
-class x extends a {
+})(v || (v = {}));
+class M extends l {
   constructor(e) {
     super(), o(this, "_value"), this._value = e;
   }
@@ -246,7 +301,7 @@ class x extends a {
     }
   }
 }
-class H extends a {
+class E extends l {
   constructor(e, t) {
     super(), o(this, "_object"), o(this, "_changes", []), this._object = e.create(t ?? "sub");
   }
@@ -275,20 +330,20 @@ class H extends a {
     this._changes = [];
   }
   onModelHandle(e) {
-    l.setModelHandle(this._object, e);
+    g.setModelHandle(this._object, e);
   }
   onChangeRequester(e) {
-    l.setChangeRequester(this._object, {
+    g.setChangeRequester(this._object, {
       change: (t) => {
         this._changes.push(t), e.change(this.index()), this.emitter().emit("changed");
       }
     });
   }
   toString(e) {
-    l.write(this._object, e);
+    g.write(this._object, e);
   }
 }
-class R extends a {
+class N extends l {
   constructor(e) {
     super(), o(this, "_objectId"), o(this, "_object", null), o(this, "_modelHandle", null), o(this, "_objectRequest", null), this._objectId = e;
   }
@@ -316,10 +371,10 @@ class R extends a {
     this._modelHandle = e, this._objectId && this._setObjectId(this._objectId);
   }
   toString(e) {
-    e.write("ref "), this._object ? l.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
+    e.write("ref "), this._object ? g.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
   }
 }
-class C extends a {
+class J extends l {
   constructor() {
     super(...arguments), o(this, "_objects", /* @__PURE__ */ new Map()), o(this, "_modelHandle", null);
   }
@@ -358,29 +413,40 @@ class C extends a {
     });
   }
 }
-var j;
+var S;
 ((s) => {
   function e(r) {
-    return new x(r);
+    return new M(r);
   }
   s.any = e;
   function t(r) {
-    return new R(r);
+    return new N(r);
   }
   s.ref = t;
   function i(r) {
-    return new H(r);
+    return new E(r);
   }
   s.object = i;
   function n() {
-    return new C();
+    return new J();
   }
   s.refSet = n;
-})(j || (j = {}));
-var p;
+})(S || (S = {}));
+var I;
 ((s) => {
-  function e(n, r, d) {
-    return { type: 0, id: n, name: r, args: d };
+  function e(i) {
+    return { type: "connected", userId: i };
+  }
+  s.connected = e;
+  function t(i) {
+    return { type: "disconnected", userId: i };
+  }
+  s.disconnected = t;
+})(I || (I = {}));
+var L;
+((s) => {
+  function e(n, r, c) {
+    return { type: 0, id: n, name: r, args: c };
   }
   s.request = e;
   function t(n, r) {
@@ -391,46 +457,15 @@ var p;
     return { type: 2, id: n, reason: r };
   }
   s.error = i;
-})(p || (p = {}));
-var M = Object.defineProperty, N = (s, e, t) => e in s ? M(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, y = (s, e, t) => (N(s, typeof e != "symbol" ? e + "" : e, t), t);
-class u {
-  constructor() {
-    y(this, "_listeners", {}), y(this, "_onceListeners", {});
-  }
-  on(e, t) {
-    this._listeners[e] || (this._listeners[e] = /* @__PURE__ */ new Set()), this._listeners[e].add(t);
-  }
-  off(e, t) {
-    this._listeners[e] && (this._listeners[e].delete(t), this._listeners[e].size === 0 && delete this._listeners[e]);
-  }
-  once(e, t) {
-    this._onceListeners[e] || (this._onceListeners[e] = /* @__PURE__ */ new Set()), this._onceListeners[e].add(t);
-  }
-  offOnce(e, t) {
-    this._onceListeners[e] && (this._onceListeners[e].delete(t), this._onceListeners[e].size === 0 && delete this._onceListeners[e]);
-  }
-  emit(e, t) {
-    if (this._listeners[e])
-      for (const i of [...this._listeners[e]])
-        i(t);
-    if (this._onceListeners[e]) {
-      for (const i of [...this._onceListeners[e]])
-        i(t);
-      delete this._onceListeners[e];
-    }
-  }
-  removeAllListeners() {
-    this._listeners = {}, this._onceListeners = {};
-  }
-}
-class E {
+})(L || (L = {}));
+class $ {
   constructor(e, t, i) {
-    h(this, "_id");
-    h(this, "_address");
-    h(this, "_emitter", new u());
-    h(this, "_socketIOEmitter", new u());
-    h(this, "_socket");
-    h(this, "_onMessage", (e, t) => {
+    a(this, "_id");
+    a(this, "_address");
+    a(this, "_emitter", new _());
+    a(this, "_socketIOEmitter", new _());
+    a(this, "_socket");
+    a(this, "_onMessage", (e, t) => {
       if (typeof e == "number" && typeof t == "string")
         try {
           const i = JSON.parse(t);
@@ -441,7 +476,7 @@ class E {
           console.error(`Error receiving network message (${this._id})`, i);
         }
     });
-    this._id = t, this._address = i ? _.host() : _.to(t), this._socket = e, e.on("message", this._onMessage), e.on("disconnect", () => {
+    this._id = t, this._address = i ? f.host() : f.to(t), this._socket = e, e.on("message", this._onMessage), e.on("disconnect", () => {
       this.destroy(), this._socketIOEmitter.emit("disconnect");
     });
   }
@@ -464,10 +499,10 @@ class E {
     this._socket.removeAllListeners();
   }
 }
-class $ {
+class F {
   constructor() {
-    h(this, "_peers", /* @__PURE__ */ new Map());
-    h(this, "_emitter", new u());
+    a(this, "_peers", /* @__PURE__ */ new Map());
+    a(this, "_emitter", new _());
   }
   peers() {
     return this._peers.values();
@@ -478,7 +513,7 @@ class $ {
   addSocket(e, t, i) {
     if (this._peers.has(t))
       return;
-    const n = new E(e, t, i);
+    const n = new $(e, t, i);
     n.socketIOEmitter().on("disconnect", () => {
       this._peers.get(t) === n && this._peers.delete(t);
     }), n.emitter().on("message", (r) => {
@@ -487,5 +522,5 @@ class $ {
   }
 }
 export {
-  $ as SocketIONetwork
+  F as SocketIONetwork
 };

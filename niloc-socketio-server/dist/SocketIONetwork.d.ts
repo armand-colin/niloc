@@ -1,5 +1,5 @@
 import { Emitter, Network, NetworkEvents, Peer } from "niloc-core";
-import { Socket } from "socket.io";
+import { Socket } from "./Socket";
 export declare class SocketIONetwork implements Network {
     private _peers;
     private _emitter;

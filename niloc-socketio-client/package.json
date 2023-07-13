@@ -20,12 +20,10 @@
   },
   "devDependencies": {
     "typescript": "^4.9.4",
-    "vite": "^4.0.4",
-    "@types/socket.io-client": "^3.0.0"
+    "vite": "^4.0.4"
   },
   "dependencies": {
-    "niloc-core": "link:../niloc-core",
-    "socket.io-client": "^4.6.1"
+    "niloc-core": "link:../niloc-core"
   },
   "directories": {
     "lib": "lib"
