@@ -20,19 +20,20 @@ const peerId = nanoid(7)
 const socket = io("http://localhost:3456", {
   query: {
     roomId,
-    peerId
+    peerId,
+    presence: 0
   }
 })
 
 socket.on("connect", () => {
-  State.instance.presence.sync()
+  State.instance.presence.connected()
 })
 
 const network = new SocketIONetwork(socket as any)
 
 const router = new Router({ id: peerId, network })
 
-State.initialize(new Presence(router))
+State.initialize(new Presence(router.context(), router.channel(0)))
 
 function App() {
   return <div class="App">

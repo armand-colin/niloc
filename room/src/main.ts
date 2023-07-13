@@ -2,7 +2,7 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { Channel, Router } from "@niloc/core"
+import { Address, Channel, PresenceMessage, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 
@@ -20,24 +20,36 @@ class Room {
 
     private readonly _network: SocketIONetwork
     private readonly _router: Router
-    private readonly _presence: Channel<{}>
 
-    private _sockets: Socket[] = []
+    private _presence: Channel<PresenceMessage> | null = null
 
-    constructor(public readonly id: string) {
+    private _sockets: { socket: Socket, peerId: string }[] = []
+
+    constructor(public readonly id: string, presence?: number) {
         this._network = new SocketIONetwork()
         this._router = new Router({ id: "SERVER", network: this._network })
+
+        if (presence !== undefined) {
+            const channel = this._router.channel(presence)
+            const [_, presenceChannel] = Channel.split(channel, 2)
+            this._presence = presenceChannel
+        }
     }
 
-    add(peer: Socket, id: string, host: boolean) {
-        this._network.addSocket(peer, id, host)
-        this._sockets.push(peer)
+    add(socket: Socket, id: string, host: boolean) {
+        this._network.addSocket(socket, id, host)
+        this._sockets.push({ socket, peerId: id })
     }
 
-    remove(peer: Socket) {
-        const index = this._sockets.findIndex(s => peer === s)
-        if (index !== -1)
-            this._sockets.splice(index, 1)
+    remove(socket: Socket) {
+        const index = this._sockets.findIndex(({ socket: s }) => socket === s)
+        if (index === -1)
+            return
+
+        const [{ peerId }] = this._sockets.splice(index, 1)
+
+        if (!this.empty && this._presence)
+            this._presence.post(Address.broadcast(), PresenceMessage.disconnected(peerId))
     }
 
     get empty() {
@@ -54,6 +66,10 @@ io.on('connection', socket => {
     const host = socket.handshake.query.host === "true"
     const roomId = socket.handshake.query.roomId
 
+    const presence = typeof socket.handshake.query.presence === "string" ?
+        parseInt(socket.handshake.query.presence) :
+        -1
+
     if (
         typeof peerId !== "string" ||
         typeof roomId !== "string"
@@ -63,7 +79,7 @@ io.on('connection', socket => {
     }
 
     let room = rooms.get(roomId) ?? (() => {
-        const room = new Room(roomId)
+        const room = new Room(roomId, presence)
         rooms.set(roomId, room)
         return room
     })()

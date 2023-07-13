@@ -9,11 +9,15 @@ export type Template<T extends SyncObject> = {
 
 }
 
+export type Factory<T extends SyncObject> = {
+    new(id: string, type: string): T
+}
+
 export namespace Template {
 
     export function create<T extends SyncObject>(
         type: string, 
-        factory: { new(id: string, type: string): T },
+        factory: Factory<T>,
         authority?: AuthorityHandler<T>
     ): Template<T> {
         return {

@@ -14,7 +14,7 @@ export const Canvas = () => {
             return
 
         const rect = canvas.getBoundingClientRect()
-        const user = presence.user
+        const user = presence.user()
 
         user.position.set({
             x: e.clientX - rect.left,

@@ -5,12 +5,6 @@ import { SyncObjectField } from "./SyncObjectField"
 import { SyncObjectRefField } from "./SyncObjectRefField"
 import { SyncObjectRefSetField } from "./SyncObjectRefSetField"
 
-export { Field } from "./Field"
-export { AnyField } from "./AnyField"
-export { SyncObjectField } from "./SyncObjectField"
-export { SyncObjectRefField } from "./SyncObjectRefField"
-export { SyncObjectRefSetField } from "./SyncObjectRefSetField"
-
 export namespace field {
 
     export function any<T>(initValue: T): AnyField<T> {
