@@ -8,7 +8,8 @@ import { Template } from "../Template";
 import { Message } from "../../core/Message";
 import { Factory } from "../Template";
 import { PresenceMessage } from "./PresenceMessage";
-import { Emitter } from "@niloc/utils";
+import type { Emitter } from "@niloc/utils";
+import { Emitter as EmitterImpl } from "@niloc/utils";
 
 export type PresenceEvents<T extends SyncObject> = {
     usersChanged: T[]
@@ -24,7 +25,7 @@ export class Presence<T extends SyncObject> {
 
     private _connected: Record<string, boolean> = {}
 
-    private _emitter = new Emitter<PresenceEvents<T>>()
+    private _emitter = new EmitterImpl<PresenceEvents<T>>()
 
     constructor(context: Context, channel: Channel<any>, factory: Factory<T>) {
         const [modelChannel, presenceChannel] = Channel.split(channel, 2)

@@ -2,7 +2,7 @@ import { Channel } from "../../channel/Channel";
 import { Context } from "../../core/Context";
 import { SyncObject } from "../SyncObject";
 import { Factory } from "../Template";
-import { Emitter } from "@niloc/utils";
+import type { Emitter } from "@niloc/utils";
 export type PresenceEvents<T extends SyncObject> = {
     usersChanged: T[];
 };

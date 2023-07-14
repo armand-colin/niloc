@@ -10,7 +10,8 @@ import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
 import { Context } from "../core/Context"
 import { Authority } from "./Authority"
-import { Emitter } from "@niloc/utils"
+import type { Emitter } from "@niloc/utils"
+import { Emitter as EmitterImpl } from "@niloc/utils"
 import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 
@@ -43,8 +44,8 @@ export class Model {
     private _channel: Channel<ModelData>
     private _context: Context
 
-    private _emitter = new Emitter<ModelEvents>()
-    private _objectsEmitter = new Emitter<{ [key: string]: SyncObject | null }>()
+    private _emitter = new EmitterImpl<ModelEvents>()
+    private _objectsEmitter = new EmitterImpl<{ [key: string]: SyncObject | null }>()
 
     private _templates = new Map<string, Template<SyncObject>>()
     private _objects = new Map<string, SyncObject>()
