@@ -16,7 +16,7 @@ if (!roomId) {
 export namespace State {
     const peerId = nanoid(7)
 
-    const socket = io("http://localhost:3456", {
+    const socket = io("https://room-3mwy.onrender.com", {
         query: {
             roomId,
             peerId,
@@ -27,7 +27,7 @@ export namespace State {
     const network = new SocketIONetwork(socket)
 
     export const router = new Router({ id: peerId, network })
-    
+
     export const presence = new Presence(router)
 
     export const model = new Model({
