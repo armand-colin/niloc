@@ -39,6 +39,16 @@ class Room {
     add(socket: Socket, id: string, host: boolean) {
         this._network.addSocket(socket, id, host)
         this._sockets.push({ socket, peerId: id })
+
+        if (this._presence) {
+            this._presence.post(Address.broadcast(), PresenceMessage.connected(id))
+
+            for (const { peerId } of this._sockets) {
+                if (peerId === id)
+                    continue
+                this._presence.post(Address.to(id), PresenceMessage.connected(peerId))
+            }
+        }
     }
 
     remove(socket: Socket) {

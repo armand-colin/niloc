@@ -854,13 +854,13 @@ class A {
     i(this, "_onPresenceMessage", (e) => {
       switch (e.data.type) {
         case "connected": {
-          if (this._connected[e.data.userId])
+          if (e.data.userId === this._user.id() || this._connected[e.data.userId])
             break;
           this._connected[e.data.userId] = !0, this._updateUser(e.data.userId), this._model.syncTo(l.to(e.data.userId)), this._model.tick();
           break;
         }
         case "disconnected": {
-          if (!this._connected[e.data.userId])
+          if (e.data.userId === this._user.id() || !this._connected[e.data.userId])
             break;
           delete this._connected[e.data.userId], this._updateUser(e.data.userId);
           break;

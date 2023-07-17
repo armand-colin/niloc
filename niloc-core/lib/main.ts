@@ -23,7 +23,8 @@ export { field } from "./sync/field/namespace"
 //  presence
 export { Presence } from "./sync/presence/Presence"
 export type { PresenceEvents } from "./sync/presence/Presence"
-export { PresenceMessage } from "./sync/presence/PresenceMessage"
+export { ConnectionList } from "./sync/presence/ConnectionList"
+export type { ConnectionListEvents } from "./sync/presence/ConnectionList"
 
 // rpc
 export { RPC } from "./rpc/RPC"
