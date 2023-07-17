@@ -7,7 +7,7 @@ import { Template } from "../Template";
 import { Factory } from "../Template";
 import { Emitter } from "@niloc/utils";
 import { ConnectionList } from "./ConnectionList";
-import { Address } from "../../main";
+import { Address } from "../../core/Address";
 
 export type PresenceEvents<T extends SyncObject> = {
     usersChanged: T[]
