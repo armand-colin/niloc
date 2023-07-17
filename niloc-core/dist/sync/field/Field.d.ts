@@ -1,4 +1,4 @@
-import { Emitter } from "@niloc/utils";
+import type { Emitter } from "@niloc/utils";
 import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";

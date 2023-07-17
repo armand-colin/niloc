@@ -1,4 +1,4 @@
-import { Emitter } from "@niloc/utils";
+import type { Emitter } from "@niloc/utils";
 import { ModelEvents } from "./Model";
 import { SyncObject } from "./SyncObject";
 export interface ModelHandle {
