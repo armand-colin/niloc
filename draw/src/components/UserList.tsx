@@ -4,10 +4,10 @@ import { User } from "../core/User"
 import { useField } from "../core/useField"
 
 export const UserList = () => {
-    const users = State.instance.presence.useUsers()
+    const users = State.presence.useUsers()
 
     return <div class="UserList">
-        <p>Users</p>
+        <h1>Users</h1>
         <For each={users()}>
             {user => <UserView user={user} />}
         </For>
@@ -24,6 +24,7 @@ const UserView = (props: { user: User }) => {
             "--color": color()
         }}
     >
+        <span class="UserView__color"></span>
         <p>{name()}</p>
     </div>
 }

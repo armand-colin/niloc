@@ -2,7 +2,7 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { Address, Channel, PresenceMessage, Router } from "@niloc/core"
+import { ConnectionList, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 
@@ -21,7 +21,7 @@ class Room {
     private readonly _network: SocketIONetwork
     private readonly _router: Router
 
-    private _presence: Channel<PresenceMessage> | null = null
+    private _connectionList?: ConnectionList
 
     private _sockets: { socket: Socket, peerId: string }[] = []
 
@@ -31,8 +31,8 @@ class Room {
 
         if (presence !== undefined) {
             const channel = this._router.channel(presence)
-            const [_, presenceChannel] = Channel.split(channel, 2)
-            this._presence = presenceChannel
+            const connectionList = ConnectionList.owner(channel)
+            this._connectionList = connectionList
         }
     }
 
@@ -40,15 +40,8 @@ class Room {
         this._network.addSocket(socket, id, host)
         this._sockets.push({ socket, peerId: id })
 
-        if (this._presence) {
-            this._presence.post(Address.broadcast(), PresenceMessage.connected(id))
-
-            for (const { peerId } of this._sockets) {
-                if (peerId === id)
-                    continue
-                this._presence.post(Address.to(id), PresenceMessage.connected(peerId))
-            }
-        }
+        if (this._connectionList)
+            this._connectionList.connected(id)
     }
 
     remove(socket: Socket) {
@@ -58,8 +51,8 @@ class Room {
 
         const [{ peerId }] = this._sockets.splice(index, 1)
 
-        if (!this.empty && this._presence)
-            this._presence.post(Address.broadcast(), PresenceMessage.disconnected(peerId))
+        if (!this.empty && this._connectionList)
+            this._connectionList.disconnected(peerId)
     }
 
     get empty() {

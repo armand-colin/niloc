@@ -1,24 +1,39 @@
+import { nanoid } from "nanoid";
 import { Presence } from "../core/Presence";
+import { io } from "socket.io-client";
+import { Channels } from "../core/Channels";
+import { SocketIONetwork } from "@niloc/socketio-client";
+import { Model, Router } from "@niloc/core";
+import { Line } from "./shapes/Line";
 
-export class State {
+const params = new URLSearchParams(window.location.search)
+const roomId = params.get("roomId")
+if (!roomId) {
+    window.location.href = "/?roomId=" + nanoid(7)
+    throw "Redirecting..."
+}
 
-    private static _instance: State | null = null
-    static get instance() {
-        if (this._instance === null)
-            throw new Error("State not initialized")
+export namespace State {
+    const peerId = nanoid(7)
 
-        return this._instance
-    }
+    const socket = io("http://localhost:3456", {
+        query: {
+            roomId,
+            peerId,
+            presence: Channels.ConnectionList
+        }
+    })
 
-    static initialize(presence: Presence) {
-        this._instance = new State(presence)
-    }
+    const network = new SocketIONetwork(socket)
 
-    private constructor(presence: Presence) {
-        this.presence = presence
-    }
+    export const router = new Router({ id: peerId, network })
+    
+    export const presence = new Presence(router)
 
+    export const model = new Model({
+        channel: router.channel(Channels.Model),
+        context: router.context(),
+    })
 
-    readonly presence: Presence
-
+    model.register(Line.template)
 }
