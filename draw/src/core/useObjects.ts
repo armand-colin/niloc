@@ -7,7 +7,7 @@ export function useObjects<T extends SyncObject>(model: Model, template: Templat
     const objects: T[] = model.getAll().filter((object): object is T => object.type() === template.type)
     signal[1](objects as T[])
 
-    model.emitter().on('created', object => {
+    model.emitter().on('created', (object: SyncObject) => {
         if (object.type() === template.type) {
             signal[1]([...signal[0](), object as T])
         }
