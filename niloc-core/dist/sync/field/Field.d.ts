@@ -22,6 +22,7 @@ export declare abstract class Field {
     abstract write(writer: Writer): void;
     readChange(reader: Reader): void;
     writeChange(writer: Writer): void;
+    clearChange(): void;
     protected changed(): void;
     protected onChangeRequester(_requester: ChangeRequester): void;
     protected onModelHandle(_handle: ModelHandle): void;

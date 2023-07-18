@@ -16,6 +16,9 @@
     border-radius: 50%;
     background-color: var(--color);
     position: absolute;
+    transition-duration: 20ms;
+    transition-property: left, top;
+    transition-timing-function: linear;
 
     left: calc(var(--left) * 1px);
     top: calc(var(--top) * 1px);

@@ -5,6 +5,7 @@ import { User } from "../core/User"
 import { useField } from "../core/useField"
 import { Line } from "../state/shapes/Line"
 import { useObjects } from "../core/useObjects"
+import { useArrayField } from "../core/useArrayField"
 
 export const Canvas = () => {
     const presence = State.presence
@@ -12,9 +13,8 @@ export const Canvas = () => {
     const users = presence.useUsers()
     const lines = useObjects(State.model, Line.template)
 
-    createEffect(() => { console.log(lines())})
+    createEffect(() => { console.log(lines()) })
 
-    let points: number[] = []
     let line: Line | null = null
 
     function onMouseDown(e: MouseEvent) {
@@ -24,9 +24,7 @@ export const Canvas = () => {
         const rect = canvas.getBoundingClientRect()
         line = State.model.instantiate(Line.template)
 
-        points = []
-        points.push(e.clientX - rect.left, e.clientY - rect.top)
-        line.points.set(points)
+        line.points.push(e.clientX - rect.left, e.clientY - rect.top)
         State.model.tick()
     }
 
@@ -47,12 +45,27 @@ export const Canvas = () => {
         if (!line)
             return
 
-        points.push(e.clientX - rect.left, e.clientY - rect.top)
-        line.points.set([...points])
+        const points = line.points.get()
+        if (points.length < 2)
+            return
+
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+
+        const px = points[points.length - 2]
+        const py = points[points.length - 1]
+
+        const sqDistance = (x - px) ** 2 + (y - py) ** 2
+
+        if (sqDistance < 25)
+            return
+        
+        line.points.push(e.clientX - rect.left, e.clientY - rect.top)
         State.model.tick()
     }
 
     function onMouseUp() {
+        console.log(line?.points.get().length)
         line = null
     }
 
@@ -98,7 +111,7 @@ const Cursor = (props: { user: User }) => {
 
 const LineView = (props: { line: Line }) => {
     const color = useField(props.line.color)
-    const points = useField(props.line.points)
+    const points = useArrayField(props.line.points)
 
     const path = createMemo(() => {
         let path = ""
@@ -115,13 +128,13 @@ const LineView = (props: { line: Line }) => {
         return path
     })
 
-    return <path 
-        d={path()} 
+    return <path
+        d={path()}
         fill="transparent"
         class="Line"
         style={{
             "--color": color()
-        }} 
+        }}
     />
 
 }

@@ -15,6 +15,7 @@ export declare class SyncObjectField<T extends SyncObject> extends Field {
     write(writer: Writer): void;
     readChange(reader: Reader): void;
     writeChange(writer: Writer): void;
+    clearChange(): void;
     protected onModelHandle(handle: ModelHandle): void;
     protected onChangeRequester(requester: ChangeRequester): void;
     protected toString(writer: StringWriter): void;

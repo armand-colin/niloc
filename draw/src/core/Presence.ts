@@ -7,6 +7,8 @@ export class Presence extends CorePresence<User> {
 
     private _usersSignal: Signal<User[]>
 
+    private _frequency = 20
+
     constructor(router: Router) {
         super({
             channel: router.channel(Channels.Presence),
@@ -29,6 +31,24 @@ export class Presence extends CorePresence<User> {
 
     useUsers(): Accessor<User[]> {
         return this._usersSignal[0]
+    }
+
+    private _tickRequest: { timeout: number | null, time: number } = { timeout: null, time: 0 } 
+    tick(): void {
+        if (this._tickRequest.timeout !== null)
+            return
+        
+        const now = Date.now()
+        const elapsed = now - this._tickRequest.time
+        if (elapsed < this._frequency)
+            return
+        
+        this._tickRequest.time = now
+        this._tickRequest.timeout = setTimeout(() => {
+            this._tickRequest.timeout = null
+            this._tickRequest.time = 0
+            super.tick()
+        }, this._frequency)
     }
 
 }

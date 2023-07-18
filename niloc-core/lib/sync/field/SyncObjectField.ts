@@ -46,6 +46,11 @@ export class SyncObjectField<T extends SyncObject> extends Field {
             writer.writeInt(fieldIndex)
             this._object.fields()[fieldIndex].writeChange(writer)
         }
+    }
+
+    clearChange(): void {
+        for (const fieldIndex of this._changes)
+            this._object.fields()[fieldIndex].clearChange()
         this._changes = []
     }
 

@@ -27,6 +27,5 @@ export declare class Presence<T extends SyncObject> {
     private _onUserCreated;
     private _onConnected;
     private _onDisconnected;
-    private _onSync;
 }
 export {};

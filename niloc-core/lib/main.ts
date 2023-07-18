@@ -15,6 +15,7 @@ export { SyncObject } from "./sync/SyncObject"
 //  field
 export { Field } from "./sync/field/Field"
 export { AnyField } from "./sync/field/AnyField"
+export { ArrayField } from "./sync/field/ArrayField"
 export { SyncObjectField } from "./sync/field/SyncObjectField"
 export { SyncObjectRefField } from "./sync/field/SyncObjectRefField"
 export { SyncObjectRefSetField } from "./sync/field/SyncObjectRefSetField"

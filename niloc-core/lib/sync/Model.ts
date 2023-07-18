@@ -199,6 +199,7 @@ export class Model {
                 const field = object.fields()[index]
                 writer.writeInt(index)
                 field.writeChange(writer)
+                field.clearChange()
             }
 
             const tail = writer.cursor()

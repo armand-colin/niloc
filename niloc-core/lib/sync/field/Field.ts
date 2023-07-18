@@ -47,6 +47,7 @@ export abstract class Field {
 
     readChange(reader: Reader): void { this.read(reader) }
     writeChange(writer: Writer): void { this.write(writer) }
+    clearChange(): void { }
 
     protected changed(): void {
         this._changeRequester?.change(this._index)
