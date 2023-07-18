@@ -3,7 +3,7 @@ import { Presence } from "../core/Presence";
 import { io } from "socket.io-client";
 import { Channels } from "../core/Channels";
 import { SocketIONetwork } from "@niloc/socketio-client";
-import { Model, Router } from "@niloc/core";
+import { ConnectionList, ConnectionPlugin, Model, Router } from "@niloc/core";
 import { Line } from "./shapes/Line";
 
 const params = new URLSearchParams(window.location.search)
@@ -28,12 +28,15 @@ export namespace State {
 
     export const router = new Router({ id: peerId, network })
 
-    export const presence = new Presence(router)
+    const connectionList = ConnectionList.client(router.channel(Channels.ConnectionList))
+
+    export const presence = new Presence(router, connectionList)
 
     export const model = new Model({
         channel: router.channel(Channels.Model),
         context: router.context(),
     })
 
+    model.plugin(new ConnectionPlugin(connectionList))
     model.register(Line.template)
 }

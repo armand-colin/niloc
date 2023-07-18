@@ -25,6 +25,7 @@ export { field } from "./sync/field/namespace"
 export { Presence } from "./sync/presence/Presence"
 export type { PresenceEvents } from "./sync/presence/Presence"
 export { ConnectionList } from "./sync/presence/ConnectionList"
+export { ConnectionPlugin } from "./sync/presence/ConnectionPlugin"
 export type { ConnectionListEvents } from "./sync/presence/ConnectionList"
 
 // rpc

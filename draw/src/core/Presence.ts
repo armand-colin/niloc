@@ -9,12 +9,12 @@ export class Presence extends CorePresence<User> {
 
     private _frequency = 20
 
-    constructor(router: Router) {
+    constructor(router: Router, connectionList: ConnectionList) {
         super({
             channel: router.channel(Channels.Presence),
             context: router.context(),
             factory: User,
-            connectionList: ConnectionList.client(router.channel(Channels.ConnectionList))
+            connectionList
         })
 
         this._usersSignal = createSignal(this.users())

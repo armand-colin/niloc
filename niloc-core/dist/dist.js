@@ -1257,6 +1257,7 @@ export {
   w as Authority,
   v as Channel,
   j as ConnectionList,
+  W as ConnectionPlugin,
   E as Context,
   g as Emitter,
   u as Field,
