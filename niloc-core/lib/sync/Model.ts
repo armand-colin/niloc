@@ -68,6 +68,8 @@ export class Model {
         this._handle = ModelHandle.make({
             emitter: this._emitter,
             objectsEmitter: this._objectsEmitter,
+            context: this._context,
+            syncTo: (address) => this.syncTo(address),
             get: (id) => this.get(id),
         })
     }
@@ -76,6 +78,7 @@ export class Model {
 
     plugin(plugin: Plugin) {
         this._plugins.push(plugin)
+        plugin.init?.(this._handle)
     }
 
     register<T extends SyncObject>(template: Template<T>) {
