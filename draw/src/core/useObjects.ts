@@ -4,7 +4,7 @@ import { Accessor, createSignal } from "solid-js";
 export function useObjects<T extends SyncObject>(model: Model, template: Template<T>): Accessor<T[]> {
     const signal = createSignal([] as T[])
 
-    const objects = model.getAll().filter(object => object.type() === template.type)
+    const objects: T[] = model.getAll().filter((object): object is T => object.type() === template.type)
     signal[1](objects as T[])
 
     model.emitter().on('created', object => {
