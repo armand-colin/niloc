@@ -55,16 +55,19 @@ export class SyncObjectField<T extends SyncObject> extends Field {
     }
 
     protected onModelHandle(handle: ModelHandle): void {
-        SyncObject.setModelHandle(this._object, handle)
+        SyncObject.__setModelHandle(this._object, handle)
     }
 
     protected onChangeRequester(requester: ChangeRequester): void {
-        SyncObject.setChangeRequester(this._object, {
+        SyncObject.__setChangeRequester(this._object, {
             change: (fieldIndex) => {
                 this._changes.push(fieldIndex)
                 requester.change(this.index())
                 this.emitter().emit('changed')
             },
+            send: () => {
+                requester.send()
+            }
         })
     }
 

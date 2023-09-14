@@ -35,10 +35,22 @@ export abstract class Field {
         field.toString(writer)
     }
 
+    public static register(fields: Iterable<Field>, callback: () => void): () => void {
+        const _fields = [...fields]
+
+        for (const field of _fields)
+            field.emitter().on('changed', callback)
+
+        return () => {
+            for (const field of _fields)
+                field.emitter().off('changed', callback)
+        }
+    }
+
     private _index: number = -1
     private _changeRequester: ChangeRequester | null = null
-    private _emitter = new EmitterImpl<FieldEvents>() 
-    
+    private _emitter = new EmitterImpl<FieldEvents>()
+
     index() { return this._index }
     emitter(): Emitter<FieldEvents> { return this._emitter }
 

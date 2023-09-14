@@ -13,6 +13,7 @@ export declare abstract class Field {
     static setModelHandle(field: Field, handle: ModelHandle): void;
     static toString(field: Field): string;
     static write(field: Field, writer: StringWriter): void;
+    static register(fields: Iterable<Field>, callback: () => void): () => void;
     private _index;
     private _changeRequester;
     private _emitter;

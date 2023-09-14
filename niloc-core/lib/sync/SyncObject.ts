@@ -7,12 +7,13 @@ import { Field } from "./field/Field";
 
 export class SyncObject {
 
-    static setChangeRequester(object: SyncObject, requester: ChangeRequester) {
+    static __setChangeRequester(object: SyncObject, requester: ChangeRequester) {
+        object._changeRequester = requester
         for (const field of object.fields())
             Field.setChangeRequester(field, requester)
     }
 
-    static setModelHandle(object: SyncObject, handle: ModelHandle) {
+    static __setModelHandle(object: SyncObject, handle: ModelHandle) {
         for (const field of object.fields())
             Field.setModelHandle(field, handle)
     }
@@ -37,6 +38,7 @@ export class SyncObject {
     private _id: string
     private _type: string
     private _fields: Field[] | null = null
+    private _changeRequester!: ChangeRequester
 
     constructor(id: string, type: string) {
         this._id = id
@@ -61,6 +63,14 @@ export class SyncObject {
     write(writer: Writer) {
         for (const field of this.fields())
             field.write(writer)
+    }
+
+    send() {
+        this._changeRequester.send()
+    }
+
+    register(callback: () => void): () => void {
+        return Field.register(this.fields(), callback)
     }
 
     private _initFields(): Field[] {

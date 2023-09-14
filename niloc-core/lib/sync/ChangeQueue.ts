@@ -41,4 +41,10 @@ export class ChangeQueue {
         this._syncs.clear()
     }
 
+    changeForObject(objectId: string): number[] | null {
+        const fields = this._changes.get(objectId)
+        this._changes.delete(objectId)
+        return fields ?? null
+    }
+
 }

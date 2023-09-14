@@ -25,7 +25,7 @@ export interface Model {
     register<T extends SyncObject>(template: Template<T>): void
     plugin(plugin: Plugin): void
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T
-    tick(): void
+    send(): void
     syncTo(address: Address): void
 
 }
@@ -94,9 +94,22 @@ export class Model {
         return object
     }
 
-    tick() {
+    send() {
         const syncs = this._collectSyncs()
         const changes = this._collectChanges()
+
+        if (syncs.length > 0)
+            this._channel.post(Address.broadcast(), { type: "sync", changes: syncs })
+
+        if (changes.length > 0)
+            this._channel.post(Address.broadcast(), { type: "change", changes: changes })
+    }
+
+    sendObject(objectId: string) {
+        const syncs = this._collectSyncsForObjects([objectId])
+
+        const changeFields = this._changeQueue.changeForObject(objectId)
+        const changes = changeFields ? this._collectChangesForObjects([{ objectId, fields: changeFields }]) : []
 
         if (syncs.length > 0)
             this._channel.post(Address.broadcast(), { type: "sync", changes: syncs })
@@ -121,8 +134,8 @@ export class Model {
 
     private _create<T extends SyncObject>(template: Template<T>, id: string) {
         const object = template.create(id)
-        SyncObject.setChangeRequester(object, this._makeChangeRequester(id))
-        SyncObject.setModelHandle(object, this._handle)
+        SyncObject.__setChangeRequester(object, this._makeChangeRequester(id))
+        SyncObject.__setModelHandle(object, this._handle)
         this._objects.set(id, object)
 
         for (const plugin of this._plugins)
@@ -136,7 +149,8 @@ export class Model {
 
     private _makeChangeRequester(id: string): ChangeRequester {
         return {
-            change: (index) => this._onChangeRequest(id, index)
+            change: (index) => this._onChangeRequest(id, index),
+            send: () => this.sendObject(id),
         }
     }
 
@@ -176,9 +190,13 @@ export class Model {
     }
 
     private _collectChanges(): any[] {
+        return this._collectChangesForObjects(this._changeQueue.changes())
+    }
+
+    private _collectChangesForObjects(objects: Iterable<{ objectId: string, fields: number[] }>): any[] {
         const writer = this._writer
 
-        for (const { objectId, fields } of this._changeQueue.changes()) {
+        for (const { objectId, fields } of objects) {
             const object = this._objects.get(objectId)
             if (!object)
                 continue

@@ -13,7 +13,7 @@ export interface Model {
     register<T extends SyncObject>(template: Template<T>): void;
     plugin(plugin: Plugin): void;
     instantiate<T extends SyncObject>(template: Template<T>, id?: string): T;
-    tick(): void;
+    send(): void;
     syncTo(address: Address): void;
 }
 type ModelData = {
@@ -40,6 +40,7 @@ export declare class Model {
     private _writer;
     private _plugins;
     constructor(opts: ModelOpts);
+    sendObject(objectId: string): void;
     get<T extends SyncObject>(id: string): T | null;
     getAll(): SyncObject[];
     private _create;
@@ -49,6 +50,7 @@ export declare class Model {
     private _collectSyncs;
     private _collectSyncsForObjects;
     private _collectChanges;
+    private _collectChangesForObjects;
     private _onMessage;
     private _onSync;
     private _onChange;

@@ -8,4 +8,5 @@ export declare class ChangeQueue {
         fields: number[];
     }>;
     syncs(): Iterable<string>;
+    changeForObject(objectId: string): number[] | null;
 }

@@ -10,7 +10,9 @@ import { ConnectionList } from "./ConnectionList";
 import { ConnectionPlugin } from "./ConnectionPlugin";
 
 export type PresenceEvents<T extends SyncObject> = {
-    usersChanged: T[]
+    changed: T[],
+    connected: T,
+    disconnected: string
 }
 
 type Options<T extends SyncObject> = {
@@ -27,7 +29,7 @@ export class Presence<T extends SyncObject> {
     private _emitter = new Emitter<PresenceEvents<T>>()
 
     private _user: T
-    private _users = [] as T[]
+    private _others = [] as T[]
 
     constructor(options: Options<T>) {
         this._connectionList = options.connectionList
@@ -58,7 +60,11 @@ export class Presence<T extends SyncObject> {
     }
 
     users(): T[] {
-        return [...this._users]
+        return [this._user, ...this._others]
+    }
+
+    others() {
+        return [...this._others]
     }
 
     emitter(): Emitter<PresenceEvents<T>> {
@@ -68,16 +74,46 @@ export class Presence<T extends SyncObject> {
     /*
      * Has to be called whenever the user has changed
     */
-    tick() {
-        this._model.tick()
+    send() {
+        this._model.send()
     }
 
+    register(callback: () => void): () => void {
+        const unregisters: Record<string, () => void> = {}
+
+        for (const user of [this._user, ...this._others])
+            unregisters[user.id()] = user.register(callback)
+
+        function onConnected(user: T) {
+            unregisters[user.id()] = user.register(callback)
+        }
+
+        function onDisconnected(userId: string) {
+            const unregisterUser = unregisters[userId]
+            if (unregisterUser) {
+                unregisterUser()
+                delete unregisters[userId]
+            }
+        }
+
+        // TODO: resolve issue
+        this.emitter().on('connected', onConnected as any)
+        this.emitter().on('disconnected', onDisconnected)
+        
+        return () => {
+            this.emitter().off('connected', onConnected as any)
+            this.emitter().off('disconnected', onDisconnected)
+            for (const unregister of Object.values(unregisters))
+                unregister()
+        }
+    }
 
     private _onUserCreated = (user: T) => {
         const isConnected = this._connectionList.isConnected(user.id())
-        if (isConnected && !this._users.includes(user)) {
-            this._users.push(user)
-            this._emitter.emit('usersChanged', this.users())
+        if (isConnected && !this._others.includes(user)) {
+            this._others.push(user)
+            this._emitter.emit('changed', this.users())
+            this._emitter.emit('connected', user)
         }
     }
 
@@ -85,14 +121,15 @@ export class Presence<T extends SyncObject> {
         if (userId === this._user.id())
             return
 
-        if (this._users.some(user => user.id() === userId))
+        if (this._others.some(user => user.id() === userId))
             return
 
         const user = this._model.get<T>(userId)
 
         if (user) {
-            this._users.push(user)
-            this._emitter.emit('usersChanged', this.users())
+            this._others.push(user)
+            this._emitter.emit('changed', this.users())
+            this._emitter.emit('connected', user)
         }
     }
 
@@ -100,12 +137,13 @@ export class Presence<T extends SyncObject> {
         if (userId === this._user.id())
             return
         
-        const index = this._users.findIndex(user => user.id() === userId)
+        const index = this._others.findIndex(user => user.id() === userId)
         if (index < 0)
             return
         
-        this._users.splice(index, 1)
-        this._emitter.emit('usersChanged', this.users())
+        this._others.splice(index, 1)
+        this._emitter.emit('changed', this.users())
+        this._emitter.emit('disconnected', userId)
     }
 
 }
