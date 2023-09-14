@@ -48,6 +48,9 @@ export class Presence<T extends SyncObject> {
         options.connectionList.emitter().on('disconnected', this._onDisconnected)
 
         this._model.emitter().on('created', user => this._onUserCreated(user as T))
+
+        for (const user of this._connectionList.users())
+            this._onConnected(user)
     }
 
     user(): T {

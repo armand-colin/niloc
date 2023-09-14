@@ -206,7 +206,7 @@ class g {
     this._listeners = {}, this._onceListeners = {};
   }
 }
-var v;
+var L;
 ((r) => {
   function e(t, s) {
     const n = [], c = new g();
@@ -229,7 +229,7 @@ var v;
     return n;
   }
   r.split = e;
-})(v || (v = {}));
+})(L || (L = {}));
 var w;
 ((r) => {
   function e() {
@@ -245,7 +245,7 @@ var w;
   }
   r.allows = s;
 })(w || (w = {}));
-class L {
+class v {
   constructor() {
     i(this, "_string", "");
   }
@@ -260,7 +260,7 @@ class k {
   constructor() {
     i(this, "_indent", 0);
     i(this, "_string", "");
-    i(this, "_line", new L());
+    i(this, "_line", new v());
   }
   write(e) {
     this._line.write(e);
@@ -270,7 +270,7 @@ class k {
   }
   nextLine() {
     this._string += this._line.toString(this._indent) + `
-`, this._line = new L();
+`, this._line = new v();
   }
   startIndent() {
     this._indent++;
@@ -1030,6 +1030,8 @@ class X {
     });
     const t = y.create("user", e.factory, w.own());
     this._model.register(t), this._model.plugin(new W(e.connectionList)), this._user = this._model.instantiate(t, e.context.userId), e.connectionList.emitter().on("connected", this._onConnected), e.connectionList.emitter().on("disconnected", this._onDisconnected), this._model.emitter().on("created", (s) => this._onUserCreated(s));
+    for (const s of this._connectionList.users())
+      this._onConnected(s);
   }
   user() {
     return this._user;
@@ -1255,7 +1257,7 @@ export {
   Q as AnyField,
   z as ArrayField,
   w as Authority,
-  v as Channel,
+  L as Channel,
   j as ConnectionList,
   W as ConnectionPlugin,
   E as Context,
