@@ -1,6 +1,6 @@
 {
     "name": "@niloc/core",
-    "version": "0.1.5",
+    "version": "0.1.7",
     "type": "module",
     "files": [
         "dist",
@@ -20,11 +20,11 @@
         "test": "vitest run"
     },
     "devDependencies": {
+        "@niloc/utils": "link:../utils",
         "typedoc": "^0.24.6",
         "typescript": "^5.0.4",
         "vite": "^4.0.4",
-        "vitest": "^0.30.1",
-        "@niloc/utils": "link:../utils"
+        "vitest": "^0.30.1"
     },
     "dependencies": {
         "nanoid": "^4.0.2"
