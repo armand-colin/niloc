@@ -43,7 +43,7 @@ export class RPCHandler implements RPCHandler {
 
         this._rpcs[id] = rpc
 
-        RPC.setCallHandler(rpc, this._makeCallHandler(rpc, id))
+        RPC.setCallHandler(rpc, this._makeCallHandler(id))
     }
 
     infuse(object: any, id: string) {
@@ -53,14 +53,10 @@ export class RPCHandler implements RPCHandler {
         }
     }
 
-    private _makeCallHandler(rpc: RPC<any>, rpcId: string): RPCCallHandler {
+    private _makeCallHandler(rpcId: string): RPCCallHandler {
         const handler: RPCCallHandler = {
             call: (address, args) => {
-                if (Address.match(this._self.id(), address, this._self))
-                    RPC.call(rpc, args)
-
                 const message = RPCMessage.make(rpcId, args)
-                
                 this._channel.post(address, message)
             }
         }

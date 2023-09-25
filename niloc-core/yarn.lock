@@ -227,7 +227,7 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
-"@niloc/utils@^0.0.1":
+"@niloc/utils@0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.1.tgz#e6f60f06555697fc6958e2dd9ec834e8e0b6d338"
   integrity sha512-owPeOyt6c9ntzjWxY4PZhgDkZWkbENDj4E1Lc4ePWPuEiAq/5Z5aPO5zoJIZIz1QYBYVQn256UoB1SA2IZBU3w==

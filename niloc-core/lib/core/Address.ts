@@ -87,6 +87,9 @@ export namespace Address {
 
     export function parse(string: string): Address | null {
         if (string === "*")
+            return all()
+
+        if (string === "#")
             return broadcast()
 
         if (string === "host")
