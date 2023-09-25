@@ -25,8 +25,8 @@
     "@types/simple-peer": "^9.11.5"
   },
   "dependencies": {
-    "niloc-core": "file:../niloc-core",
-    "simple-peer": "^9.11.1",
-    "utils": "file:../utils"
+    "@niloc/core": "0.1.8",
+    "@niloc/utils": "0.0.1",
+    "simple-peer": "^9.11.1"
   }
 }

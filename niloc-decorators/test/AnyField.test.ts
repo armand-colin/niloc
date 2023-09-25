@@ -1,4 +1,4 @@
-import { SyncObject, Template } from "niloc-core"
+import { SyncObject, Template } from "@niloc/core"
 import { describe, expect, it } from "vitest"
 import { field } from "../lib/fields/main"
 

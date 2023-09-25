@@ -26,6 +26,6 @@
     "vitest": "^0.31.0"
   },
   "dependencies": {
-    "niloc-core": "link:../niloc-core"
+    "@niloc/core": "^0.1.8"
   }
 }

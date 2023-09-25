@@ -1,4 +1,4 @@
-import { Emitter, Network, NetworkEvents, Peer } from "niloc-core";
+import { Emitter, Network, NetworkEvents, Peer } from "@niloc/core";
 import { SocketIOPeer } from "./SocketIOPeer";
 import { Socket } from "./Socket";
 
@@ -9,6 +9,7 @@ export class SocketIONetwork implements Network {
 
     constructor(socket: Socket) {
         this._serverPeer = new SocketIOPeer("SERVER", socket)
+        this._serverPeer.emitter()
         this._serverPeer.emitter().on('message', ({ channel, message }) => {
             this._emitter.emit('message', { 
                 peerId: this._serverPeer.id(),

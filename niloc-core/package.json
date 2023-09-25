@@ -20,7 +20,7 @@
         "test": "vitest run"
     },
     "devDependencies": {
-        "@niloc/utils": "link:../utils",
+        "@niloc/utils": "0.0.1",
         "typedoc": "^0.24.6",
         "typescript": "^5.0.4",
         "vite": "^4.0.4",

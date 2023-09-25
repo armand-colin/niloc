@@ -15,9 +15,11 @@ describe('RPC', () => {
         const handlerA = new RPCHandler(peerA, channelA)
         const handlerB = new RPCHandler(peerB, channelB)
 
+        let response: string = ""
+        
         function rpc(id: string) {
-            return RPC.target("a", (count: number): string => {
-                return id + count
+            return RPC.target("a", (count: number) => {
+                response = id + count
             })
         }
 
@@ -27,9 +29,14 @@ describe('RPC', () => {
         handlerA.register(rpcA, "rpc")
         handlerB.register(rpcB, "rpc")
 
-        expect(await rpcA.call(0)).to.equal('a0')
-        expect(await rpcA.call(10)).to.equal('a10')
-        expect(await rpcB.call(0)).to.equal('a0')
+        rpcA.call(0);
+        expect(response).to.equal('a0')
+
+        rpcA.call(10);
+        expect(response).to.equal('a10')
+
+        rpcB.call(0);
+        expect(response).to.equal('a0')
     })
 
     class Avatar extends SyncObject {
@@ -38,9 +45,14 @@ describe('RPC', () => {
 
         isHost = false
 
+        received: string = "nothing"
+
         ping = RPC.target("a", () => {
-            if (this.isHost)
-                return 'pong'
+            if (this.isHost) {
+                this.received = "pong"
+                return
+            }
+
             throw "Called RPC from peer b"
         })
 
@@ -56,13 +68,15 @@ describe('RPC', () => {
 
         const avatarA = modelA.instantiate(Avatar.template, 'avatarA')
         avatarA.isHost = true
-        modelA.tick()
+        modelA.send()
 
         {
             const avatarA = modelB.get<Avatar>("avatarA")!
             expect(avatarA).not.to.be.null;
-            expect(await avatarA.ping.call()).to.equal("pong")
+            avatarA.ping.call()
         }
+
+        expect(avatarA.received).to.equal("pong")
     })
 
 })

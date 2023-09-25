@@ -1,5 +1,5 @@
-import { Network, NetworkEvents, Peer } from "niloc-core";
-import { Emitter } from "utils"
+import { Network, NetworkEvents, Peer } from "@niloc/core";
+import { Emitter } from "@niloc/utils"
 import { WebRTCOpts } from "./WebRTCOpts";
 import { WebRTCPeer } from "./WebRTCPeer";
 

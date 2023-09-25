@@ -1,4 +1,4 @@
-import { AnyField, SyncObject } from "niloc-core";
+import { AnyField, SyncObject } from "@niloc/core";
 
 type KeyOfSelf<T> = T[keyof T]
 type KeyOfType<T, O> = KeyOfSelf<{

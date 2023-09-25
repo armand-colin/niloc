@@ -1,5 +1,5 @@
-import { Emitter } from "utils"
-import { Address, Message, Peer } from "niloc-core";
+import { Emitter } from "@niloc/utils"
+import { Address, Message, Peer } from "@niloc/core";
 import { WebRTCOpts } from "./WebRTCOpts";
 import { SimplePeer } from "./SimplePeer"
 import type { Instance } from "simple-peer";

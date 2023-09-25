@@ -41,14 +41,25 @@ export namespace Address {
         return { type: AddressType.Dynamic, get: getTargetId }
     }
 
-    export function match(address: Address, peer: Peer): boolean {
-        if (address.type === AddressType.Broadcast || peer.address().type === AddressType.Broadcast)
+    export function match(senderId: string, address: Address, peer: Peer): boolean {
+        if (
+            peer.address().type === AddressType.Broadcast ||
+            peer.address().type === AddressType.All ||
+            address.type === AddressType.All    
+        )  
             return true
+
+        if (address.type === AddressType.Broadcast)
+            return peer.id() !== senderId
 
         if (address.type === AddressType.Host)
             return peer.address().type === AddressType.Host
 
-        return address.id === peer.id()
+        let targetId = address.type === AddressType.Dynamic ? 
+            address.get() : 
+            address.id
+
+        return targetId === peer.id()
     }
 
     export function toString(address: Address): string {
@@ -61,6 +72,9 @@ export namespace Address {
             }
             case AddressType.Target: {
                 return `:${address.id}`
+            }
+            case AddressType.Dynamic: {
+                return `:${address.get()}`
             }
             case AddressType.Host: {
                 return `host`

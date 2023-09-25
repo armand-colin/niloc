@@ -4,11 +4,16 @@ import { Channel } from "../channel/Channel";
 import { Peer } from "./Peer";
 import { Context } from "./Context";
 export interface RouterOpts {
-    id: string;
     /**
      * peerId of this router
      */
+    id: string;
     network: Network;
+    /**
+     * Whether this router should relay messages upon reception or not
+     * @default false
+     */
+    relay?: boolean;
     /**
      * Whether this router is a host or not
      * @default false
@@ -17,6 +22,7 @@ export interface RouterOpts {
 }
 export declare class Router {
     private _id;
+    private _relay;
     private _address;
     private _self;
     private _context;
@@ -53,6 +59,7 @@ export declare class Router {
     channel<T = any>(channel: number): Channel<T>;
     context(): Context;
     private _onMessage;
+    private _receive;
     private _createChannel;
     private _send;
 }

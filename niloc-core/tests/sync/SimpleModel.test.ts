@@ -39,7 +39,7 @@ describe("Sync / Model", () => {
 
         const red = modelA.instantiate(Color.template, 'red')
         red.value.set('#ff0000')
-        modelA.tick()
+        modelA.send()
 
         expect(modelB.get('red')).not.to.be.null;
         expect(modelB.get<Color>('red')?.value.get()).to.equal("#ff0000");
@@ -49,13 +49,13 @@ describe("Sync / Model", () => {
         const [modelA, modelB] = MockModel.models([Color.template])
 
         const red = modelA.instantiate(Color.template, 'red')
-        modelA.tick()
+        modelA.send()
 
         expect(modelB.get('red')).not.to.be.null;
         expect(modelB.get<Color>('red')?.value.get()).to.equal("#ffffff");
 
         red.value.set("#ff0000")
-        modelA.tick()
+        modelA.send()
 
         expect(modelB.get<Color>('red')?.value.get()).to.equal("#ff0000");
     })
@@ -70,7 +70,7 @@ describe("Sync / Model", () => {
         apple.name.set("Granny Smith")
         apple.tree.set(appleTree)
 
-        modelA.tick()
+        modelA.send()
 
         {
             const apple = modelB.get<Fruit>("apple")
@@ -95,7 +95,7 @@ describe("Sync / Model", () => {
 
         const apple = modelA.instantiate(Fruit.template, "apple")
         apple.name.set("Granny Smith")
-        modelA.tick()
+        modelA.send()
 
         {
             const apple = modelB.get<Fruit>('apple')
@@ -104,7 +104,7 @@ describe("Sync / Model", () => {
         }
 
         apple.tree.set(appleTree)
-        modelA.tick()
+        modelA.send()
 
         {
             const apple = modelB.get<Fruit>('apple')
@@ -115,7 +115,7 @@ describe("Sync / Model", () => {
         }
 
         apple.tree.set(pearTree)
-        modelA.tick()
+        modelA.send()
 
         {
             const apple = modelB.get<Fruit>('apple')
