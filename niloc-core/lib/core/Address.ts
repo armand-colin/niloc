@@ -1,20 +1,29 @@
 import { Peer } from "./Peer"
 
 enum AddressType {
-    Broadcast = 0,
-    Target = 1,
-    Host = 2
+    All = 0,
+    Broadcast = 1,
+    Target = 2,
+    Host = 3,
+    Dynamic = 4
 }
 
 export type Address =
+    { type: AddressType.All } |
     { type: AddressType.Broadcast } |
     { type: AddressType.Host } |
-    { type: AddressType.Target, id: string }
+    { type: AddressType.Target, id: string } | 
+    { type: AddressType.Dynamic, get(): string }
 
 export namespace Address {
 
-    const BROADCAST = { type: AddressType.Broadcast } as Address
-    const HOST = { type: AddressType.Host } as Address
+    const ALL = Object.freeze({ type: AddressType.All }) as Address
+    const BROADCAST = Object.freeze({ type: AddressType.Broadcast }) as Address
+    const HOST = Object.freeze({ type: AddressType.Host }) as Address
+
+    export function all(): Address {
+        return ALL
+    }
 
     export function broadcast(): Address {
         return BROADCAST
@@ -26,6 +35,10 @@ export namespace Address {
 
     export function to(peerId: string): Address {
         return { type: AddressType.Target, id: peerId }
+    }
+
+    export function dynamic(getTargetId: () => string): Address {
+        return { type: AddressType.Dynamic, get: getTargetId }
     }
 
     export function match(address: Address, peer: Peer): boolean {
@@ -40,8 +53,11 @@ export namespace Address {
 
     export function toString(address: Address): string {
         switch (address.type) {
-            case AddressType.Broadcast: {
+            case AddressType.All: {
                 return "*"
+            }
+            case AddressType.Broadcast: {
+                return "#"
             }
             case AddressType.Target: {
                 return `:${address.id}`
