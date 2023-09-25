@@ -25,8 +25,11 @@ export function any<T, O extends SyncObject, K extends KeyOfType<T, O> & string>
         Object.defineProperty(target, accessor, {
             get(): AnyField<T> {
                 let field = this[storage] as AnyField<T>
-                if (!field)
+                if (!field) {
                     field = new AnyField(defaultValue)
+                    this[storage] = field
+                }
+                
                 return field
             },
             enumerable: true

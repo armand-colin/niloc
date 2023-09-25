@@ -21,8 +21,10 @@ export function syncObject<Type extends SyncObject, Source extends SyncObject, K
         Object.defineProperty(target, accessor, {
             get(): SyncObjectField<Type> {
                 let field = this[storage] as SyncObjectField<Type>
-                if (!field)
+                if (!field) {
                     field = new SyncObjectField(template)
+                    this[storage] = field
+                }
                 return field
             },
             enumerable: true
