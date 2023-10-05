@@ -12,7 +12,7 @@ describe("RPC", () => {
 
             temp = 0
 
-            @rpc.own()
+            @rpc.owner()
             testOwn() {
                 this.temp += 1 
             }
