@@ -52,7 +52,7 @@ export function broadcast<Args extends any[], O, K extends KeyOfType<(...args: A
     return _rpc<Args, O, K>(Address.broadcast)
 }
 
-export function own<Args extends any[], O extends SyncObject, K extends KeyOfType<(...args: Args) => any, O> & string>() {
+export function owner<Args extends any[], O extends SyncObject, K extends KeyOfType<(...args: Args) => any, O> & string>() {
     return _rpc<Args, O, K>(object => Address.to(object.id()))
 }
 
@@ -64,6 +64,6 @@ export const rpc = {
     host,
     all,
     broadcast,
-    own,
+    owner,
     dynamic
 }
