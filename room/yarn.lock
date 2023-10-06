@@ -112,14 +112,21 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.19.tgz#8cfaf2ff603e9aabb910e9c0558c26cf32744061"
   integrity sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==
 
-"@niloc/core@0.1.8", "@niloc/core@^0.1.8":
+"@niloc/core@0.1.12":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.12.tgz#dbccd4818f52f7e7617a14c97a736f169c7a0198"
+  integrity sha512-CuR/va6pN3sU+FRIVgpwROmRukwWz6XbVc9IvgN5oThgQEbkvV9xh7T8znceO4TR6YKBbRUNQtB1KviVTcBnUg==
+  dependencies:
+    nanoid "^4.0.2"
+
+"@niloc/core@0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.8.tgz#bc15c9018ed6fb6acb99ade7706a1e1488c38dde"
   integrity sha512-rVSpSkuqKL9vZiN2dVa8/PFG2x5Y9tlaIS1y3geo+JZBvKeOqNHQ4C4ie1Wi1UWzMbnzq5l9WKEYKah3GolUKQ==
   dependencies:
     nanoid "^4.0.2"
 
-"@niloc/socketio-server@^0.0.1":
+"@niloc/socketio-server@0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.0.1.tgz#5da5ff016f4f93df89b4d2baa285b6ce966740c4"
   integrity sha512-gP1u9gBbe9rDox5xOfzP4m9ZNFnFs5YHHKKBsy1SQxfHkssXOqKFMU6FDEriFIJEl5yjxNjtRHktzQLTHeYx+Q==

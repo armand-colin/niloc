@@ -27,7 +27,11 @@ class Room {
 
     constructor(public readonly id: string, presence?: number) {
         this._network = new SocketIONetwork()
-        this._router = new Router({ id: "SERVER", network: this._network })
+        this._router = new Router({ 
+            id: "SERVER", 
+            network: this._network,
+            relay: true
+        })
 
         if (presence !== undefined) {
             const channel = this._router.channel(presence)
