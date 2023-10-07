@@ -1,6 +1,6 @@
 {
   "name": "@niloc/utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "files": [
     "dist",
@@ -27,18 +27,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "esbuild": "^0.17.14",
-    "function-bind": "^1.1.1",
-    "has": "^1.0.3",
-    "is-core-module": "^2.11.0",
-    "nanoid": "^3.3.6",
-    "path-parse": "^1.0.7",
-    "picocolors": "^1.0.0",
-    "postcss": "^8.4.21",
-    "resolve": "^1.22.1",
-    "rollup": "^3.20.2",
-    "source-map-js": "^1.0.2",
-    "supports-preserve-symlinks-flag": "^1.0.0"
+    "nanoid": "^3.3.6"
   },
   "author": "",
   "license": "ISC",
