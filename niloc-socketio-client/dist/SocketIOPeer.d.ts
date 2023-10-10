@@ -1,4 +1,4 @@
-import { Address, Emitter, Message, Peer } from "niloc-core";
+import { Address, Emitter, Message, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
 interface PeerEvents {
     message: {

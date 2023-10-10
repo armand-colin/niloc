@@ -33,6 +33,11 @@ class Room {
             relay: true
         })
 
+        this._router.network.emitter().on('message', message => {
+            console.log(message)
+            console.log([...this._router.network.peers()].map(peer => peer.address()))
+        })
+
         if (presence !== undefined) {
             const channel = this._router.channel(presence)
             const connectionList = ConnectionList.owner(channel)
