@@ -1,6 +1,6 @@
 {
   "name": "@niloc/socketio-client",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "type": "module",
   "files": [
     "dist",
