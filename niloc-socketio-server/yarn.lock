@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.14.tgz#e81fb49de05fed91bf74251c9ca0343f4fc77d31"
   integrity sha512-gPQmsi2DKTaEgG14hc3CHXHp62k8g6qr0Pas+I4lUxRMugGSATh/Bi8Dgusoz9IQ0IfdrvLpco6kujEIBoaogA==
 
-"@niloc/core@0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.13.tgz#835679c99926c78e38d5d01358b14c3af5c89316"
-  integrity sha512-0u9s13FFANhDChNQDXanrO7saMISAZ6a68XG+eWsVjT7DZMFGCs+QKqF2+BCXDRfMab3ix0+1f++vASS2m+RPQ==
+"@niloc/core@0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.15.tgz#e6f2624c5a3dac057b28b12edfbd7da6ca978e5f"
+  integrity sha512-5ioaDf1y4lRIWbS8VDbhFpi3UMo2c/XjgxNEhbAO7Zvfop/xoM4Q3mPz/jNWjQmEhlwK0h1DLakr5TcDsfasnQ==
   dependencies:
     nanoid "^4.0.2"
 

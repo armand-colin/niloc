@@ -1,4 +1,4 @@
-import { Emitter, Network, NetworkEvents, Peer } from "niloc-core";
+import { Emitter, Network, NetworkEvents, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
 export declare class SocketIONetwork implements Network {
     private _peers;

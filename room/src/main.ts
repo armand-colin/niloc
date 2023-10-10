@@ -2,7 +2,7 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { ConnectionList, Router } from "@niloc/core"
+import { Address, ConnectionList, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 
@@ -31,11 +31,6 @@ class Room {
             id: "SERVER", 
             network: this._network,
             relay: true
-        })
-
-        this._router.network.emitter().on('message', message => {
-            console.log(message)
-            console.log([...this._router.network.peers()].map(peer => peer.address()))
         })
 
         if (presence !== undefined) {
