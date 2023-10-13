@@ -16,7 +16,8 @@ import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 
 export interface ModelEvents {
-    created: SyncObject
+    created: SyncObject,
+    deleted: string
 }
 
 export interface Model {
@@ -151,6 +152,7 @@ export class Model {
         return {
             change: (index) => this._onChangeRequest(id, index),
             send: () => this.sendObject(id),
+            delete: () => this._delete(id),
         }
     }
 
@@ -227,6 +229,15 @@ export class Model {
         }
 
         return writer.collect()
+    }
+
+    private _delete(id: string) {
+        if (!this._objects.has(id))
+            return
+
+        this._objects.delete(id)
+        this._emitter.emit('deleted', id)
+        this._objectsEmitter.emit(id, null)
     }
 
     private _onMessage = (message: Message<ModelData>) => {
