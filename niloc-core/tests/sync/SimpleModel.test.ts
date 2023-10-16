@@ -1,4 +1,3 @@
-import { Template } from "../../lib/sync/Template";
 import { SyncObject } from "../../lib/sync/SyncObject";
 import { AnyField } from "../../lib/sync/field/AnyField";
 import { describe, expect, it } from "vitest";
@@ -7,25 +6,17 @@ import { SyncObjectRefField } from "../../lib/sync/field/SyncObjectRefField"
 
 class Tree extends SyncObject {
 
-    static template = Template.create<Tree>("tree", Tree)
-
     name = new AnyField<string>("")
 
 }
 
 class Color extends SyncObject {
 
-    static template = Template.create<Color>("color", Color)
-
     value = new AnyField<string>('#ffffff')
 
 }
 
 class Fruit extends SyncObject {
-
-    static template = Template.create("fruit", Fruit, (fruit, context) => {
-        return true
-    })
 
     tree = new SyncObjectRefField<Tree>(null)
     name = new AnyField<string>("")
@@ -35,9 +26,9 @@ class Fruit extends SyncObject {
 describe("Sync / Model", () => {
 
     it("Should handle simple object creation", () => {
-        const [modelA, modelB] = MockModel.models([Color.template])
+        const [modelA, modelB] = MockModel.models([Color])
 
-        const red = modelA.instantiate(Color.template, 'red')
+        const red = modelA.instantiate(Color, 'red')
         red.value.set('#ff0000')
         modelA.send()
 
@@ -46,9 +37,9 @@ describe("Sync / Model", () => {
     })
 
     it("Should handle simple object change", () => {
-        const [modelA, modelB] = MockModel.models([Color.template])
+        const [modelA, modelB] = MockModel.models([Color])
 
-        const red = modelA.instantiate(Color.template, 'red')
+        const red = modelA.instantiate(Color, 'red')
         modelA.send()
 
         expect(modelB.get('red')).not.to.be.null;
@@ -61,12 +52,12 @@ describe("Sync / Model", () => {
     })
 
     it("Should hande reference", () => {
-        const [modelA, modelB] = MockModel.models([Fruit.template, Tree.template])
+        const [modelA, modelB] = MockModel.models([Fruit, Tree])
 
-        const appleTree = modelA.instantiate(Tree.template, "appleTree")
+        const appleTree = modelA.instantiate(Tree, "appleTree")
         appleTree.name.set("My apple tree")
 
-        const apple = modelA.instantiate(Fruit.template, "apple")
+        const apple = modelA.instantiate(Fruit, "apple")
         apple.name.set("Granny Smith")
         apple.tree.set(appleTree)
 
@@ -85,15 +76,15 @@ describe("Sync / Model", () => {
     })
 
     it("Should hande reference change", () => {
-        const [modelA, modelB] = MockModel.models([Fruit.template, Tree.template])
+        const [modelA, modelB] = MockModel.models([Fruit, Tree])
 
-        const appleTree = modelA.instantiate(Tree.template, "appleTree")
+        const appleTree = modelA.instantiate(Tree, "appleTree")
         appleTree.name.set("My apple tree")
         
-        const pearTree = modelA.instantiate(Tree.template, "pearTree")
+        const pearTree = modelA.instantiate(Tree, "pearTree")
         pearTree.name.set("My pear tree")
 
-        const apple = modelA.instantiate(Fruit.template, "apple")
+        const apple = modelA.instantiate(Fruit, "apple")
         apple.name.set("Granny Smith")
         modelA.send()
 

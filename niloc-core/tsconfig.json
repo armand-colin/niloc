@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": false,
     "module": "CommonJS",
     "lib": [
       "ESNext",
@@ -20,6 +20,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "dist"
   },
   "exclude": [

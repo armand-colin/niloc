@@ -1,7 +1,6 @@
-import { Channel } from "../../lib/channel/DataChannel"
-import { Message } from "../../lib/main"
+import { Channel, Context, Message } from "../../lib/main"
 import { Model } from "../../lib/sync/Model"
-import { Template } from "../../lib/sync/Template"
+import { SyncObjectType } from "../../lib/sync/SyncObjectType"
 
 export namespace MockModel {
 
@@ -40,20 +39,22 @@ export namespace MockModel {
         return [a, b]
     }
 
-    export function models(templates?: Template<any>[]): [Model, Model] {
+    export function models(types?: SyncObjectType[]): [Model, Model] {
         const [channelA, channelB] = channels("a", "b")
         
         const modelA = new Model({
             channel: channelA,
+            context: new Context("a", false)
         })
 
         const modelB = new Model({
             channel: channelB,
+            context: new Context("b", false)
         })
 
-        for (const template of templates ?? []) {
-            modelA.register(template)
-            modelB.register(template)
+        for (const type of types ?? []) {
+            modelA.register(type)
+            modelB.register(type)
         }
 
         return [modelA, modelB]

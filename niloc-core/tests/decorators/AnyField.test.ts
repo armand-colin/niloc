@@ -1,6 +1,5 @@
-import { SyncObject, Template } from "@niloc/core"
 import { describe, expect, it } from "vitest"
-import { field } from "../lib/fields/main"
+import { SyncObject, field } from "../../lib/main"
 
 describe("Test", () => {
 
@@ -8,18 +7,17 @@ describe("Test", () => {
 
         class Sub extends SyncObject {
 
-            public static template = Template.create("Sub", Sub)
-
             @field.any("armand")
-            name!: string
+            name: string
+
         }
 
         class Test extends SyncObject {
 
             @field.any(3)
-            age!: number
+            age: number
 
-            @field.syncObject(Sub.template)
+            @field.syncObject(Sub)
             sub: Sub
 
             @field.syncObjectRef(null)
@@ -27,7 +25,7 @@ describe("Test", () => {
 
         }
 
-        const test = new Test("a", "Test")
+        const test = new Test("a")
 
         expect(test.age).to.equal(3)
         expect(test.sub.name).to.equal("armand")

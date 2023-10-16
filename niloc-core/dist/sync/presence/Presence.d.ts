@@ -1,9 +1,9 @@
 import { Channel } from "../../channel/Channel";
 import { Context } from "../../core/Context";
 import { SyncObject } from "../SyncObject";
-import { Factory } from "../Template";
 import { Emitter } from "@niloc/utils";
 import { ConnectionList } from "./ConnectionList";
+import { SyncObjectType } from "../SyncObjectType";
 export type PresenceEvents<T extends SyncObject> = {
     changed: T[];
     connected: T;
@@ -12,7 +12,7 @@ export type PresenceEvents<T extends SyncObject> = {
 type Options<T extends SyncObject> = {
     context: Context;
     channel: Channel<any>;
-    factory: Factory<T>;
+    type: SyncObjectType<T>;
     connectionList: ConnectionList;
 };
 export declare class Presence<T extends SyncObject> {

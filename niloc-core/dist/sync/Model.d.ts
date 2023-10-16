@@ -1,19 +1,19 @@
-import { Template } from "./Template";
 import { SyncObject } from "./SyncObject";
 import { Channel } from "../channel/Channel";
 import { Plugin } from "./Plugin";
 import { Context } from "../core/Context";
 import type { Emitter } from "@niloc/utils";
 import { Address } from "../core/Address";
+import { SyncObjectType } from "./SyncObjectType";
 export interface ModelEvents {
     created: SyncObject;
     deleted: string;
 }
 export interface Model {
     emitter(): Emitter<ModelEvents>;
-    register<T extends SyncObject>(template: Template<T>): void;
+    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void;
     plugin(plugin: Plugin): void;
-    instantiate<T extends SyncObject>(template: Template<T>, id?: string): T;
+    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T;
     send(): void;
     syncTo(address: Address): void;
 }

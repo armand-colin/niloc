@@ -1,5 +1,5 @@
 import { SyncObject } from "../SyncObject"
-import { Template } from "../Template"
+import { SyncObjectType } from "../SyncObjectType"
 import { AnyField } from "./AnyField"
 import { ArrayField } from "./ArrayField"
 import { SyncObjectField } from "./SyncObjectField"
@@ -20,8 +20,8 @@ export namespace field {
         return new SyncObjectRefField(objectId)
     }
 
-    export function object<T extends SyncObject>(template: Template<T>): SyncObjectField<T> {
-        return new SyncObjectField(template)
+    export function object<T extends SyncObject>(type: SyncObjectType<T>): SyncObjectField<T> {
+        return new SyncObjectField(type)
     }
 
     export function refSet<T extends SyncObject>(): SyncObjectRefSetField<T> {

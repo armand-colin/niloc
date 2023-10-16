@@ -1,4 +1,5 @@
 import { StringWriter } from "../tools/StringWriter";
+import { Authority } from "./Authority";
 import { ModelHandle } from "./ModelHandle";
 import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
@@ -26,7 +27,7 @@ export class SyncObject {
     }
 
     static write(object: SyncObject, writer: StringWriter) {
-        writer.writeLine(`${object.type()}: ${object.id()} {`)
+        writer.writeLine(`${object.constructor.name}: ${object.id()} {`)
         writer.startIndent()
 
         for (const field of object.fields())
@@ -37,21 +38,20 @@ export class SyncObject {
     }
 
     private _id: string
-    private _type: string
     private _fields: Field[] | null = null
     private _changeRequester!: ChangeRequester
     
+    authority = Authority.All
+    
     readonly deleted = new BooleanField(false)
 
-    constructor(id: string, type: string) {
+    constructor(id: string) {
         this._id = id
-        this._type = type
 
         this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
     }
 
     id(): string { return this._id }
-    type(): string { return this._type }
 
     fields(): Field[] {
         if (!this._fields)

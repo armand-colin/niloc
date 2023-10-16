@@ -1,4 +1,5 @@
 import { StringWriter } from "../tools/StringWriter";
+import { Authority } from "./Authority";
 import { ModelHandle } from "./ModelHandle";
 import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
@@ -11,13 +12,12 @@ export declare class SyncObject {
     static toString(object: SyncObject): string;
     static write(object: SyncObject, writer: StringWriter): void;
     private _id;
-    private _type;
     private _fields;
     private _changeRequester;
+    authority: Authority;
     readonly deleted: BooleanField;
-    constructor(id: string, type: string);
+    constructor(id: string);
     id(): string;
-    type(): string;
     fields(): Field[];
     read(reader: Reader): void;
     write(writer: Writer): void;

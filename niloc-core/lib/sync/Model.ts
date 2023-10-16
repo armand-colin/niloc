@@ -1,4 +1,3 @@
-import { Template } from "./Template"
 import { SyncObject } from "./SyncObject"
 import { Channel } from "../channel/Channel"
 import { nanoid } from "nanoid"
@@ -14,6 +13,8 @@ import type { Emitter } from "@niloc/utils"
 import { Emitter as EmitterImpl } from "@niloc/utils"
 import { Address } from "../core/Address"
 import { Message } from "../core/Message"
+import { TypesHandler } from "./TypesHandler"
+import { SyncObjectType } from "./SyncObjectType"
 
 export interface ModelEvents {
     created: SyncObject,
@@ -23,9 +24,9 @@ export interface ModelEvents {
 export interface Model {
 
     emitter(): Emitter<ModelEvents>
-    register<T extends SyncObject>(template: Template<T>): void
+    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
     plugin(plugin: Plugin): void
-    instantiate<T extends SyncObject>(template: Template<T>, id?: string): T
+    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
     send(): void
     syncTo(address: Address): void
 
@@ -48,7 +49,7 @@ export class Model {
     private _emitter = new EmitterImpl<ModelEvents>()
     private _objectsEmitter = new EmitterImpl<{ [key: string]: SyncObject | null }>()
 
-    private _templates = new Map<string, Template<SyncObject>>()
+    private _templates = new TypesHandler()
     private _objects = new Map<string, SyncObject>()
 
     private _handle: ModelHandle
@@ -82,13 +83,13 @@ export class Model {
         plugin.init?.(this._handle)
     }
 
-    register<T extends SyncObject>(template: Template<T>) {
-        this._templates.set(template.type, template as Template<any>)
+    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string) {
+        this._templates.register(type, typeId)
     }
 
-    instantiate<T extends SyncObject>(template: Template<T>, id?: string): T {
+    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T {
         const objectId = id ?? nanoid()
-        const object = this._create(template, objectId)
+        const object = this._create(type, objectId)
 
         this._changeQueue.sync(objectId)
 
@@ -133,8 +134,8 @@ export class Model {
         return [...this._objects.values()]
     }
 
-    private _create<T extends SyncObject>(template: Template<T>, id: string) {
-        const object = template.create(id)
+    private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
+        const object = new type(id)
         SyncObject.__setChangeRequester(object, this._makeChangeRequester(id))
         SyncObject.__setModelHandle(object, this._handle)
         this._objects.set(id, object)
@@ -176,15 +177,15 @@ export class Model {
             if (!object)
                 continue
 
-            const template = this._templates.get(object.type())
-            if (!template)
+            const typeId = this._templates.getTypeId(object)
+            if (typeId === null) 
                 continue
 
-            if (!Authority.allows(template.authority, object, this._context))
+            if (!Authority.allows(object, this._context))
                 continue
 
             writer.writeString(object.id())
-            writer.writeString(object.type())
+            writer.writeString(typeId)
             object.write(writer)
         }
 
@@ -203,11 +204,7 @@ export class Model {
             if (!object)
                 continue
 
-            const template = this._templates.get(object.type())
-            if (!template)
-                continue
-
-            if (!Authority.allows(template.authority, object, this._context))
+            if (!Authority.allows(object, this._context))
                 continue
 
             writer.writeString(objectId)
@@ -262,7 +259,7 @@ export class Model {
                 break
 
             const objectId = reader.readString()
-            const type = reader.readString()
+            const typeId = reader.readString()
 
             let object = this._objects.get(objectId)
 
@@ -271,13 +268,13 @@ export class Model {
                 continue
             }
 
-            const template = this._templates.get(type)
-            if (!template) {
-                console.error('Could not create object with type', type)
+            const type = this._templates.getType(typeId)
+            if (!type) {
+                console.error('Could not create object with type', typeId)
                 return
             }
 
-            object = this._create(template, objectId)
+            object = this._create(type, objectId)
             object.read(reader)
         }
     }

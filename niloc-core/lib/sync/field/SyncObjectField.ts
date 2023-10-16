@@ -2,8 +2,8 @@ import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
+import { SyncObjectType } from "../SyncObjectType";
 import { ChangeRequester } from "../Synchronize";
-import { Template } from "../Template";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 
@@ -12,9 +12,9 @@ export class SyncObjectField<T extends SyncObject> extends Field {
     private _object: T
     private _changes: number[] = []
 
-    constructor(template: Template<T>, id?: string) {
+    constructor(type: SyncObjectType<T>, id?: string) {
         super()
-        this._object = template.create(id ?? "sub")
+        this._object = new type(id ?? "sub")
     }
 
     get(): T {

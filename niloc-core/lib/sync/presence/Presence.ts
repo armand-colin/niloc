@@ -1,13 +1,12 @@
-import { Authority } from "../Authority";
 import { Channel } from "../../channel/Channel";
 import { Context } from "../../core/Context";
 import { Model } from "../Model";
 import { SyncObject } from "../SyncObject";
-import { Template } from "../Template";
-import { Factory } from "../Template";
 import { Emitter } from "@niloc/utils";
 import { ConnectionList } from "./ConnectionList";
 import { ConnectionPlugin } from "./ConnectionPlugin";
+import { SyncObjectType } from "../SyncObjectType";
+import { OwnerAuthorityPlugin } from "./OwnerAuthorityPlugin";
 
 export type PresenceEvents<T extends SyncObject> = {
     changed: T[],
@@ -18,7 +17,7 @@ export type PresenceEvents<T extends SyncObject> = {
 type Options<T extends SyncObject> = {
     context: Context,
     channel: Channel<any>,
-    factory: Factory<T>,
+    type: SyncObjectType<T>,
     connectionList: ConnectionList
 }
 
@@ -39,13 +38,12 @@ export class Presence<T extends SyncObject> {
             context: options.context
         })
 
-        const userTemplate = Template.create("user", options.factory, Authority.own())
-
-        this._model.register(userTemplate)
+        this._model.register(options.type, "user")
         this._model.plugin(new ConnectionPlugin(options.connectionList))
+        this._model.plugin(new OwnerAuthorityPlugin())
 
-        this._user = this._model.instantiate(userTemplate, options.context.userId)
-
+        this._user = this._model.instantiate(options.type, options.context.userId)
+        
         options.connectionList.emitter().on('connected', this._onConnected)
         options.connectionList.emitter().on('disconnected', this._onDisconnected)
 

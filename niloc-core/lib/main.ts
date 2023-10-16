@@ -9,8 +9,8 @@ export { Authority } from "./sync/Authority";
 
 // sync
 export { Model } from "./sync/Model"
-export { Template } from "./sync/Template"
 export { SyncObject } from "./sync/SyncObject"
+export type { SyncObjectType } from "./sync/SyncObjectType"
 
 //  field
 export { Field } from "./sync/field/Field"
@@ -19,7 +19,6 @@ export { ArrayField } from "./sync/field/ArrayField"
 export { SyncObjectField } from "./sync/field/SyncObjectField"
 export { SyncObjectRefField } from "./sync/field/SyncObjectRefField"
 export { SyncObjectRefSetField } from "./sync/field/SyncObjectRefSetField"
-export { field } from "./sync/field/namespace"
 
 //  presence
 export { Presence } from "./sync/presence/Presence"
@@ -36,4 +35,4 @@ export { RPCPlugin } from "./rpc/RPCPlugin"
 // Re-exports for implementation purposes
 export { Emitter } from "@niloc/utils";
 
-export * from "./decorators/main"
+export { field, rpc } from "./decorators/main"

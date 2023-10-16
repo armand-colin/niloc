@@ -7,8 +7,9 @@ type KeyOfType<T, O> = KeyOfSelf<{
 }>
 
 export function any<T, O extends SyncObject, K extends KeyOfType<T, O> & string>(defaultValue: T) {
-
+    
     return function(target: O, propertyKey: K) {
+        
         const accessor = '$' + propertyKey
         const storage = Symbol(propertyKey)
 

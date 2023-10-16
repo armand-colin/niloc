@@ -2,14 +2,14 @@ import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
+import { SyncObjectType } from "../SyncObjectType";
 import { ChangeRequester } from "../Synchronize";
-import { Template } from "../Template";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 export declare class SyncObjectField<T extends SyncObject> extends Field {
     private _object;
     private _changes;
-    constructor(template: Template<T>, id?: string);
+    constructor(type: SyncObjectType<T>, id?: string);
     get(): T;
     read(reader: Reader): void;
     write(writer: Writer): void;
