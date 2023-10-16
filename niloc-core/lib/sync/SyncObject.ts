@@ -83,6 +83,9 @@ export class SyncObject {
     }
 
     delete() {
+        if (this.deleted())
+            return
+        
         this._deleted.set(true)
         this._changeRequester.send()
         this._changeRequester.delete()
