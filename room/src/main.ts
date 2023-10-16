@@ -2,7 +2,7 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { Address, ConnectionList, Router } from "@niloc/core"
+import { ConnectionList, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 

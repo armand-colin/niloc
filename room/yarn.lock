@@ -9,6 +9,13 @@
   dependencies:
     nanoid "^4.0.2"
 
+"@niloc/core@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.0.tgz#5287c11b590260c5a42327a0dbe7198db853b1b2"
+  integrity sha512-ezwHYjLMBUHxIx+vp1J36I7PC4hKF9GggAgtjULwwzFIJBFVZ66qaUfJ73vJCOzN2SxlZ5gZthXvWKEXG3rI/g==
+  dependencies:
+    nanoid "^4.0.2"
+
 "@niloc/socketio-server@0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.0.6.tgz#76c4060a290136cf512d1bac22e2da5f75008df1"

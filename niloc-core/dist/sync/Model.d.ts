@@ -33,7 +33,7 @@ export declare class Model {
     private _context;
     private _emitter;
     private _objectsEmitter;
-    private _templates;
+    private _typesHandler;
     private _objects;
     private _handle;
     private _changeQueue;
@@ -41,7 +41,6 @@ export declare class Model {
     private _writer;
     private _plugins;
     constructor(opts: ModelOpts);
-    sendObject(objectId: string): void;
     get<T extends SyncObject>(id: string): T | null;
     getAll(): SyncObject[];
     private _create;
