@@ -1,7 +1,23 @@
+import type { Emitter } from "@niloc/utils"
+import { Emitter as EmitterImpl  } from "@niloc/utils"
+
+type Events = {
+    needsSend: void
+}
+
 export class ChangeQueue {
 
     private _changes = new Map<string, number[]>()
     private _syncs = new Set<string>()
+    private _emitter = new EmitterImpl<Events>
+
+    emitter(): Emitter<Events> {
+        return this._emitter
+    }
+
+    needsSend(): boolean {
+        return this._syncs.size > 0 || this._changes.size > 0
+    }
 
     change(objectId: string, fieldIndex: number) {
         if (this._syncs.has(objectId))

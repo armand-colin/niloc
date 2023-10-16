@@ -35,4 +35,7 @@ export { RPCPlugin } from "./rpc/RPCPlugin"
 // Re-exports for implementation purposes
 export { Emitter } from "@niloc/utils";
 
+// Plugins
+export { SendLoopPlugin } from "./sync/plugins/SendLoopPlugin"
+
 export { field, rpc } from "./decorators/main"

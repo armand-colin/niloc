@@ -73,6 +73,8 @@ export class Model {
             context: this._context,
             syncTo: (address) => this.syncTo(address),
             get: (id) => this.get(id),
+            changeQueue: this._changeQueue,
+            send: () => this.send(),
         })
     }
 

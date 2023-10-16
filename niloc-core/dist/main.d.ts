@@ -24,4 +24,5 @@ export { RPC } from "./rpc/RPC";
 export { RPCHandler } from "./rpc/RPCHandler";
 export { RPCPlugin } from "./rpc/RPCPlugin";
 export { Emitter } from "@niloc/utils";
+export { SendLoopPlugin } from "./sync/plugins/SendLoopPlugin";
 export { field, rpc } from "./decorators/main";

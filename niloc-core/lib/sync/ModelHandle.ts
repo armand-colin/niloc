@@ -2,6 +2,7 @@ import type { Emitter } from "@niloc/utils";
 import { ModelEvents } from "./Model";
 import { SyncObject } from "./SyncObject";
 import { Address, Context } from "../main";
+import { ChangeQueue } from "./ChangeQueue";
 
 export interface ModelHandle {
 
@@ -10,6 +11,8 @@ export interface ModelHandle {
     get<T extends SyncObject>(id: string): T | null
     syncTo(address: Address): void
     requestObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): ModelHandle.ObjectRequest
+    changeQueue(): ChangeQueue
+    send(): void
 
 }
 
@@ -18,7 +21,9 @@ interface ModelHandleOpts {
     context: Context,
     get<T extends SyncObject>(id: string): T | null,
     syncTo(address: Address): void,
-    objectsEmitter: Emitter<{ [key: string]: SyncObject | null }>
+    objectsEmitter: Emitter<{ [key: string]: SyncObject | null }>,
+    changeQueue: ChangeQueue,
+    send(): void
 }
 
 export namespace ModelHandle {
@@ -50,7 +55,11 @@ export namespace ModelHandle {
                 }
 
                 return request
-            }
+            },
+            changeQueue() {
+                return options.changeQueue
+            },
+            send: options.send,
         }
 
         return handle
