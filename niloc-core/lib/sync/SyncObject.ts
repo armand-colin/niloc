@@ -1,10 +1,10 @@
-import { AnyField } from "../main";
 import { StringWriter } from "../tools/StringWriter";
 import { ModelHandle } from "./ModelHandle";
 import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
+import { BooleanField } from "./field/customs/BooleanField";
 
 export class SyncObject {
 
@@ -41,13 +41,13 @@ export class SyncObject {
     private _fields: Field[] | null = null
     private _changeRequester!: ChangeRequester
     
-    private _deleted = new AnyField(false)
+    readonly deleted = new BooleanField(false)
 
     constructor(id: string, type: string) {
         this._id = id
         this._type = type
 
-        this._deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
+        this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
     }
 
     id(): string { return this._id }
@@ -78,25 +78,22 @@ export class SyncObject {
         return Field.register(this.fields(), callback)
     }
 
-    deleted() {
-        return this._deleted.get()
-    }
 
     delete() {
-        if (this.deleted())
+        if (this.deleted.get())
             return
-        
-        this._deleted.set(true)
+
+        this.deleted.set(true)
         this._changeRequester.send()
         this._changeRequester.delete()
     }
 
     private _onDeletedChanged = () => {
-        const deleted = this._deleted.get()
+        const deleted = this.deleted.get()
         
         if (deleted) {
             this._changeRequester.delete()
-            this._deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
+            this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
         }
     }
 
