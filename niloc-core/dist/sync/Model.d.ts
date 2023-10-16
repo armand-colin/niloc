@@ -7,6 +7,7 @@ import type { Emitter } from "@niloc/utils";
 import { Address } from "../core/Address";
 export interface ModelEvents {
     created: SyncObject;
+    deleted: string;
 }
 export interface Model {
     emitter(): Emitter<ModelEvents>;
@@ -51,6 +52,7 @@ export declare class Model {
     private _collectSyncsForObjects;
     private _collectChanges;
     private _collectChangesForObjects;
+    private _delete;
     private _onMessage;
     private _onSync;
     private _onChange;

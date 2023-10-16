@@ -35,3 +35,5 @@ export { RPCPlugin } from "./rpc/RPCPlugin"
 
 // Re-exports for implementation purposes
 export { Emitter } from "@niloc/utils";
+
+export * from "./decorators/main"

@@ -4,6 +4,7 @@ import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
+import { BooleanField } from "./field/customs/BooleanField";
 export declare class SyncObject {
     static __setChangeRequester(object: SyncObject, requester: ChangeRequester): void;
     static __setModelHandle(object: SyncObject, handle: ModelHandle): void;
@@ -13,6 +14,7 @@ export declare class SyncObject {
     private _type;
     private _fields;
     private _changeRequester;
+    readonly deleted: BooleanField;
     constructor(id: string, type: string);
     id(): string;
     type(): string;
@@ -21,5 +23,7 @@ export declare class SyncObject {
     write(writer: Writer): void;
     send(): void;
     register(callback: () => void): () => void;
+    delete(): void;
+    private _onDeletedChanged;
     private _initFields;
 }

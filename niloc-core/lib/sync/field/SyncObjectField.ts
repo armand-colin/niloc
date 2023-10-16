@@ -67,6 +67,9 @@ export class SyncObjectField<T extends SyncObject> extends Field {
             },
             send: () => {
                 requester.send()
+            },
+            delete: () => {
+                console.error('SyncObjectField: delete is not supported, as it cannot be null for its parent object. This is an undefined behaviour.')
             }
         })
     }

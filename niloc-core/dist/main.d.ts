@@ -25,3 +25,4 @@ export { RPC } from "./rpc/RPC";
 export { RPCHandler } from "./rpc/RPCHandler";
 export { RPCPlugin } from "./rpc/RPCPlugin";
 export { Emitter } from "@niloc/utils";
+export * from "./decorators/main";
