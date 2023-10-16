@@ -4,6 +4,7 @@ import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
+import { BooleanField } from "./field/customs/BooleanField";
 
 export class SyncObject {
 
@@ -39,10 +40,14 @@ export class SyncObject {
     private _type: string
     private _fields: Field[] | null = null
     private _changeRequester!: ChangeRequester
+    
+    readonly deleted = new BooleanField(false)
 
     constructor(id: string, type: string) {
         this._id = id
         this._type = type
+
+        this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
     }
 
     id(): string { return this._id }
@@ -71,6 +76,25 @@ export class SyncObject {
 
     register(callback: () => void): () => void {
         return Field.register(this.fields(), callback)
+    }
+
+
+    delete() {
+        if (this.deleted.get())
+            return
+
+        this.deleted.set(true)
+        this._changeRequester.send()
+        this._changeRequester.delete()
+    }
+
+    private _onDeletedChanged = () => {
+        const deleted = this.deleted.get()
+        
+        if (deleted) {
+            this._changeRequester.delete()
+            this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
+        }
     }
 
     private _initFields(): Field[] {
