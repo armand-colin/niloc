@@ -78,7 +78,6 @@ export class SyncObject {
         return Field.register(this.fields(), callback)
     }
 
-
     delete() {
         if (this.deleted.get())
             return

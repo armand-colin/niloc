@@ -12,30 +12,30 @@ interface FieldEvents {
 
 export abstract class Field {
 
-    public static setIndex(field: Field, index: number) {
+    static setIndex(field: Field, index: number) {
         field._index = index
     }
 
-    public static setChangeRequester(field: Field, requester: ChangeRequester) {
+    static setChangeRequester(field: Field, requester: ChangeRequester) {
         field._changeRequester = requester
         field.onChangeRequester(requester)
     }
 
-    public static setModelHandle(field: Field, handle: ModelHandle) {
+    static setModelHandle(field: Field, handle: ModelHandle) {
         field.onModelHandle(handle)
     }
 
-    public static toString(field: Field) {
+    static toString(field: Field) {
         const writer = new StringWriter()
         this.write(field, writer)
         return writer.toString()
     }
 
-    public static write(field: Field, writer: StringWriter) {
+    static write(field: Field, writer: StringWriter) {
         field.toString(writer)
     }
 
-    public static register(fields: Iterable<Field>, callback: () => void): () => void {
+    static register(fields: Iterable<Field>, callback: () => void): () => void {
         const _fields = [...fields]
 
         for (const field of _fields)

@@ -49,7 +49,7 @@ export class Model {
     private _emitter = new EmitterImpl<ModelEvents>()
     private _objectsEmitter = new EmitterImpl<{ [key: string]: SyncObject | null }>()
 
-    private _templates = new TypesHandler()
+    private _typesHandler = new TypesHandler()
     private _objects = new Map<string, SyncObject>()
 
     private _handle: ModelHandle
@@ -86,7 +86,7 @@ export class Model {
     }
 
     register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string) {
-        this._templates.register(type, typeId)
+        this._typesHandler.register(type, typeId)
     }
 
     instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T {
@@ -98,22 +98,17 @@ export class Model {
         return object
     }
 
-    send() {
-        const syncs = this._collectSyncs()
-        const changes = this._collectChanges()
+    send(objectId?: string) {
+        let syncs: any[]
+        let changes: any[]
 
-        if (syncs.length > 0)
-            this._channel.post(Address.broadcast(), { type: "sync", changes: syncs })
-
-        if (changes.length > 0)
-            this._channel.post(Address.broadcast(), { type: "change", changes: changes })
-    }
-
-    sendObject(objectId: string) {
-        const syncs = this._collectSyncsForObjects([objectId])
-
-        const changeFields = this._changeQueue.changeForObject(objectId)
-        const changes = changeFields ? this._collectChangesForObjects([{ objectId, fields: changeFields }]) : []
+        if (objectId !== undefined) {
+            syncs = this._collectSyncsForObjects([objectId])
+            changes = this._collectChangesForObjects([{ objectId, fields: this._changeQueue.changeForObject(objectId) ?? [] }])
+        } else {
+            syncs = this._collectSyncs()
+            changes = this._collectChanges()
+        }
 
         if (syncs.length > 0)
             this._channel.post(Address.broadcast(), { type: "sync", changes: syncs })
@@ -154,7 +149,7 @@ export class Model {
     private _makeChangeRequester(id: string): ChangeRequester {
         return {
             change: (index) => this._onChangeRequest(id, index),
-            send: () => this.sendObject(id),
+            send: () => this.send(id),
             delete: () => this._delete(id),
         }
     }
@@ -179,7 +174,7 @@ export class Model {
             if (!object)
                 continue
 
-            const typeId = this._templates.getTypeId(object)
+            const typeId = this._typesHandler.getTypeId(object)
             if (typeId === null) 
                 continue
 
@@ -270,7 +265,7 @@ export class Model {
                 continue
             }
 
-            const type = this._templates.getType(typeId)
+            const type = this._typesHandler.getType(typeId)
             if (!type) {
                 console.error('Could not create object with type', typeId)
                 return
