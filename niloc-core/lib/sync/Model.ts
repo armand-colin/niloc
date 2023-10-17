@@ -9,8 +9,7 @@ import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
 import { Context } from "../core/Context"
 import { Authority } from "./Authority"
-import type { Emitter } from "@niloc/utils"
-import { Emitter as EmitterImpl } from "@niloc/utils"
+import { Emitter, IEmitter } from "@niloc/utils"
 import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 import { TypesHandler } from "./TypesHandler"
@@ -23,7 +22,7 @@ export interface ModelEvents {
 
 export interface Model {
 
-    emitter(): Emitter<ModelEvents>
+    emitter(): IEmitter<ModelEvents>
     register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
     plugin(plugin: Plugin): void
     instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
@@ -46,8 +45,8 @@ export class Model {
     private _channel: Channel<ModelData>
     private _context: Context
 
-    private _emitter = new EmitterImpl<ModelEvents>()
-    private _objectsEmitter = new EmitterImpl<{ [key: string]: SyncObject | null }>()
+    private _emitter = new Emitter<ModelEvents>()
+    private _objectsEmitter = new Emitter<{ [key: string]: SyncObject | null }>()
 
     private _typesHandler = new TypesHandler()
     private _objects = new Map<string, SyncObject>()
@@ -78,7 +77,7 @@ export class Model {
         })
     }
 
-    emitter() { return this._emitter }
+    emitter(): IEmitter<ModelEvents> { return this._emitter }
 
     plugin(plugin: Plugin) {
         this._plugins.push(plugin)

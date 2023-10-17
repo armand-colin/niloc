@@ -23,7 +23,7 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
-    "@niloc/core": "0.1.13",
+    "@niloc/core": "0.2.0",
     "@niloc/utils": "^0.0.1"
   },
   "directories": {

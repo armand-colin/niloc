@@ -1,4 +1,4 @@
-import type { Emitter } from "@niloc/utils";
+import type { IEmitter } from "@niloc/utils";
 import { Message } from "./Message";
 import { Peer } from "./Peer";
 export interface NetworkEvents {
@@ -16,5 +16,5 @@ export interface Network {
     /**
      *
      */
-    emitter(): Emitter<NetworkEvents>;
+    emitter(): IEmitter<NetworkEvents>;
 }

@@ -1,7 +1,7 @@
 import { Channel } from "../../channel/Channel";
 import { Context } from "../../core/Context";
 import { SyncObject } from "../SyncObject";
-import { Emitter } from "@niloc/utils";
+import { IEmitter } from "@niloc/utils";
 import { ConnectionList } from "./ConnectionList";
 import { SyncObjectType } from "../SyncObjectType";
 export type PresenceEvents<T extends SyncObject> = {
@@ -25,7 +25,7 @@ export declare class Presence<T extends SyncObject> {
     user(): T;
     users(): T[];
     others(): T[];
-    emitter(): Emitter<PresenceEvents<T>>;
+    emitter(): IEmitter<PresenceEvents<T>>;
     send(): void;
     register(callback: () => void): () => void;
     private _onUserCreated;

@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@niloc/core": "0.2.0",
+    "@niloc/socketio-client": "^0.0.5",
+    "@niloc/utils": "^0.0.2",
+    "socket.io-client": "^4.7.2",
     "solid-js": "^1.7.8"
   },
   "devDependencies": {

@@ -1,5 +1,4 @@
-import type { Emitter } from "@niloc/utils"
-import { Emitter as EmitterImpl  } from "@niloc/utils"
+import { Emitter, IEmitter } from "@niloc/utils"
 
 type Events = {
     needsSend: void
@@ -9,9 +8,9 @@ export class ChangeQueue {
 
     private _changes = new Map<string, number[]>()
     private _syncs = new Set<string>()
-    private _emitter = new EmitterImpl<Events>
+    private _emitter = new Emitter<Events>()
 
-    emitter(): Emitter<Events> {
+    emitter(): IEmitter<Events> {
         return this._emitter
     }
 

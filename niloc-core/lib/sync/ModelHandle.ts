@@ -1,4 +1,4 @@
-import type { Emitter } from "@niloc/utils";
+import { IEmitter } from "@niloc/utils";
 import { ModelEvents } from "./Model";
 import { SyncObject } from "./SyncObject";
 import { Address, Context } from "../main";
@@ -6,7 +6,7 @@ import { ChangeQueue } from "./ChangeQueue";
 
 export interface ModelHandle {
 
-    emitter(): Emitter<ModelEvents>
+    emitter(): IEmitter<ModelEvents>
     context(): Context
     get<T extends SyncObject>(id: string): T | null
     syncTo(address: Address): void
@@ -17,11 +17,11 @@ export interface ModelHandle {
 }
 
 interface ModelHandleOpts {
-    emitter: Emitter<ModelEvents>,
+    emitter: IEmitter<ModelEvents>,
     context: Context,
     get<T extends SyncObject>(id: string): T | null,
     syncTo(address: Address): void,
-    objectsEmitter: Emitter<{ [key: string]: SyncObject | null }>,
+    objectsEmitter: IEmitter<{ [key: string]: SyncObject | null }>,
     changeQueue: ChangeQueue,
     send(): void
 }

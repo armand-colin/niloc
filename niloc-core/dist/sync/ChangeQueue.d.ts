@@ -1,4 +1,4 @@
-import type { Emitter } from "@niloc/utils";
+import { IEmitter } from "@niloc/utils";
 type Events = {
     needsSend: void;
 };
@@ -6,7 +6,7 @@ export declare class ChangeQueue {
     private _changes;
     private _syncs;
     private _emitter;
-    emitter(): Emitter<Events>;
+    emitter(): IEmitter<Events>;
     needsSend(): boolean;
     change(objectId: string, fieldIndex: number): void;
     sync(objectId: string): void;

@@ -1,5 +1,4 @@
-import type { Emitter } from "@niloc/utils"
-import { Emitter as EmitterImpl } from "@niloc/utils"
+import { Emitter, IEmitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
 import { ModelHandle } from "../ModelHandle"
 import { Reader } from "../Reader"
@@ -49,10 +48,10 @@ export abstract class Field {
 
     private _index: number = -1
     private _changeRequester: ChangeRequester | null = null
-    private _emitter = new EmitterImpl<FieldEvents>()
+    private _emitter = new Emitter<FieldEvents>()
 
     index() { return this._index }
-    emitter(): Emitter<FieldEvents> { return this._emitter }
+    emitter(): IEmitter<FieldEvents> { return this._emitter }
 
     abstract read(reader: Reader): void
     abstract write(writer: Writer): void

@@ -4,7 +4,7 @@ type VoidKeys<T> = {
     [K in keyof T]: T[K] extends void ? K : never
 }[keyof T]
 
-export interface Emitter<Events> {
+export interface IEmitter<Events> {
 
     once<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
     off<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
@@ -16,7 +16,7 @@ export interface Emitter<Events> {
 
 }
 
-export class Emitter<Events> implements Emitter<Events> {
+export class Emitter<Events> implements IEmitter<Events> {
 
     private _listeners: Record<string, Set<(data: any) => void>> = {}
     private _onceListeners: Record<string, Set<(data: any) => void>> = {}

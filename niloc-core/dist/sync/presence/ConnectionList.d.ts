@@ -1,5 +1,5 @@
 import { Channel } from "../../channel/Channel";
-import { Emitter } from "@niloc/utils";
+import { IEmitter } from "@niloc/utils";
 export type ConnectionListEvents = {
     connected: string;
     disconnected: string;
@@ -13,7 +13,7 @@ export declare class ConnectionList {
     private _users;
     private _emitter;
     private constructor();
-    emitter(): Emitter<ConnectionListEvents>;
+    emitter(): IEmitter<ConnectionListEvents>;
     users(): IterableIterator<string>;
     isConnected(userId: string): boolean;
     connected(userId: string): void;

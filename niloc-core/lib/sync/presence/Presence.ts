@@ -2,7 +2,7 @@ import { Channel } from "../../channel/Channel";
 import { Context } from "../../core/Context";
 import { Model } from "../Model";
 import { SyncObject } from "../SyncObject";
-import { Emitter } from "@niloc/utils";
+import { Emitter, IEmitter } from "@niloc/utils";
 import { ConnectionList } from "./ConnectionList";
 import { ConnectionPlugin } from "./ConnectionPlugin";
 import { SyncObjectType } from "../SyncObjectType";
@@ -65,7 +65,7 @@ export class Presence<T extends SyncObject> {
         return [...this._others]
     }
 
-    emitter(): Emitter<PresenceEvents<T>> {
+    emitter(): IEmitter<PresenceEvents<T>> {
         return this._emitter
     }
 

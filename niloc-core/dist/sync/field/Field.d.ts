@@ -1,4 +1,4 @@
-import type { Emitter } from "@niloc/utils";
+import { IEmitter } from "@niloc/utils";
 import { StringWriter } from "../../tools/StringWriter";
 import { ModelHandle } from "../ModelHandle";
 import { Reader } from "../Reader";
@@ -18,7 +18,7 @@ export declare abstract class Field {
     private _changeRequester;
     private _emitter;
     index(): number;
-    emitter(): Emitter<FieldEvents>;
+    emitter(): IEmitter<FieldEvents>;
     abstract read(reader: Reader): void;
     abstract write(writer: Writer): void;
     readChange(reader: Reader): void;

@@ -1,6 +1,6 @@
 import { Address } from "../../core/Address"
 import { Channel  } from "../../channel/Channel"
-import { Emitter } from "@niloc/utils"
+import { Emitter, IEmitter } from "@niloc/utils"
 import { Message } from "../../core/Message"
 
 type ConnectionListMessage = {
@@ -43,7 +43,7 @@ export class ConnectionList {
         this._channel.addListener(this._onMessage)
     }
 
-    emitter(): Emitter<ConnectionListEvents> {
+    emitter(): IEmitter<ConnectionListEvents> {
         return this._emitter
     }
 
