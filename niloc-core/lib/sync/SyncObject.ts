@@ -97,7 +97,7 @@ export class SyncObject {
     }
 
     private _initFields(): Field[] {
-        const fields = []
+        const fields: Field[] = []
         for (const key in this) {
             const field = this[key]
             if (field instanceof Field) {
