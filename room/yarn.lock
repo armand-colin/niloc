@@ -9,11 +9,12 @@
   dependencies:
     nanoid "^4.0.2"
 
-"@niloc/core@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.0.tgz#5287c11b590260c5a42327a0dbe7198db853b1b2"
-  integrity sha512-ezwHYjLMBUHxIx+vp1J36I7PC4hKF9GggAgtjULwwzFIJBFVZ66qaUfJ73vJCOzN2SxlZ5gZthXvWKEXG3rI/g==
+"@niloc/core@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.2.tgz#275e6abed3c35dc116b632d7ea126aa8febb9fde"
+  integrity sha512-DRb67KRnesdlkPASEWCSJS3KDybo1GPEvYtEFpwA4MbTZ97lQYwCCESH6Pzq0vbwOcMQ7u0SdpSnu/reCaiBkw==
   dependencies:
+    "@niloc/utils" "^0.0.4"
     nanoid "^4.0.2"
 
 "@niloc/socketio-server@0.0.6":
@@ -28,6 +29,13 @@
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.2.tgz#8b34bb11985f5148664bb32d0317d957bc317715"
   integrity sha512-OJhm1XVQELSod5Eo8cXAO2QxnnqhQGq44bajEt3FRlC8Vpv13wh2sGuGNQ5RVnkodp1IL4b2poxmmB4TvLostw==
+  dependencies:
+    nanoid "^3.3.6"
+
+"@niloc/utils@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.4.tgz#72f3adb7ff564c7486113424a92b9877dc3058c4"
+  integrity sha512-VKr4VjLktWfxGVhju3vnzP7kFI1PYvPRwJlw9Dq1Br64qideb4UFZlWSxd866EOQeY5+x2XnvmKEXhj6eRWuBw==
   dependencies:
     nanoid "^3.3.6"
 

@@ -69,9 +69,14 @@ export class Presence<T extends SyncObject> {
         return this._emitter
     }
 
+    model() {
+        return this._model
+    }
+
     /*
      * Has to be called whenever the user has changed
-    */
+     * Shortcut for `model.send()`
+     */
     send() {
         this._model.send()
     }

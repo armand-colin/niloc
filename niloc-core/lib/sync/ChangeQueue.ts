@@ -22,6 +22,7 @@ export class ChangeQueue {
         if (this._syncs.has(objectId))
             return
 
+        let needsSend = this._changes.size === 0 && this._syncs.size === 0
         let changes = this._changes.get(objectId)
 
         if (!changes) {
@@ -33,11 +34,18 @@ export class ChangeQueue {
             return
 
         changes.push(fieldIndex)
+
+        if (needsSend)
+            this._emitter.emit('needsSend')
     }
 
     sync(objectId: string) {
+        const needsSend = this._syncs.size === 0 && this._changes.size === 0
         this._syncs.add(objectId)
         this._changes.delete(objectId)
+
+        if (needsSend)
+            this._emitter.emit('needsSend')
     }
 
     *changes(): Iterable<{ objectId: string, fields: number[] }> {

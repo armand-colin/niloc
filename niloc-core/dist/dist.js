@@ -283,7 +283,7 @@ class I {
     return this.nextLine(), this._string;
   }
 }
-class u {
+class d {
   constructor() {
     this._index = -1, this._changeRequester = null, this._emitter = new f();
   }
@@ -338,7 +338,7 @@ class u {
     e.writeLine("???");
   }
 }
-class L extends u {
+class L extends d {
   constructor(e) {
     super(), this.value = e;
   }
@@ -385,11 +385,11 @@ class p {
   static __setChangeRequester(e, t) {
     e._changeRequester = t;
     for (const s of e.fields())
-      u.setChangeRequester(s, t);
+      d.setChangeRequester(s, t);
   }
   static __setModelHandle(e, t) {
     for (const s of e.fields())
-      u.setModelHandle(s, t);
+      d.setModelHandle(s, t);
   }
   static toString(e) {
     const t = new I();
@@ -398,7 +398,7 @@ class p {
   static write(e, t) {
     t.writeLine(`${e.constructor.name}: ${e.id()} {`), t.startIndent();
     for (const s of e.fields())
-      u.write(s, t);
+      d.write(s, t);
     t.endIndent(), t.writeLine("}");
   }
   id() {
@@ -419,7 +419,7 @@ class p {
     this._changeRequester.send();
   }
   register(e) {
-    return u.register(this.fields(), e);
+    return d.register(this.fields(), e);
   }
   delete() {
     this.deleted.get() || (this.deleted.set(!0), this._changeRequester.send(), this._changeRequester.delete());
@@ -428,7 +428,7 @@ class p {
     const e = [];
     for (const t in this) {
       const s = this[t];
-      s instanceof u && (u.setIndex(s, e.length), e.push(s));
+      s instanceof d && (d.setIndex(s, e.length), e.push(s));
     }
     return e;
   }
@@ -474,11 +474,12 @@ class N {
   change(e, t) {
     if (this._syncs.has(e))
       return;
-    let s = this._changes.get(e);
-    s || (s = [], this._changes.set(e, s)), !s.includes(t) && s.push(t);
+    let s = this._changes.size === 0 && this._syncs.size === 0, n = this._changes.get(e);
+    n || (n = [], this._changes.set(e, n)), !n.includes(t) && (n.push(t), s && this._emitter.emit("needsSend"));
   }
   sync(e) {
-    this._syncs.add(e), this._changes.delete(e);
+    const t = this._syncs.size === 0 && this._changes.size === 0;
+    this._syncs.add(e), this._changes.delete(e), t && this._emitter.emit("needsSend");
   }
   *changes() {
     const e = { objectId: "", fields: [] };
@@ -587,7 +588,7 @@ class Q {
     return this._templates.get(e) ?? null;
   }
 }
-class E {
+class z {
   constructor(e) {
     this._emitter = new f(), this._objectsEmitter = new f(), this._typesHandler = new Q(), this._objects = /* @__PURE__ */ new Map(), this._changeQueue = new N(), this._reader = new P(), this._writer = new $(), this._plugins = [], this._onMessage = (t) => {
       switch (t.data.type) {
@@ -729,7 +730,7 @@ class E {
     }
   }
 }
-class z extends L {
+class E extends L {
   readValue(e) {
     this.value = e.readJSON();
   }
@@ -831,7 +832,7 @@ class D {
     this._changes = [];
   }
 }
-class ce extends u {
+class ce extends d {
   constructor(e) {
     super(), this._changes = new D(), this._value = e;
   }
@@ -872,7 +873,7 @@ class ce extends u {
     this._changes.reset();
   }
 }
-class V extends u {
+class V extends d {
   constructor(e, t) {
     super(), this._changes = [], this._object = new e(t ?? "sub");
   }
@@ -924,7 +925,7 @@ class V extends u {
     p.write(this._object, e);
   }
 }
-class B extends u {
+class B extends d {
   constructor(e) {
     super(), this._object = null, this._modelHandle = null, this._objectRequest = null, this._objectId = e;
   }
@@ -955,7 +956,7 @@ class B extends u {
     e.write("ref "), this._object ? p.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
   }
 }
-class he extends u {
+class he extends d {
   constructor() {
     super(...arguments), this._objects = /* @__PURE__ */ new Map(), this._modelHandle = null;
   }
@@ -1025,7 +1026,7 @@ class oe {
         return;
       const s = this._others.findIndex((n) => n.id() === t);
       s < 0 || (this._others.splice(s, 1), this._emitter.emit("changed", this.users()), this._emitter.emit("disconnected", t));
-    }, this._connectionList = e.connectionList, this._model = new E({
+    }, this._connectionList = e.connectionList, this._model = new z({
       channel: e.channel,
       context: e.context
     }), this._model.register(e.type, "user"), this._model.plugin(new U(e.connectionList)), this._model.plugin(new W()), this._user = this._model.instantiate(e.type, e.context.userId), e.connectionList.emitter().on("connected", this._onConnected), e.connectionList.emitter().on("disconnected", this._onDisconnected), this._model.emitter().on("created", (t) => this._onUserCreated(t));
@@ -1044,9 +1045,13 @@ class oe {
   emitter() {
     return this._emitter;
   }
+  model() {
+    return this._model;
+  }
   /*
    * Has to be called whenever the user has changed
-  */
+   * Shortcut for `model.send()`
+   */
   send() {
     this._model.send();
   }
@@ -1130,7 +1135,7 @@ class j {
     this._emitter.emit("sync");
   }
 }
-class d {
+class u {
   constructor(e, t) {
     this._callHandler = null, this._callback = t, this.address = e;
   }
@@ -1138,19 +1143,19 @@ class d {
     e._callHandler = t;
   }
   static host(e) {
-    return new d(o.host(), e);
+    return new u(o.host(), e);
   }
   static target(e, t) {
-    return new d(o.to(e), t);
+    return new u(o.to(e), t);
   }
   static broadcast(e) {
-    return new d(o.broadcast(), e);
+    return new u(o.broadcast(), e);
   }
   static all(e) {
-    return new d(o.all(), e);
+    return new u(o.all(), e);
   }
   static dynamic(e, t) {
-    return new d(o.dynamic(e), t);
+    return new u(o.dynamic(e), t);
   }
   // Called by the RPC Handler to execute the real code
   static call(e, t) {
@@ -1185,11 +1190,11 @@ class A {
       console.error("Trying to register rpc twice:", t);
       return;
     }
-    this._rpcs[t] = e, d.setCallHandler(e, this._makeCallHandler(t));
+    this._rpcs[t] = e, u.setCallHandler(e, this._makeCallHandler(t));
   }
   infuse(e, t) {
     for (const s in e)
-      e[s] instanceof d && this.register(e[s], `${t}.${s}`);
+      e[s] instanceof u && this.register(e[s], `${t}.${s}`);
   }
   _makeCallHandler(e) {
     return {
@@ -1205,7 +1210,7 @@ class A {
       console.error(`Received unhandled RPC request '${s}', originated from ${t}`);
       return;
     }
-    d.call(i, n);
+    u.call(i, n);
   }
 }
 class ae {
@@ -1216,7 +1221,7 @@ class ae {
     let t = 0;
     for (const s in e) {
       const n = e[s];
-      n instanceof d && this._handler.register(n, `${e.id()}.${t++}`);
+      n instanceof u && this._handler.register(n, `${e.id()}.${t++}`);
     }
   }
 }
@@ -1253,7 +1258,7 @@ function X(r) {
     }), Object.defineProperty(e, s, {
       get() {
         let i = this[n];
-        return i || (i = new z(r), this[n] = i), i;
+        return i || (i = new E(r), this[n] = i), i;
       },
       enumerable: !0
     });
@@ -1294,7 +1299,7 @@ function Z(r) {
     });
   };
 }
-const ue = {
+const de = {
   any: X,
   syncObject: Y,
   syncObjectRef: Z
@@ -1307,7 +1312,7 @@ function w(r) {
     }, Object.defineProperty(e, n, {
       get() {
         let h = this[i];
-        return h || (h = new d(r(this), c.bind(this)), h.call = h.call.bind(h), this[i] = h), h;
+        return h || (h = new u(r(this), c.bind(this)), h.call = h.call.bind(h), this[i] = h), h;
       },
       enumerable: !0
     });
@@ -1328,7 +1333,7 @@ function se() {
 function ne(r) {
   return w(() => o.dynamic(r));
 }
-const de = {
+const ue = {
   host: K,
   all: ee,
   broadcast: te,
@@ -1337,7 +1342,7 @@ const de = {
 };
 export {
   o as Address,
-  z as AnyField,
+  E as AnyField,
   ce as ArrayField,
   g as Authority,
   O as Channel,
@@ -1345,10 +1350,10 @@ export {
   U as ConnectionPlugin,
   q as Context,
   f as Emitter,
-  u as Field,
-  E as Model,
+  d as Field,
+  z as Model,
   oe as Presence,
-  d as RPC,
+  u as RPC,
   A as RPCHandler,
   ae as RPCPlugin,
   re as Router,
@@ -1357,6 +1362,6 @@ export {
   V as SyncObjectField,
   B as SyncObjectRefField,
   he as SyncObjectRefSetField,
-  ue as field,
-  de as rpc
+  de as field,
+  ue as rpc
 };
