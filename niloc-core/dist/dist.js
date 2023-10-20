@@ -104,7 +104,7 @@ class q {
     this.host = t, this.userId = e;
   }
 }
-class re {
+class ie {
   constructor(e) {
     this._channels = {}, this._id = e.id, this._relay = e.relay ?? !1, this._address = e.host ? o.host() : o.to(e.id), this._context = new q(e.id, e.host ?? !1), this._self = {
       id: () => this._id,
@@ -832,7 +832,7 @@ class D {
     this._changes = [];
   }
 }
-class ce extends d {
+class re extends d {
   constructor(e) {
     super(), this._changes = new D(), this._value = e;
   }
@@ -956,7 +956,7 @@ class B extends d {
     e.write("ref "), this._object ? p.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
   }
 }
-class he extends d {
+class ce extends d {
   constructor() {
     super(...arguments), this._objects = /* @__PURE__ */ new Map(), this._modelHandle = null;
   }
@@ -1012,7 +1012,7 @@ class W {
     e.authority = g.Owner;
   }
 }
-class oe {
+class he {
   constructor(e) {
     this._emitter = new f(), this._others = [], this._onUserCreated = (t) => {
       this._connectionList.isConnected(t.id()) && !this._others.includes(t) && (this._others.push(t), this._emitter.emit("changed", this.users()), this._emitter.emit("connected", t));
@@ -1178,7 +1178,7 @@ var S;
   }
   r.make = e;
 })(S || (S = {}));
-class A {
+class oe {
   constructor(e, t) {
     this._rpcs = {}, this._onMessage = (s) => {
       const n = s.data, i = s.originId;
@@ -1186,7 +1186,7 @@ class A {
     }, this._self = e, this._channel = t, this._channel.addListener(this._onMessage);
   }
   register(e, t) {
-    if (this._rpcs[t]) {
+    if (console.log(this._self.id(), "registering rpc", t), this._rpcs[t]) {
       console.error("Trying to register rpc twice:", t);
       return;
     }
@@ -1214,8 +1214,8 @@ class A {
   }
 }
 class ae {
-  constructor(e, t) {
-    this._handler = new A(e, t);
+  constructor(e) {
+    this._handler = e;
   }
   beforeCreate(e) {
     let t = 0;
@@ -1225,7 +1225,7 @@ class ae {
     }
   }
 }
-const G = {
+const A = {
   frequency: 100,
   tolerance: 3
 };
@@ -1239,13 +1239,13 @@ class le {
         return;
       }
       this._modelHandle.send();
-    }, this._options = { ...G, ...e };
+    }, this._options = { ...A, ...e };
   }
   init(e) {
     this._modelHandle = e, e.changeQueue().emitter().on("needsSend", this._needsSend), e.changeQueue().needsSend() && this._needsSend();
   }
 }
-function X(r) {
+function G(r) {
   return function(e, t) {
     const s = "$" + t, n = Symbol(t);
     Object.defineProperty(e, t, {
@@ -1264,7 +1264,7 @@ function X(r) {
     });
   };
 }
-function Y(r) {
+function X(r) {
   return function(e, t) {
     const s = "$" + t, n = Symbol(t);
     Object.defineProperty(e, t, {
@@ -1280,7 +1280,7 @@ function Y(r) {
     });
   };
 }
-function Z(r) {
+function Y(r) {
   return function(e, t) {
     const s = "$" + t, n = Symbol(t);
     Object.defineProperty(e, t, {
@@ -1300,9 +1300,9 @@ function Z(r) {
   };
 }
 const de = {
-  any: X,
-  syncObject: Y,
-  syncObjectRef: Z
+  any: G,
+  syncObject: X,
+  syncObjectRef: Y
 };
 function w(r) {
   return function(e, t, s) {
@@ -1318,32 +1318,32 @@ function w(r) {
     });
   };
 }
-function K() {
+function Z() {
   return w(o.host);
 }
-function ee() {
+function K() {
   return w(o.all);
 }
-function te() {
+function ee() {
   return w(o.broadcast);
 }
-function se() {
+function te() {
   return w((r) => o.to(r.id()));
 }
-function ne(r) {
+function se(r) {
   return w(() => o.dynamic(r));
 }
 const ue = {
-  host: K,
-  all: ee,
-  broadcast: te,
-  owner: se,
-  dynamic: ne
+  host: Z,
+  all: K,
+  broadcast: ee,
+  owner: te,
+  dynamic: se
 };
 export {
   o as Address,
   E as AnyField,
-  ce as ArrayField,
+  re as ArrayField,
   g as Authority,
   O as Channel,
   j as ConnectionList,
@@ -1352,16 +1352,16 @@ export {
   f as Emitter,
   d as Field,
   z as Model,
-  oe as Presence,
+  he as Presence,
   u as RPC,
-  A as RPCHandler,
+  oe as RPCHandler,
   ae as RPCPlugin,
-  re as Router,
+  ie as Router,
   le as SendLoopPlugin,
   p as SyncObject,
   V as SyncObjectField,
   B as SyncObjectRefField,
-  he as SyncObjectRefSetField,
+  ce as SyncObjectRefSetField,
   de as field,
   ue as rpc
 };

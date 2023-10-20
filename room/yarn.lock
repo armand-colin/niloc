@@ -9,10 +9,10 @@
   dependencies:
     nanoid "^4.0.2"
 
-"@niloc/core@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.2.tgz#275e6abed3c35dc116b632d7ea126aa8febb9fde"
-  integrity sha512-DRb67KRnesdlkPASEWCSJS3KDybo1GPEvYtEFpwA4MbTZ97lQYwCCESH6Pzq0vbwOcMQ7u0SdpSnu/reCaiBkw==
+"@niloc/core@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.3.tgz#6b6a1d82c4e62b0ceedc78bc9f81a88e5af540c9"
+  integrity sha512-lLw08mly6uN8/fJzgvfa9cmbbr4EkpiFNeefCZcY321eRfVxxNLeRziBtNfS+rkdwucq0w40mYAsj0mguiMGZw==
   dependencies:
     "@niloc/utils" "^0.0.4"
     nanoid "^4.0.2"
