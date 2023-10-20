@@ -1,5 +1,3 @@
-import { Channel } from "../channel/Channel";
-import { Peer } from "../core/Peer";
 import { SyncObject } from "../sync/SyncObject";
 import { Plugin } from "../sync/Plugin";
 import { RPC } from "./RPC";
@@ -9,8 +7,8 @@ export class RPCPlugin implements Plugin {
 
     private _handler: RPCHandler
 
-    constructor(self: Peer, channel: Channel<any>) {
-        this._handler = new RPCHandler(self, channel)
+    constructor(rpcHandler: RPCHandler) {
+        this._handler = rpcHandler
     }
 
     beforeCreate<T extends SyncObject>(object: T): void {
