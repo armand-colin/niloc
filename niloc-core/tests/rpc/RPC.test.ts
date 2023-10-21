@@ -4,7 +4,7 @@ import { RPCHandler } from "../../lib/rpc/RPCHandler"
 import { RPC } from "../../lib/rpc/RPC";
 import { RPCPlugin } from "../../lib/rpc/RPCPlugin";
 import { MockModel } from "../sync/MockModel";
-import { SyncObject } from "../../lib/main";
+import { SyncObject, rpc } from "../../lib/main";
 import { MockPeers } from "../MockPeers";
 
 describe('RPC', () => {
@@ -16,7 +16,7 @@ describe('RPC', () => {
         const handlerB = new RPCHandler(peerB, channelB)
 
         let response: string = ""
-        
+
         function rpc(id: string) {
             return RPC.target("a", (count: number) => {
                 response = id + count
@@ -60,9 +60,12 @@ describe('RPC', () => {
         const [channelA, channelB] = MockModel.channels('a', 'b')
         const [modelA, modelB] = MockModel.models([Avatar])
         const [peerA, peerB] = MockPeers.make(["a", "b"])
+        
+        const rpcHandlerA = new RPCHandler(peerA, channelA)
+        const rpcHandlerB = new RPCHandler(peerB, channelB)
 
-        modelA.plugin(new RPCPlugin(peerA, channelA))
-        modelB.plugin(new RPCPlugin(peerB, channelB))
+        modelA.plugin(new RPCPlugin(rpcHandlerA))
+        modelB.plugin(new RPCPlugin(rpcHandlerB))
 
         const avatarA = modelA.instantiate(Avatar, 'avatarA')
         avatarA.isHost = true

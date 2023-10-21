@@ -1,4 +1,4 @@
-import { Emitter, Model, RPCPlugin, Router, SyncObject, rpc } from "../../lib/main"
+import { Emitter, Model, RPCHandler, RPCPlugin, Router, SyncObject, rpc } from "../../lib/main"
 import { describe, expect, it } from "vitest"
 
 describe("RPC", () => {
@@ -38,7 +38,9 @@ describe("RPC", () => {
             context: router.context()
         })
 
-        model.plugin(new RPCPlugin(router.self(), router.channel(1)))
+        const rpcHandler = new RPCHandler(router.self(), router.channel(1))
+
+        model.plugin(new RPCPlugin(rpcHandler))
         model.register(Test)
 
         const test = model.instantiate(Test, "a")
