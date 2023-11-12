@@ -39,3 +39,6 @@ export { Emitter } from "@niloc/utils";
 export { SendLoopPlugin } from "./sync/plugins/SendLoopPlugin"
 
 export { field, rpc } from "./decorators/main"
+
+export { Framework, FrameworkChannels } from "./core/Framework"
+export type { FrameworkOptions } from "./core/Framework"
