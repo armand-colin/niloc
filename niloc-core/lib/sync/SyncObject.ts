@@ -37,7 +37,7 @@ export class SyncObject {
         writer.writeLine('}')
     }
 
-    private _id: string
+    readonly _id: string
     private _fields: Field[] | null = null
     private _changeRequester!: ChangeRequester
     

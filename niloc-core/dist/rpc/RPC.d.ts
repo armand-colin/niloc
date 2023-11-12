@@ -13,6 +13,9 @@ export declare class RPC<Args extends any[]> implements RPC<Args> {
     static broadcast<Args extends any[]>(callback: Callback<Args>): RPC<Args>;
     static all<Args extends any[]>(callback: Callback<Args>): RPC<Args>;
     static dynamic<Args extends any[]>(getTargetId: () => string, callback: Callback<Args>): RPC<Args>;
+    /**
+     * Called by the RPC Handler to execute the real code
+     */
     static call<Args extends any[]>(rpc: RPC<Args>, args: Args): void;
     private _callback;
     private _callHandler;

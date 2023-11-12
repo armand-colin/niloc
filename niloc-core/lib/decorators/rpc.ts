@@ -54,6 +54,10 @@ export function broadcast<Args extends any[], O, K extends KeyOfType<(...args: A
     return _rpc<Args, O, K>(Address.broadcast)
 }
 
+/**
+ * Creates an RPC that targets the owner of the object - the peer that has the same id as the object.
+ * Useful if you have a `Presence` for example, where every user instance has the id of the user.
+ */
 export function owner<Args extends any[], O extends SyncObject, K extends KeyOfType<(...args: Args) => any, O> & string>() {
     return _rpc<Args, O, K>(object => Address.to(object.id()))
 }

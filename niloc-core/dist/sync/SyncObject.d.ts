@@ -11,7 +11,7 @@ export declare class SyncObject {
     static __setModelHandle(object: SyncObject, handle: ModelHandle): void;
     static toString(object: SyncObject): string;
     static write(object: SyncObject, writer: StringWriter): void;
-    private _id;
+    readonly _id: string;
     private _fields;
     private _changeRequester;
     authority: Authority;

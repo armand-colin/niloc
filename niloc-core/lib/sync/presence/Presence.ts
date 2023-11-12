@@ -39,8 +39,8 @@ export class Presence<T extends SyncObject> {
         })
 
         this._model.register(options.type, "user")
-        this._model.plugin(new ConnectionPlugin(options.connectionList))
-        this._model.plugin(new OwnerAuthorityPlugin())
+        this._model.addPlugin(new ConnectionPlugin(options.connectionList))
+        this._model.addPlugin(new OwnerAuthorityPlugin())
 
         this._user = this._model.instantiate(options.type, options.context.userId)
         

@@ -9,14 +9,6 @@ export interface ModelEvents {
     created: SyncObject;
     deleted: string;
 }
-export interface Model {
-    emitter(): IEmitter<ModelEvents>;
-    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void;
-    plugin(plugin: Plugin): void;
-    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T;
-    send(): void;
-    syncTo(address: Address): void;
-}
 type ModelData = {
     type: "change";
     changes: string[];
@@ -41,6 +33,16 @@ export declare class Model {
     private _writer;
     private _plugins;
     constructor(opts: ModelOpts);
+    emitter(): IEmitter<ModelEvents>;
+    /**
+     * @deprecated Use `addPlugin` instead
+     */
+    plugin(plugin: Plugin): void;
+    addPlugin(plugin: Plugin): this;
+    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void;
+    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T;
+    send(objectId?: string): void;
+    syncTo(address: Address): void;
     get<T extends SyncObject>(id: string): T | null;
     getAll(): SyncObject[];
     private _create;

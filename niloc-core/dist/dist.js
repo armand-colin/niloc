@@ -30,8 +30,8 @@ var o;
     return { type: 4, get: a };
   }
   r.dynamic = l;
-  function _(a, m, b) {
-    return b.address().type === 1 || b.address().type === 0 || m.type === 0 ? !0 : m.type === 1 ? b.id() !== a : m.type === 3 ? b.address().type === 3 : (m.type === 4 ? m.get() : m.id) === b.id();
+  function _(a, m, p) {
+    return p.address().type === 1 || p.address().type === 0 || m.type === 0 ? !0 : m.type === 1 ? p.id() !== a : m.type === 3 ? p.address().type === 3 : (m.type === 4 ? m.get() : m.id) === p.id();
   }
   r.match = _;
   function k(a) {
@@ -376,7 +376,7 @@ class T extends L {
     e.writeBoolean(this.value);
   }
 }
-class p {
+class b {
   constructor(e) {
     this._fields = null, this.authority = g.All, this.deleted = new T(!1), this._onDeletedChanged = () => {
       this.deleted.get() && (this._changeRequester.delete(), this.deleted.emitter().on("changed", this._onDeletedChanged.bind(this)));
@@ -433,7 +433,7 @@ class p {
     return e;
   }
 }
-let J = (r = 21) => crypto.getRandomValues(new Uint8Array(r)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), "");
+let P = (r = 21) => crypto.getRandomValues(new Uint8Array(r)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), "");
 var y;
 ((r) => {
   function e(t) {
@@ -461,7 +461,7 @@ var y;
   }
   r.make = e;
 })(y || (y = {}));
-class N {
+class J {
   constructor() {
     this._changes = /* @__PURE__ */ new Map(), this._syncs = /* @__PURE__ */ new Set(), this._emitter = new f();
   }
@@ -497,7 +497,7 @@ class N {
     return this._changes.delete(e), t ?? null;
   }
 }
-class P {
+class N {
   constructor() {
     this._buffer = [], this._cursor = 0;
   }
@@ -590,7 +590,7 @@ class Q {
 }
 class z {
   constructor(e) {
-    this._emitter = new f(), this._objectsEmitter = new f(), this._typesHandler = new Q(), this._objects = /* @__PURE__ */ new Map(), this._changeQueue = new N(), this._reader = new P(), this._writer = new $(), this._plugins = [], this._onMessage = (t) => {
+    this._emitter = new f(), this._objectsEmitter = new f(), this._typesHandler = new Q(), this._objects = /* @__PURE__ */ new Map(), this._changeQueue = new J(), this._reader = new N(), this._writer = new $(), this._plugins = [], this._onMessage = (t) => {
       switch (t.data.type) {
         case "sync": {
           this._onSync(t.data.changes);
@@ -614,15 +614,21 @@ class z {
   emitter() {
     return this._emitter;
   }
+  /**
+   * @deprecated Use `addPlugin` instead
+   */
   plugin(e) {
+    this.addPlugin(e);
+  }
+  addPlugin(e) {
     var t;
-    this._plugins.push(e), (t = e.init) == null || t.call(e, this._handle);
+    return this._plugins.push(e), (t = e.init) == null || t.call(e, this._handle), this;
   }
   register(e, t) {
     this._typesHandler.register(e, t);
   }
   instantiate(e, t) {
-    const s = t ?? J(), n = this._create(e, s);
+    const s = t ?? P(), n = this._create(e, s);
     return this._changeQueue.sync(s), n;
   }
   send(e) {
@@ -642,7 +648,7 @@ class z {
   _create(e, t) {
     var n;
     const s = new e(t);
-    p.__setChangeRequester(s, this._makeChangeRequester(t)), p.__setModelHandle(s, this._handle), this._objects.set(t, s);
+    b.__setChangeRequester(s, this._makeChangeRequester(t)), b.__setModelHandle(s, this._handle), this._objects.set(t, s);
     for (const i of this._plugins)
       (n = i.beforeCreate) == null || n.call(i, s);
     return this._emitter.emit("created", s), this._objectsEmitter.emit(t, s), s;
@@ -906,10 +912,10 @@ class V extends d {
     this._changes = [];
   }
   onModelHandle(e) {
-    p.__setModelHandle(this._object, e);
+    b.__setModelHandle(this._object, e);
   }
   onChangeRequester(e) {
-    p.__setChangeRequester(this._object, {
+    b.__setChangeRequester(this._object, {
       change: (t) => {
         this._changes.push(t), e.change(this.index()), this.emitter().emit("changed");
       },
@@ -922,7 +928,7 @@ class V extends d {
     });
   }
   toString(e) {
-    p.write(this._object, e);
+    b.write(this._object, e);
   }
 }
 class B extends d {
@@ -953,7 +959,7 @@ class B extends d {
     this._modelHandle = e, this._objectId && this._setObjectId(this._objectId);
   }
   toString(e) {
-    e.write("ref "), this._object ? p.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
+    e.write("ref "), this._object ? b.write(this._object, e) : e.writeLine(`${this._objectId} (null)`);
   }
 }
 class ce extends d {
@@ -1029,7 +1035,7 @@ class he {
     }, this._connectionList = e.connectionList, this._model = new z({
       channel: e.channel,
       context: e.context
-    }), this._model.register(e.type, "user"), this._model.plugin(new U(e.connectionList)), this._model.plugin(new W()), this._user = this._model.instantiate(e.type, e.context.userId), e.connectionList.emitter().on("connected", this._onConnected), e.connectionList.emitter().on("disconnected", this._onDisconnected), this._model.emitter().on("created", (t) => this._onUserCreated(t));
+    }), this._model.register(e.type, "user"), this._model.addPlugin(new U(e.connectionList)), this._model.addPlugin(new W()), this._user = this._model.instantiate(e.type, e.context.userId), e.connectionList.emitter().on("connected", this._onConnected), e.connectionList.emitter().on("disconnected", this._onDisconnected), this._model.emitter().on("created", (t) => this._onUserCreated(t));
     for (const t of this._connectionList.users())
       this._onConnected(t);
   }
@@ -1157,7 +1163,9 @@ class u {
   static dynamic(e, t) {
     return new u(o.dynamic(e), t);
   }
-  // Called by the RPC Handler to execute the real code
+  /**
+   * Called by the RPC Handler to execute the real code
+   */
   static call(e, t) {
     try {
       e._callback(...t);
@@ -1358,7 +1366,7 @@ export {
   ae as RPCPlugin,
   ie as Router,
   le as SendLoopPlugin,
-  p as SyncObject,
+  b as SyncObject,
   V as SyncObjectField,
   B as SyncObjectRefField,
   ce as SyncObjectRefSetField,
