@@ -1,4 +1,4 @@
-import type { Network } from "../core/Network"
+import type { Network } from "./Network"
 import { SyncObjectType } from "../sync/SyncObjectType"
 import { Model } from "../sync/Model"
 import { Presence } from "../sync/presence/Presence"
@@ -6,7 +6,7 @@ import { SyncObject } from "../sync/SyncObject"
 import { ConnectionList } from "../sync/presence/ConnectionList"
 import { RPCHandler } from "../rpc/RPCHandler"
 import { RPCPlugin } from "../rpc/RPCPlugin"
-import { Router } from "../core/Router"
+import { Router } from "./Router"
 
 export type FrameworkOptions<P extends SyncObject> = {
     id: string,
@@ -24,6 +24,9 @@ export enum FrameworkChannels {
     Model = 28,
 }
 
+/**
+ * Utiliy class for innitilizing a networked application
+ */
 export class Framework<P extends SyncObject> {
 
     readonly network: Network
