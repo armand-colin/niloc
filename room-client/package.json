@@ -1,0 +1,44 @@
+{
+    "name": "@niloc/room-client",
+    "private": false,
+    "version": "0.0.3",
+    "type": "module",
+    "files": [
+        "dist",
+        "index.d.ts"
+    ],
+    "main": "./dist/dist.umd.cjs",
+    "module": "./dist/dist.js",
+    "types": "./index.d.ts",
+    "exports": {
+        "types": "./index.d.ts",
+        "import": "./dist/dist.js",
+        "require": "./dist/dist.umd.cjs"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && tsc",
+        "test": "vitest run",
+        "prepare": "yarn build && yarn test"
+    },
+    "devDependencies": {
+        "typedoc": "^0.24.6",
+        "typescript": "^5.0.4",
+        "vite": "^4.0.4",
+        "vitest": "^0.30.1"
+    },
+    "dependencies": {
+        "@niloc/core": "^0.2.7",
+        "@niloc/socketio-client": "^0.0.5",
+        "@niloc/utils": "^0.0.4",
+        "socket.io-client": "^4.7.2"
+    },
+    "description": "",
+    "directories": {
+        "doc": "docs",
+        "lib": "lib",
+        "test": "tests"
+    },
+    "author": "armand-colin",
+    "license": "MIT"
+}
