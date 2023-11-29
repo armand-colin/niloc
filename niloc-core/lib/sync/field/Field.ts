@@ -15,13 +15,13 @@ export abstract class Field {
         field._index = index
     }
 
-    static __setChangeRequester(field: Field, requester: ChangeRequester) {
-        field._changeRequester = requester
-        field.onChangeRequester(requester)
-    }
-
-    static __setModel(field: Field, model: Model) {
-        field.onModel(model)
+    static __init(field: Field, data: {
+        changeRequester: ChangeRequester,
+        model: Model
+    }) {
+        field.changeRequester = data.changeRequester
+        field.model = data.model
+        field.onInit()
     }
 
     static toString(field: Field) {
@@ -47,7 +47,10 @@ export abstract class Field {
     }
 
     private _index: number = -1
-    private _changeRequester: ChangeRequester | null = null
+
+    protected changeRequester!: ChangeRequester
+    protected model!: Model
+
     private _emitter = new Emitter<FieldEvents>()
 
     index() { return this._index }
@@ -61,12 +64,14 @@ export abstract class Field {
     clearChange(): void { }
 
     protected changed(): void {
-        this._changeRequester?.change(this._index)
+        this.changeRequester?.change(this._index)
         this._emitter.emit('changed')
     }
 
-    protected onChangeRequester(_requester: ChangeRequester) { }
-    protected onModel(_model: Model) { }
+    // Method called once field is initialized
+    protected onInit() {
+
+    }
 
     protected toString(writer: StringWriter) { writer.writeLine("???") }
 

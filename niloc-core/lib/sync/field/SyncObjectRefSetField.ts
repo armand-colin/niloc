@@ -1,4 +1,3 @@
-import { Model } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { Writer } from "../Writer";
@@ -7,7 +6,6 @@ import { Field } from "./Field";
 export class SyncObjectRefSetField<T extends SyncObject> extends Field {
 
     private _objects = new Map<string, T | null>()
-    private _model: Model | null = null
 
     add(object: T) {
         this._objects.set(object.id(), object)
@@ -34,7 +32,7 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
         this._objects.clear()
         for (let i = 0; i < count; i++) {
             const objectId = reader.readString()
-            this._objects.set(objectId, this._model?.get(objectId) ?? null)
+            this._objects.set(objectId, this.model.get(objectId))
         }
         this.emitter().emit('changed')
     }
@@ -45,14 +43,13 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
             writer.writeString(objectId)
     }
 
-    protected onModel(handle: Model): void {
-        this._model = handle
-        this._model.emitter().on('created', object => {
+    protected onInit(): void {
+        this.model.emitter().on('created', object => {
             const objectId = object.id()
             if (this._objects.has(objectId))
                 this._objects.set(objectId, object as T)
             this.emitter().emit('changed')
-        })
+        })   
     }
 
 }

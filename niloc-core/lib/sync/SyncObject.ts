@@ -9,16 +9,19 @@ import { BooleanField } from "./field/customs/BooleanField";
 
 export class SyncObject {
 
-    static __setChangeRequester(object: SyncObject, requester: ChangeRequester) {
-        object._changeRequester = requester
-        for (const field of object.fields())
-            Field.__setChangeRequester(field, requester)
-    }
+    static __init(object: SyncObject, data: { 
+        changeRequester: ChangeRequester,
+        model: Model
+    }) {
+        // First set the change requester
+        object.changeRequester = data.changeRequester
+        object.model = data.model
 
-    static __setModel(object: SyncObject, model: Model) {
-        object.model = model
         for (const field of object.fields())
-            Field.__setModel(field, model)
+            Field.__init(field, data)
+
+        // Finally call the onInit method
+        object.onInit()
     }
 
     static toString(object: SyncObject): string {
@@ -39,14 +42,20 @@ export class SyncObject {
     }
 
     readonly _id: string
-    private _fields: Field[] | null = null
-    private _changeRequester!: ChangeRequester
+    readonly deleted = new BooleanField(false)
     
     authority = Authority.All
     
-    readonly deleted = new BooleanField(false)
-    
+    /**
+     * Only available after the object is initialized (onInit has been called)
+     */
     protected model!: Model
+    /**
+     * Only available after the object is initialized (onInit has been called)
+     */
+    protected changeRequester!: ChangeRequester
+    
+    private _fields: Field[] | null = null
 
     constructor(id: string) {
         this._id = id
@@ -74,7 +83,7 @@ export class SyncObject {
     }
 
     send() {
-        this._changeRequester.send()
+        this.changeRequester.send()
     }
 
     register(callback: () => void): () => void {
@@ -86,15 +95,18 @@ export class SyncObject {
             return
 
         this.deleted.set(true)
-        this._changeRequester.send()
-        this._changeRequester.delete()
+        this.changeRequester.send()
+        this.changeRequester.delete()
     }
+
+    // Method called when the object is created and everything is setup
+    protected onInit() { }
 
     private _onDeletedChanged = () => {
         const deleted = this.deleted.get()
         
         if (deleted) {
-            this._changeRequester.delete()
+            this.changeRequester.delete()
             this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
         }
     }

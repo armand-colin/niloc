@@ -127,9 +127,12 @@ export class Model implements IModel {
 
     private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
         const object = new type(id)
-        SyncObject.__setChangeRequester(object, this._makeChangeRequester(id))
-        SyncObject.__setModel(object, this)
         this._objects.set(id, object)
+        
+        SyncObject.__init(object, {
+            changeRequester: this._makeChangeRequester(id), 
+            model: this
+        })
 
         for (const plugin of this._plugins)
             plugin.beforeCreate?.(object)

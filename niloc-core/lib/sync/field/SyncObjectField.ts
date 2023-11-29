@@ -1,5 +1,4 @@
 import { StringWriter } from "../../tools/StringWriter";
-import { Model } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { SyncObjectType } from "../SyncObjectType";
@@ -54,23 +53,26 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         this._changes = []
     }
 
-    protected onModel(model: Model): void {
-        SyncObject.__setModel(this._object, model)
-    }
+    protected onInit(): void {
+        super.onInit()
 
-    protected onChangeRequester(requester: ChangeRequester): void {
-        SyncObject.__setChangeRequester(this._object, {
+        const changeRequester: ChangeRequester = {
             change: (fieldIndex) => {
                 this._changes.push(fieldIndex)
-                requester.change(this.index())
+                this.changeRequester.change(this.index())
                 this.emitter().emit('changed')
             },
             send: () => {
-                requester.send()
+                this.changeRequester.send()
             },
             delete: () => {
                 console.error('SyncObjectField: delete is not supported, as it cannot be null for its parent object. This is an undefined behaviour.')
             }
+        }
+
+        SyncObject.__init(this._object, {
+            changeRequester,
+            model: this.model
         })
     }
 

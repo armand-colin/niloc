@@ -1,5 +1,5 @@
 import { StringWriter } from "../../tools/StringWriter";
-import { Model, ObjectRequest } from "../Model.interface";
+import { ObjectRequest } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { Writer } from "../Writer";
@@ -9,7 +9,6 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
 
     private _objectId: string | null
     private _object: T | null = null
-    private _model: Model | null = null
     private _objectRequest: ObjectRequest | null = null
 
     constructor(objectId: string | null) {
@@ -53,9 +52,9 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
         this._object = null
 
         if (objectId) {
-            this._objectRequest = this._model?.requestObject<T>(objectId, (object) => {
+            this._objectRequest = this.model.requestObject<T>(objectId, (object) => {
                 this._object = object
-            }) ?? null
+            })
         } else {
             this._objectRequest = null
         }
@@ -63,8 +62,8 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
         this.emitter().emit('changed')
     }
 
-    protected onModel(handle: Model): void {
-        this._model = handle
+    protected onInit(): void {
+        super.onInit()
 
         if (this._objectId)
             this._setObjectId(this._objectId)
