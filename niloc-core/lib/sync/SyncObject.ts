@@ -1,6 +1,6 @@
 import { StringWriter } from "../tools/StringWriter";
 import { Authority } from "./Authority";
-import { ModelHandle } from "./ModelHandle";
+import { Model } from "./Model.interface";
 import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
 import { Writer } from "./Writer";
@@ -12,12 +12,13 @@ export class SyncObject {
     static __setChangeRequester(object: SyncObject, requester: ChangeRequester) {
         object._changeRequester = requester
         for (const field of object.fields())
-            Field.setChangeRequester(field, requester)
+            Field.__setChangeRequester(field, requester)
     }
 
-    static __setModelHandle(object: SyncObject, handle: ModelHandle) {
+    static __setModel(object: SyncObject, model: Model) {
+        object.model = model
         for (const field of object.fields())
-            Field.setModelHandle(field, handle)
+            Field.__setModel(field, model)
     }
 
     static toString(object: SyncObject): string {
@@ -44,6 +45,8 @@ export class SyncObject {
     authority = Authority.All
     
     readonly deleted = new BooleanField(false)
+    
+    protected model!: Model
 
     constructor(id: string) {
         this._id = id

@@ -9,6 +9,7 @@ export { Authority } from "./sync/Authority";
 
 // sync
 export { Model } from "./sync/Model"
+export type { ObjectRequest } from "./sync/Model.interface"
 export { SyncObject } from "./sync/SyncObject"
 export type { SyncObjectType } from "./sync/SyncObjectType"
 

@@ -2,7 +2,6 @@ import { SyncObject } from "./SyncObject"
 import { Channel } from "../channel/Channel"
 import { nanoid } from "nanoid"
 import { ChangeRequester } from "./Synchronize"
-import { ModelHandle } from "./ModelHandle"
 import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
 import { Writer } from "./Writer"
@@ -14,11 +13,8 @@ import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 import { TypesHandler } from "./TypesHandler"
 import { SyncObjectType } from "./SyncObjectType"
+import { ModelEvents, Model as IModel, ObjectRequest } from "./Model.interface"
 
-export interface ModelEvents {
-    created: SyncObject,
-    deleted: string
-}
 
 type ModelData =
     { type: "change", changes: string[] } |
@@ -29,7 +25,7 @@ interface ModelOpts {
     channel: Channel<ModelData>,
 }
 
-export class Model {
+export class Model implements IModel {
 
     private _channel: Channel<ModelData>
     private _context: Context
@@ -39,8 +35,6 @@ export class Model {
 
     private _typesHandler = new TypesHandler()
     private _objects = new Map<string, SyncObject>()
-
-    private _handle: ModelHandle
 
     private _changeQueue = new ChangeQueue()
 
@@ -54,19 +48,10 @@ export class Model {
         this._channel.addListener(this._onMessage)
 
         this._context = opts.context
-
-        this._handle = ModelHandle.make({
-            emitter: this._emitter,
-            objectsEmitter: this._objectsEmitter,
-            context: this._context,
-            syncTo: (address) => this.syncTo(address),
-            get: (id) => this.get(id),
-            changeQueue: this._changeQueue,
-            send: () => this.send(),
-        })
     }
 
     emitter(): IEmitter<ModelEvents> { return this._emitter }
+    changeQueue() { return this._changeQueue }
 
     /**
      * @deprecated Use `addPlugin` instead
@@ -77,7 +62,7 @@ export class Model {
 
     addPlugin(plugin: Plugin): this {
         this._plugins.push(plugin)
-        plugin.init?.(this._handle)
+        plugin.init?.(this)
         return this
     }
 
@@ -127,10 +112,23 @@ export class Model {
         return [...this._objects.values()]
     }
 
+    requestObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): ObjectRequest {
+        this._objectsEmitter.on(id, callback)
+        callback(this.get(id))
+
+        const request: ObjectRequest = {
+            dispose: () => {
+                this._objectsEmitter.off(id, callback)
+            }
+        }
+
+        return request
+    }
+
     private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
         const object = new type(id)
         SyncObject.__setChangeRequester(object, this._makeChangeRequester(id))
-        SyncObject.__setModelHandle(object, this._handle)
+        SyncObject.__setModel(object, this)
         this._objects.set(id, object)
 
         for (const plugin of this._plugins)
@@ -171,7 +169,7 @@ export class Model {
                 continue
 
             const typeId = this._typesHandler.getTypeId(object)
-            if (typeId === null) 
+            if (typeId === null)
                 continue
 
             if (!Authority.allows(object, this._context))

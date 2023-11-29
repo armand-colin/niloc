@@ -1,5 +1,5 @@
 import { StringWriter } from "../../tools/StringWriter";
-import { ModelHandle } from "../ModelHandle";
+import { Model, ObjectRequest } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { Writer } from "../Writer";
@@ -9,8 +9,8 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
 
     private _objectId: string | null
     private _object: T | null = null
-    private _modelHandle: ModelHandle | null = null
-    private _objectRequest: ModelHandle.ObjectRequest | null = null
+    private _model: Model | null = null
+    private _objectRequest: ObjectRequest | null = null
 
     constructor(objectId: string | null) {
         super()
@@ -47,13 +47,13 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
     }
 
     private _setObjectId(objectId: string | null) {
-        this._objectRequest?.destroy()
+        this._objectRequest?.dispose()
 
         this._objectId = objectId
         this._object = null
 
         if (objectId) {
-            this._objectRequest = this._modelHandle?.requestObject<T>(objectId, (object) => {
+            this._objectRequest = this._model?.requestObject<T>(objectId, (object) => {
                 this._object = object
             }) ?? null
         } else {
@@ -63,8 +63,8 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
         this.emitter().emit('changed')
     }
 
-    protected onModelHandle(handle: ModelHandle): void {
-        this._modelHandle = handle
+    protected onModel(handle: Model): void {
+        this._model = handle
 
         if (this._objectId)
             this._setObjectId(this._objectId)

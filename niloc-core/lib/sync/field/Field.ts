@@ -1,9 +1,9 @@
 import { Emitter, IEmitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
-import { ModelHandle } from "../ModelHandle"
 import { Reader } from "../Reader"
 import { ChangeRequester } from "../Synchronize"
 import { Writer } from "../Writer"
+import { Model } from "../Model.interface"
 
 interface FieldEvents {
     changed: void
@@ -15,13 +15,13 @@ export abstract class Field {
         field._index = index
     }
 
-    static setChangeRequester(field: Field, requester: ChangeRequester) {
+    static __setChangeRequester(field: Field, requester: ChangeRequester) {
         field._changeRequester = requester
         field.onChangeRequester(requester)
     }
 
-    static setModelHandle(field: Field, handle: ModelHandle) {
-        field.onModelHandle(handle)
+    static __setModel(field: Field, model: Model) {
+        field.onModel(model)
     }
 
     static toString(field: Field) {
@@ -66,7 +66,7 @@ export abstract class Field {
     }
 
     protected onChangeRequester(_requester: ChangeRequester) { }
-    protected onModelHandle(_handle: ModelHandle) { }
+    protected onModel(_model: Model) { }
 
     protected toString(writer: StringWriter) { writer.writeLine("???") }
 

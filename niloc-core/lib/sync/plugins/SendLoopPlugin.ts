@@ -1,4 +1,4 @@
-import { ModelHandle } from "../ModelHandle";
+import { Model } from "../Model.interface";
 import { Plugin } from "../Plugin";
 
 type Options = {
@@ -23,7 +23,7 @@ const defaultOptions: Options = {
 export class SendLoopPlugin implements Plugin {
 
     private _interval: number | null = null
-    private _modelHandle!: ModelHandle
+    private _model!: Model
     private _options: Options
 
     private _uselessTicks = 0
@@ -32,8 +32,8 @@ export class SendLoopPlugin implements Plugin {
         this._options = { ...defaultOptions, ...options }
     }
 
-    init(model: ModelHandle): void {
-        this._modelHandle = model
+    init(model: Model): void {
+        this._model = model
 
         model.changeQueue().emitter().on('needsSend', this._needsSend)
 
@@ -49,7 +49,7 @@ export class SendLoopPlugin implements Plugin {
     }
 
     private _send = () => {
-        if (!this._modelHandle.changeQueue().needsSend()) {
+        if (!this._model.changeQueue().needsSend()) {
             this._uselessTicks++
 
             if (this._uselessTicks >= this._options.tolerance) {
@@ -61,7 +61,7 @@ export class SendLoopPlugin implements Plugin {
             return
         }
 
-        this._modelHandle.send()
+        this._model.send()
     }
 
 }

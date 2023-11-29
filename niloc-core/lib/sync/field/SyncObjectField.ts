@@ -1,5 +1,5 @@
 import { StringWriter } from "../../tools/StringWriter";
-import { ModelHandle } from "../ModelHandle";
+import { Model } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { SyncObjectType } from "../SyncObjectType";
@@ -54,8 +54,8 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         this._changes = []
     }
 
-    protected onModelHandle(handle: ModelHandle): void {
-        SyncObject.__setModelHandle(this._object, handle)
+    protected onModel(model: Model): void {
+        SyncObject.__setModel(this._object, model)
     }
 
     protected onChangeRequester(requester: ChangeRequester): void {
