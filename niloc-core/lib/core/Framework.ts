@@ -7,6 +7,7 @@ import { ConnectionList } from "../sync/presence/ConnectionList"
 import { RPCHandler } from "../rpc/RPCHandler"
 import { RPCPlugin } from "../rpc/RPCPlugin"
 import { Router } from "./Router"
+import { ConnectionPlugin } from "../main"
 
 export type FrameworkOptions<P extends SyncObject> = {
     id: string,
@@ -51,20 +52,21 @@ export class Framework<P extends SyncObject> {
             this.router.channel(FrameworkChannels.RPC)
         )
 
+        this.connectionList = options.connectionList ??
+            ConnectionList.client(this.router.channel(FrameworkChannels.ConnectionList))
+
         this.model = new Model({
             channel: this.router.channel(FrameworkChannels.Model),
             context: this.router.context()
         })
         this.model.addPlugin(new RPCPlugin(this.rpcHandler))
-
-        this.connectionList = options.connectionList ?? 
-            ConnectionList.client(this.router.channel(FrameworkChannels.ConnectionList))
+        this.model.addPlugin(new ConnectionPlugin(this.connectionList))
 
         this.presence = new Presence({
             channel: this.router.channel(FrameworkChannels.Presence),
             context: this.router.context(),
             connectionList: this.connectionList,
-            type: options.presenceType            
+            type: options.presenceType
         })
         this.presence.model().plugin(new RPCPlugin(this.rpcHandler))
     }
