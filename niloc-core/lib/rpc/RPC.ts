@@ -40,7 +40,9 @@ export class RPC<Args extends any[]> implements RPC<Args> {
         return new RPC(Address.dynamic(getTargetId), callback)
     }
 
-    // Called by the RPC Handler to execute the real code
+    /**
+     * Called by the RPC Handler to execute the real code
+     */
     static call<Args extends any[]>(rpc: RPC<Args>, args: Args): void {
         try {
             rpc._callback(...args)

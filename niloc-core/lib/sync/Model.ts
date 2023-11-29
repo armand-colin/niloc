@@ -20,17 +20,6 @@ export interface ModelEvents {
     deleted: string
 }
 
-export interface Model {
-
-    emitter(): IEmitter<ModelEvents>
-    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
-    plugin(plugin: Plugin): void
-    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
-    send(): void
-    syncTo(address: Address): void
-
-}
-
 type ModelData =
     { type: "change", changes: string[] } |
     { type: "sync", changes: string[] }
@@ -79,9 +68,17 @@ export class Model {
 
     emitter(): IEmitter<ModelEvents> { return this._emitter }
 
-    plugin(plugin: Plugin) {
+    /**
+     * @deprecated Use `addPlugin` instead
+     */
+    plugin(plugin: Plugin): void {
+        this.addPlugin(plugin)
+    }
+
+    addPlugin(plugin: Plugin): this {
         this._plugins.push(plugin)
         plugin.init?.(this._handle)
+        return this
     }
 
     register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string) {

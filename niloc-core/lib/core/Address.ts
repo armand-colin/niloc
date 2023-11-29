@@ -21,26 +21,45 @@ export namespace Address {
     const BROADCAST = Object.freeze({ type: AddressType.Broadcast }) as Address
     const HOST = Object.freeze({ type: AddressType.Host }) as Address
 
+    /**
+     * @returns Address that matches all peers (including self)
+     */
     export function all(): Address {
         return ALL
     }
 
+    /**
+     * @returns Address that matches all peers except the sender
+     */
     export function broadcast(): Address {
         return BROADCAST
     }
 
+    /**
+     * @returns Address that matches the host of the network
+     */
     export function host(): Address {
         return HOST
     }
 
+    /**
+     * @returns Address that matches the peer with the given id
+     */
     export function to(peerId: string): Address {
         return { type: AddressType.Target, id: peerId }
     }
 
+    /**
+     * @returns Address that matches the peer with the computed id
+     */
     export function dynamic(getTargetId: () => string): Address {
         return { type: AddressType.Dynamic, get: getTargetId }
     }
 
+    /**
+     * Checks if the given address matches the given peer
+     * Used when receiving a message from the network to check if the message should be handled
+     */
     export function match(senderId: string, address: Address, peer: Peer): boolean {
         if (
             peer.address().type === AddressType.Broadcast ||
