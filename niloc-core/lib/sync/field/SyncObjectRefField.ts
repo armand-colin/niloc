@@ -53,7 +53,11 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
 
         if (objectId) {
             this._objectRequest = this.model.requestObject<T>(objectId, (object) => {
+                if (object === this._object)
+                    return
+
                 this._object = object
+                this.emitter().emit('changed')
             })
         } else {
             this._objectRequest = null
