@@ -26,12 +26,32 @@ export abstract class Field {
 
     static toString(field: Field) {
         const writer = new StringWriter()
-        this.write(field, writer)
+        this.writeString(field, writer)
         return writer.toString()
     }
 
-    static write(field: Field, writer: StringWriter) {
+    static writeString(field: Field, writer: StringWriter) {
         field.toString(writer)
+    }
+
+    static write(field: Field, writer: Writer) {
+        field.write(writer)
+    }
+
+    static read(field: Field, reader: Reader) {
+        field.read(reader)
+    }
+
+    static writeChange(field: Field, writer: Writer) {
+        field.writeChange(writer)
+    }
+
+    static readChange(field: Field, reader: Reader) {
+        field.readChange(reader)
+    }
+
+    static clearChange(field: Field) {
+        field.clearChange()
     }
 
     static register(fields: Iterable<Field>, callback: () => void): () => void {
@@ -56,12 +76,12 @@ export abstract class Field {
     index() { return this._index }
     emitter(): IEmitter<FieldEvents> { return this._emitter }
 
-    abstract read(reader: Reader): void
-    abstract write(writer: Writer): void
+    protected abstract read(reader: Reader): void
+    protected abstract write(writer: Writer): void
 
-    readChange(reader: Reader): void { this.read(reader) }
-    writeChange(writer: Writer): void { this.write(writer) }
-    clearChange(): void { }
+    protected readChange(reader: Reader): void { this.read(reader) }
+    protected writeChange(writer: Writer): void { this.write(writer) }
+    protected clearChange(): void { }
 
     protected changed(): void {
         this.changeRequester?.change(this._index)
@@ -69,9 +89,7 @@ export abstract class Field {
     }
 
     // Method called once field is initialized
-    protected onInit() {
-
-    }
+    protected onInit() { }
 
     protected toString(writer: StringWriter) { writer.writeLine("???") }
 

@@ -36,8 +36,6 @@ export class RPCHandler implements RPCHandler {
     }
 
     register(rpc: RPC<any>, id: string) {
-        console.log(this._self.id(), "registering rpc", id)
-
         if (this._rpcs[id]) {
             console.error('Trying to register rpc twice:', id)
             return

@@ -76,7 +76,7 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
     protected toString(writer: StringWriter): void {
         writer.write("ref ")
         if (this._object)
-            SyncObject.write(this._object, writer)
+            SyncObject.writeString(this._object, writer)
         else
             writer.writeLine(`${this._objectId} (null)`)
     }

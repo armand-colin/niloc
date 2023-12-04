@@ -21,19 +21,19 @@ export class SyncObjectField<T extends SyncObject> extends Field {
     }
 
     read(reader: Reader): void {
-        this._object.read(reader)
+        SyncObject.read(this._object, reader)
         this.emitter().emit('changed')
     }
 
     write(writer: Writer): void {
-        this._object.write(writer)
+        SyncObject.write(this._object, writer)
     }
 
     readChange(reader: Reader): void {
         const count = reader.readInt() as number
         for (let i = 0; i < count; i++) {
             const fieldIndex = reader.readInt()
-            this._object.fields()[fieldIndex].readChange(reader)
+            Field.readChange(this._object.fields()[fieldIndex], reader)
         }
         this.emitter().emit('changed')
     }
@@ -43,13 +43,13 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         writer.writeInt(count)
         for (const fieldIndex of this._changes) {
             writer.writeInt(fieldIndex)
-            this._object.fields()[fieldIndex].writeChange(writer)
+            Field.writeChange(this._object.fields()[fieldIndex], writer)
         }
     }
 
     clearChange(): void {
         for (const fieldIndex of this._changes)
-            this._object.fields()[fieldIndex].clearChange()
+            Field.clearChange(this._object.fields()[fieldIndex])
         this._changes = []
     }
 
@@ -77,7 +77,7 @@ export class SyncObjectField<T extends SyncObject> extends Field {
     }
 
     protected toString(writer: StringWriter): void {
-        SyncObject.write(this._object, writer)
+        SyncObject.writeString(this._object, writer)
     }
 
 }

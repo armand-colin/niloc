@@ -112,7 +112,7 @@ class ChangeStack<T> {
             switch (type) {
                 case ChangeType.Push:
                     const m = reader.readInt()
-                    for (let j = 0; j < m; j++)
+                    for (let j = 0; j < m; j++) 
                         array.push(reader.readJSON())
                     break
                 case ChangeType.Pop:

@@ -26,19 +26,27 @@ export class SyncObject {
 
     static toString(object: SyncObject): string {
         const writer = new StringWriter()
-        this.write(object, writer)
+        this.writeString(object, writer)
         return writer.toString()
     }
 
-    static write(object: SyncObject, writer: StringWriter) {
+    static writeString(object: SyncObject, writer: StringWriter) {
         writer.writeLine(`${object.constructor.name}: ${object.id()} {`)
         writer.startIndent()
 
         for (const field of object.fields())
-            Field.write(field, writer)
+            Field.writeString(field, writer)
 
         writer.endIndent()
         writer.writeLine('}')
+    }
+
+    static write(object: SyncObject, writer: Writer) {
+        object.write(writer)
+    }
+
+    static read(object: SyncObject, reader: Reader) {
+        object.read(reader)
     }
 
     readonly _id: string
@@ -72,14 +80,14 @@ export class SyncObject {
         return this._fields
     }
 
-    read(reader: Reader) {
+    protected read(reader: Reader) {
         for (const field of this.fields())
-            field.read(reader)
+            Field.read(field, reader)
     }
 
-    write(writer: Writer) {
+    protected write(writer: Writer) {
         for (const field of this.fields())
-            field.write(writer)
+            Field.write(field, writer)
     }
 
     send() {

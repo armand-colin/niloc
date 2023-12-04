@@ -14,6 +14,7 @@ import { Message } from "../core/Message"
 import { TypesHandler } from "./TypesHandler"
 import { SyncObjectType } from "./SyncObjectType"
 import { ModelEvents, Model as IModel, ObjectRequest } from "./Model.interface"
+import { Field } from "./field/Field"
 
 
 type ModelData =
@@ -84,7 +85,7 @@ export class Model implements IModel {
         let changes: any[]
 
         if (objectId !== undefined) {
-            syncs = this._collectSyncsForObjects([objectId])
+            syncs = this._collectSyncsForObjects(this._changeQueue.syncForObject(objectId))
             changes = this._collectChangesForObjects([{ objectId, fields: this._changeQueue.changeForObject(objectId) ?? [] }])
         } else {
             syncs = this._collectSyncs()
@@ -180,7 +181,7 @@ export class Model implements IModel {
 
             writer.writeString(object.id())
             writer.writeString(typeId)
-            object.write(writer)
+            SyncObject.write(object, writer)
         }
 
         return writer.collect()
@@ -209,8 +210,8 @@ export class Model implements IModel {
             for (const index of fields) {
                 const field = object.fields()[index]
                 writer.writeInt(index)
-                field.writeChange(writer)
-                field.clearChange()
+                Field.writeChange(field, writer)
+                Field.clearChange(field)
             }
 
             const tail = writer.cursor()
@@ -258,7 +259,7 @@ export class Model implements IModel {
             let object = this._objects.get(objectId)
 
             if (object) {
-                object.read(reader)
+                SyncObject.read(object, reader)
                 continue
             }
 
@@ -269,7 +270,7 @@ export class Model implements IModel {
             }
 
             object = this._create(type, objectId)
-            object.read(reader)
+            SyncObject.read(object, reader)
         }
     }
 
@@ -295,7 +296,7 @@ export class Model implements IModel {
 
             for (let i = 0; i < fieldCount; i++) {
                 const fieldIndex = reader.readInt()
-                object.fields()[fieldIndex].readChange(reader)
+                Field.readChange(object.fields()[fieldIndex], reader)
             }
         }
     }

@@ -64,6 +64,13 @@ export class ChangeQueue {
         this._syncs.clear()
     }
 
+    *syncForObject(objectId: string): Iterable<string> {
+        if (this._syncs.has(objectId)) {
+            this._syncs.delete(objectId)
+            yield objectId
+        }
+    }
+
     changeForObject(objectId: string): number[] | null {
         const fields = this._changes.get(objectId)
         this._changes.delete(objectId)
