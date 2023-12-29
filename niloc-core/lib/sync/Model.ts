@@ -139,7 +139,7 @@ export class Model implements IModel {
             return
 
         writer.writeString(object.id())
-        writer.writeInt(object.fields().length)
+        writer.writeInt(dirtyFields.length)
 
         const head = writer.cursor()
         writer.writeInt(0)
@@ -305,7 +305,7 @@ export class Model implements IModel {
             const objectId = reader.readString()
             const fieldCount = reader.readInt()
             const changeCount = reader.readInt()
-
+            
             const object = this._objects.get(objectId)
 
             if (!object) {
