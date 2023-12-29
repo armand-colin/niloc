@@ -30,6 +30,10 @@ export abstract class Field {
         return writer.toString()
     }
 
+    static isDirty(field: Field) {
+        return field.dirty
+    }
+
     static writeString(field: Field, writer: StringWriter) {
         field.toString(writer)
     }
@@ -42,16 +46,16 @@ export abstract class Field {
         field.read(reader)
     }
 
-    static writeChange(field: Field, writer: Writer) {
-        field.writeChange(writer)
+    static writeDelta(field: Field, writer: Writer) {
+        field.writeDelta(writer)
     }
 
-    static readChange(field: Field, reader: Reader) {
-        field.readChange(reader)
+    static readDelta(field: Field, reader: Reader) {
+        field.readDelta(reader)
     }
 
-    static clearChange(field: Field) {
-        field.clearChange()
+    static resetDelta(field: Field) {
+        field.resetDelta()
     }
 
     static register(fields: Iterable<Field>, callback: () => void): () => void {
@@ -66,12 +70,12 @@ export abstract class Field {
         }
     }
 
+    private _emitter = new Emitter<FieldEvents>()
     private _index: number = -1
 
     protected changeRequester!: ChangeRequester
     protected model!: Model
-
-    private _emitter = new Emitter<FieldEvents>()
+    protected dirty: boolean = false
 
     index() { return this._index }
     emitter(): IEmitter<FieldEvents> { return this._emitter }
@@ -79,11 +83,12 @@ export abstract class Field {
     protected abstract read(reader: Reader): void
     protected abstract write(writer: Writer): void
 
-    protected readChange(reader: Reader): void { this.read(reader) }
-    protected writeChange(writer: Writer): void { this.write(writer) }
-    protected clearChange(): void { }
+    protected readDelta(reader: Reader): void { this.read(reader) }
+    protected writeDelta(writer: Writer): void { this.write(writer) }
+    protected resetDelta(): void { }
 
     protected changed(): void {
+        this.dirty = true
         this.changeRequester?.change(this._index)
         this._emitter.emit('changed')
     }

@@ -6,8 +6,7 @@ type Events = {
 
 export class ChangeQueue {
 
-    private _changes = new Map<string, number[]>()
-    private _syncs = new Set<string>()
+    private _changes = new Set<string>()
     private _emitter = new Emitter<Events>()
 
     emitter(): IEmitter<Events> {
@@ -15,66 +14,27 @@ export class ChangeQueue {
     }
 
     needsSend(): boolean {
-        return this._syncs.size > 0 || this._changes.size > 0
+        return this._changes.size > 0
     }
 
-    change(objectId: string, fieldIndex: number) {
-        if (this._syncs.has(objectId))
-            return
+    addChange(objectId: string) {
+        const startSize = this._changes.size
+        this._changes.add(objectId)
 
-        let needsSend = this._changes.size === 0 && this._syncs.size === 0
-        let changes = this._changes.get(objectId)
-
-        if (!changes) {
-            changes = []
-            this._changes.set(objectId, changes)
-        }
-
-        if (changes.includes(fieldIndex))
-            return
-
-        changes.push(fieldIndex)
-
-        if (needsSend)
+        if (startSize === 0)
             this._emitter.emit('needsSend')
     }
 
-    sync(objectId: string) {
-        const needsSend = this._syncs.size === 0 && this._changes.size === 0
-        this._syncs.add(objectId)
+    deleteChange(objectId: string) {
         this._changes.delete(objectId)
-
-        if (needsSend)
-            this._emitter.emit('needsSend')
     }
 
-    *changes(): Iterable<{ objectId: string, fields: number[] }> {
-        const payload = { objectId: "", fields: [] as number[] }
-        for (const [objectId, fields] of this._changes) {
-            payload.objectId = objectId
-            payload.fields = fields
-            yield payload
-        }
+    *changes(): Iterable<string> {
+        yield* this._changes
+    }
+
+    clear() {
         this._changes.clear()
-    }
-
-    *syncs(): Iterable<string> {
-        for (const objectId of this._syncs)
-            yield objectId
-        this._syncs.clear()
-    }
-
-    *syncForObject(objectId: string): Iterable<string> {
-        if (this._syncs.has(objectId)) {
-            this._syncs.delete(objectId)
-            yield objectId
-        }
-    }
-
-    changeForObject(objectId: string): number[] | null {
-        const fields = this._changes.get(objectId)
-        this._changes.delete(objectId)
-        return fields ?? null
     }
 
 }

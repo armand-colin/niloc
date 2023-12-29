@@ -199,16 +199,16 @@ export class ArrayField<T> extends Field {
         writer.writeJSON(this._value)
     }
 
-    readChange(reader: Reader): void {
+    readDelta(reader: Reader): void {
         this._changes.read(reader, this._value)
         this.changed()
     }
 
-    writeChange(writer: Writer): void {
+    writeDelta(writer: Writer): void {
         this._changes.write(writer)
     }
 
-    clearChange(): void {
+    resetDelta(): void {
         this._changes.reset()
     }
 

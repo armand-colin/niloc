@@ -49,6 +49,23 @@ export class SyncObject {
         object.read(reader)
     }
 
+    static isDirty(object: SyncObject): boolean {
+        for (const field of object.fields())
+            if (Field.isDirty(field))
+                return true
+
+        return false
+    }
+
+    static getDirtyFields(object: SyncObject): Field[] {
+        const fields: Field[] = []
+        for (const field of object.fields())
+            if (Field.isDirty(field))
+                fields.push(field)
+
+        return fields
+    }
+    
     readonly _id: string
     readonly deleted = new BooleanField(false)
     

@@ -16,6 +16,7 @@ export abstract class ValueField<T> extends Field {
     
     public set(value: T) {
         this.value = value
+        this.dirty = true
         this.changed()
     }
 

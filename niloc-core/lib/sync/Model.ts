@@ -16,14 +16,23 @@ import { SyncObjectType } from "./SyncObjectType"
 import { ModelEvents, Model as IModel, ObjectRequest } from "./Model.interface"
 import { Field } from "./field/Field"
 
+type ObjectId = string
+type TypeId = string
 
 type ModelData =
-    { type: "change", changes: string[] } |
-    { type: "sync", changes: string[] }
+    [ModelMessageType.Change, ...string[]] |
+    [ModelMessageType.Sync, ...string[]] |
+    [ModelMessageType.Instantiate, ObjectId, TypeId]
 
 interface ModelOpts {
     context: Context,
     channel: Channel<ModelData>,
+}
+
+enum ModelMessageType {
+    Sync = 0,
+    Change = 1,
+    Instantiate = 2
 }
 
 export class Model implements IModel {
@@ -75,34 +84,100 @@ export class Model implements IModel {
         const objectId = id ?? nanoid()
         const object = this._create(type, objectId)
 
-        this._changeQueue.sync(objectId)
+        if (Authority.allows(object, this._context)) {
+            const typeId = this._typesHandler.getTypeId(object)
+            if (typeId === null)
+                throw new Error('Error while instantiating object: Type not registered')
+
+            this._channel.post(Address.broadcast(), [
+                ModelMessageType.Instantiate,
+                objectId,
+                typeId
+            ])
+        }
 
         return object
     }
 
     send(objectId?: string) {
-        let syncs: any[]
-        let changes: any[]
-
+        const writer = this._writer
+        
         if (objectId !== undefined) {
-            syncs = this._collectSyncsForObjects(this._changeQueue.syncForObject(objectId))
-            changes = this._collectChangesForObjects([{ objectId, fields: this._changeQueue.changeForObject(objectId) ?? [] }])
+            const object = this._objects.get(objectId)
+            if (!object)
+                return
+
+            this._writeChangesForObject(object, writer)
+            this._changeQueue.deleteChange(objectId)
         } else {
-            syncs = this._collectSyncs()
-            changes = this._collectChanges()
+            for (const objectId of this._changeQueue.changes()) {
+                const object = this._objects.get(objectId)
+                if (!object)
+                    continue
+
+                this._writeChangesForObject(object, writer)
+            }
+            this._changeQueue.clear()
         }
 
-        if (syncs.length > 0)
-            this._channel.post(Address.broadcast(), { type: "sync", changes: syncs })
+        const changes = writer.collect()
+        if (changes.length === 0)
+            return
 
-        if (changes.length > 0)
-            this._channel.post(Address.broadcast(), { type: "change", changes: changes })
+        this._channel.post(Address.broadcast(), [ModelMessageType.Change, ...changes])
+    }
+
+    private _writeChangesForObject(object: SyncObject, writer: Writer) {
+        if (!Authority.allows(object, this._context))
+            return
+
+        if (!SyncObject.isDirty(object))
+            return
+
+        const dirtyFields = SyncObject.getDirtyFields(object)
+        if (dirtyFields.length === 0)
+            return
+
+        writer.writeString(object.id())
+        writer.writeInt(object.fields().length)
+
+        const head = writer.cursor()
+        writer.writeInt(0)
+
+        for (const field of dirtyFields) {
+            writer.writeInt(field.index())
+            Field.writeDelta(field, writer)
+            Field.resetDelta(field)
+        }
+
+        const tail = writer.cursor()
+        writer.setCursor(head)
+        writer.writeInt(tail - head - 1)
+        writer.resume()
     }
 
     syncTo(address: Address) {
-        const syncs = this._collectGlobalSyncs()
-        if (syncs.length > 0)
-            this._channel.post(address, { type: "sync", changes: syncs })
+        const writer = this._writer
+
+        for (const object of this._objects.values()) {
+            if (!Authority.allows(object, this._context))
+                continue
+
+            const typeId = this._typesHandler.getTypeId(object)
+            if (typeId === null)
+                continue
+
+            writer.writeString(object.id())
+            writer.writeString(typeId)
+            SyncObject.write(object, writer)
+        }
+
+        const changes = writer.collect()
+
+        if (changes.length === 0)
+            return
+
+        this._channel.post(address, [ModelMessageType.Sync, ...changes])
     }
 
     get<T extends SyncObject>(id: string): T | null {
@@ -129,9 +204,9 @@ export class Model implements IModel {
     private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
         const object = new type(id)
         this._objects.set(id, object)
-        
+
         SyncObject.__init(object, {
-            changeRequester: this._makeChangeRequester(id), 
+            changeRequester: this._makeChangeRequester(id),
             model: this
         })
 
@@ -146,81 +221,14 @@ export class Model implements IModel {
 
     private _makeChangeRequester(id: string): ChangeRequester {
         return {
-            change: (index) => this._onChangeRequest(id, index),
+            change: () => this._onChangeRequest(id),
             send: () => this.send(id),
             delete: () => this._delete(id),
         }
     }
 
-    private _onChangeRequest(id: string, fieldIndex: number) {
-        this._changeQueue.change(id, fieldIndex)
-    }
-
-    private _collectGlobalSyncs(): any[] {
-        return this._collectSyncsForObjects(this._objects.keys())
-    }
-
-    private _collectSyncs(): any[] {
-        return this._collectSyncsForObjects(this._changeQueue.syncs())
-    }
-
-    private _collectSyncsForObjects(objectIds: Iterable<string>): any[] {
-        const writer = this._writer;
-
-        for (const objectId of objectIds) {
-            const object = this._objects.get(objectId)
-            if (!object)
-                continue
-
-            const typeId = this._typesHandler.getTypeId(object)
-            if (typeId === null)
-                continue
-
-            if (!Authority.allows(object, this._context))
-                continue
-
-            writer.writeString(object.id())
-            writer.writeString(typeId)
-            SyncObject.write(object, writer)
-        }
-
-        return writer.collect()
-    }
-
-    private _collectChanges(): any[] {
-        return this._collectChangesForObjects(this._changeQueue.changes())
-    }
-
-    private _collectChangesForObjects(objects: Iterable<{ objectId: string, fields: number[] }>): any[] {
-        const writer = this._writer
-
-        for (const { objectId, fields } of objects) {
-            const object = this._objects.get(objectId)
-            if (!object)
-                continue
-
-            if (!Authority.allows(object, this._context))
-                continue
-
-            writer.writeString(objectId)
-            writer.writeInt(fields.length)
-            const head = writer.cursor()
-            writer.writeInt(0)
-
-            for (const index of fields) {
-                const field = object.fields()[index]
-                writer.writeInt(index)
-                Field.writeChange(field, writer)
-                Field.clearChange(field)
-            }
-
-            const tail = writer.cursor()
-            writer.setCursor(head)
-            writer.writeInt(tail - head - 1)
-            writer.resume()
-        }
-
-        return writer.collect()
+    private _onChangeRequest(id: string) {
+        this._changeQueue.addChange(id)
     }
 
     private _delete(id: string) {
@@ -233,13 +241,25 @@ export class Model implements IModel {
     }
 
     private _onMessage = (message: Message<ModelData>) => {
-        switch (message.data.type) {
-            case 'sync': {
-                this._onSync(message.data.changes)
+        switch (message.data[0]) {
+            case ModelMessageType.Instantiate: {
+                const objectId = message.data[1]
+                const typeId = message.data[2]
+                const type = this._typesHandler.getType(typeId)
+                if (!type) {
+                    console.error('Could not create object with type', typeId)
+                    return
+                }
+
+                this._create(type, objectId)
                 break
             }
-            case 'change': {
-                this._onChange(message.data.changes)
+            case ModelMessageType.Sync: {
+                this._onSync(message.data.slice(1) as string[])
+                break
+            }
+            case ModelMessageType.Change: {
+                this._onChange(message.data.slice(1) as string[])
                 break
             }
         }
@@ -296,7 +316,7 @@ export class Model implements IModel {
 
             for (let i = 0; i < fieldCount; i++) {
                 const fieldIndex = reader.readInt()
-                Field.readChange(object.fields()[fieldIndex], reader)
+                Field.readDelta(object.fields()[fieldIndex], reader)
             }
         }
     }

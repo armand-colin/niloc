@@ -29,27 +29,27 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         SyncObject.write(this._object, writer)
     }
 
-    readChange(reader: Reader): void {
+    readDelta(reader: Reader): void {
         const count = reader.readInt() as number
         for (let i = 0; i < count; i++) {
             const fieldIndex = reader.readInt()
-            Field.readChange(this._object.fields()[fieldIndex], reader)
+            Field.readDelta(this._object.fields()[fieldIndex], reader)
         }
         this.emitter().emit('changed')
     }
 
-    writeChange(writer: Writer): void {
+    writeDelta(writer: Writer): void {
         const count = this._changes.length
         writer.writeInt(count)
         for (const fieldIndex of this._changes) {
             writer.writeInt(fieldIndex)
-            Field.writeChange(this._object.fields()[fieldIndex], writer)
+            Field.writeDelta(this._object.fields()[fieldIndex], writer)
         }
     }
 
-    clearChange(): void {
+    resetDelta(): void {
         for (const fieldIndex of this._changes)
-            Field.clearChange(this._object.fields()[fieldIndex])
+            Field.resetDelta(this._object.fields()[fieldIndex])
         this._changes = []
     }
 
