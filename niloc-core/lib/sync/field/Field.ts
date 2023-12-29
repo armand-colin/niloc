@@ -56,6 +56,7 @@ export abstract class Field {
 
     static resetDelta(field: Field) {
         field.resetDelta()
+        field.dirty = false
     }
 
     static register(fields: Iterable<Field>, callback: () => void): () => void {
