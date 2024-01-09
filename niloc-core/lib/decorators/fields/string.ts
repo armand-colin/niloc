@@ -2,8 +2,11 @@ import { SyncObject } from "../../main";
 import { StringField } from "../../sync/field/customs/StringField";
 import { KeyOfType, custom } from "./custom";
 
-export function string<O extends SyncObject, K extends KeyOfType<string, O> & string>(defaultValue: string = "") {
-    
-    return custom<string, O, K>(() => new StringField(defaultValue))
+export function string<
+    Source extends SyncObject,
+    Key extends KeyOfType<string, Source>
+>(defaultValue: string = "") {
+
+    return custom<string, Source, Key>(() => new StringField(defaultValue))
 
 }

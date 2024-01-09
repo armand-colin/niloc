@@ -2,8 +2,11 @@ import { SyncObject } from "../../main";
 import { BooleanField } from "../../sync/field/customs/BooleanField";
 import { KeyOfType, custom } from "./custom";
 
-export function boolean<O extends SyncObject, K extends KeyOfType<boolean, O> & string>(defaultValue: boolean = false) {
+export function boolean<
+    Source extends SyncObject,
+    Key extends KeyOfType<boolean, Source>
+>(defaultValue: boolean = false) {
 
-    return custom<boolean, O, K>(() => new BooleanField(defaultValue))
+    return custom<boolean, Source, Key>(() => new BooleanField(defaultValue))
 
 }

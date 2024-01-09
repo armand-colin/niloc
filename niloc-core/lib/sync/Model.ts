@@ -1,7 +1,7 @@
 import { SyncObject } from "./SyncObject"
 import { Channel } from "../channel/Channel"
 import { nanoid } from "nanoid"
-import { ChangeRequester } from "./Synchronize"
+import { ChangeRequester } from "./ChangeRequester"
 import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
 import { Writer } from "./Writer"

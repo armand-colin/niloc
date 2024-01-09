@@ -1,7 +1,7 @@
 import { Emitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
 import { Reader } from "../Reader"
-import { ChangeRequester } from "../Synchronize"
+import { ChangeRequester } from "../ChangeRequester"
 import { Writer } from "../Writer"
 import { Model } from "../Model.interface"
 

@@ -1,6 +1,6 @@
 import { Address } from "../../core/Address"
 import { Channel  } from "../../channel/Channel"
-import { Emitter, IEmitter } from "@niloc/utils"
+import { Emitter } from "@niloc/utils"
 import { Message } from "../../core/Message"
 
 type ConnectionListMessage = {
@@ -20,7 +20,7 @@ export type ConnectionListEvents = {
     sync: void
 }
 
-export class ConnectionList {
+export class ConnectionList extends Emitter<ConnectionListEvents> {
 
     static owner(channel: Channel<any>) {
         return new ConnectionList(true, channel)
@@ -37,14 +37,12 @@ export class ConnectionList {
     private _emitter = new Emitter<ConnectionListEvents>()
 
     private constructor(owner: boolean, channel: Channel<any>) {
+        super()
+
         this._isOwner = owner
         this._channel = channel
 
         this._channel.addListener(this._onMessage)
-    }
-
-    emitter(): IEmitter<ConnectionListEvents> {
-        return this._emitter
     }
 
     users(): IterableIterator<string> {

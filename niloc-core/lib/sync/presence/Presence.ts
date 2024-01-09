@@ -14,6 +14,8 @@ export type PresenceEvents<T extends SyncObject> = {
     disconnected: string
 }
 
+type UnregisterCallback = () => void
+
 type Options<T extends SyncObject> = {
     context: Context,
     channel: Channel<any>,
@@ -47,8 +49,8 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
 
         this._user = this._model.instantiate(options.type, options.context.userId)
         
-        options.connectionList.emitter().on('connected', this._onConnected)
-        options.connectionList.emitter().on('disconnected', this._onDisconnected)
+        options.connectionList.on('connected', this._onConnected)
+        options.connectionList.on('disconnected', this._onDisconnected)
 
         this._model.on('created', user => this._onUserCreated(user as T))
 
@@ -68,7 +70,7 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
         return [...this._others]
     }
 
-    model() {
+    get model() {
         return this._model
     }
 
@@ -80,7 +82,12 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
         this._model.send()
     }
 
-    register(callback: () => void): () => void {
+    /**
+     * Call `user.registerAll` for all users to be created, and call `callback` when a user either
+     * connects, disconnects or changes.
+     * @returns A callback to call when you want to unregister the listener
+     */
+    register(callback: () => void): UnregisterCallback {
         const registeredObjects: Record<string, SyncObject> = {}
 
         for (const user of [this._user, ...this._others]) {

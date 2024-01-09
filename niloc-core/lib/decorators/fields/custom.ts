@@ -1,15 +1,19 @@
 import { Field } from "../../main";
 import { SyncObject } from "../../sync/SyncObject";
 
-export type KeyOfSelf<T> = T[keyof T]
+type KeyOfSelf<T> = T[keyof T]
 export type KeyOfType<T, O> = KeyOfSelf<{
     [K in keyof O]: O[K] extends T ? K : never
-}>
+}> & string
 
-export function custom<T, O extends SyncObject, K extends KeyOfType<T, O> & string>(fieldType: () => Field<T>) {
-    
-    return function(target: O, propertyKey: K) {
-        
+export function custom<
+    T,
+    Source extends SyncObject,
+    Key extends KeyOfType<T, Source>
+>(fieldType: () => Field<T>) {
+
+    return function (target: Source, propertyKey: Key) {
+
         const accessor = '$' + propertyKey
         const storage = Symbol(propertyKey)
 
@@ -31,11 +35,12 @@ export function custom<T, O extends SyncObject, K extends KeyOfType<T, O> & stri
                     field = fieldType()
                     this[storage] = field
                 }
-                
+
                 return field
             },
             enumerable: true
         })
+
     }
 
 }

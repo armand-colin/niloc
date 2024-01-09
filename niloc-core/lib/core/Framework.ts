@@ -29,7 +29,7 @@ export enum FrameworkChannels {
 }
 
 /**
- * Utiliy class for innitilizing a networked application
+ * Utiliy class for initializing a networked application
  */
 export class Framework<P extends SyncObject> {
 
@@ -64,7 +64,6 @@ export class Framework<P extends SyncObject> {
             channel: this.router.channel(FrameworkChannels.Model),
             context: this.router.context()
         })
-        this.model
             .addPlugin(new RPCPlugin(this.rpcHandler))
             .addPlugin(new ConnectionPlugin(this.connectionList))
 
@@ -75,7 +74,7 @@ export class Framework<P extends SyncObject> {
             type: options.presenceType
         })
 
-        this.presence.model()
+        this.presence.model
             .addPlugin(new RPCPlugin(this.rpcHandler))
             // Already added in Presence constructor
             // .addPlugin(new ConnectionPlugin(this.connectionList))

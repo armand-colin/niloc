@@ -3,7 +3,7 @@ import { StringWriter } from "../tools/StringWriter";
 import { Authority } from "./Authority";
 import { Model } from "./Model.interface";
 import { Reader } from "./Reader";
-import { ChangeRequester } from "./Synchronize";
+import { ChangeRequester } from "./ChangeRequester";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
 import { field } from "../main";

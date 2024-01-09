@@ -8,8 +8,8 @@ export class ConnectionPlugin implements Plugin {
     private _model: Model | null = null
 
     constructor(connectionList: ConnectionList) {
-        connectionList.emitter().on('connected', this._onConnected)
-        connectionList.emitter().on('sync', this._onSync)
+        connectionList.on('connected', this._onConnected)
+        connectionList.on('sync', this._onSync)
     }
 
     init(model: Model): void {

@@ -2,7 +2,7 @@ import { StringWriter } from "../../tools/StringWriter";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { SyncObjectType } from "../SyncObjectType";
-import { ChangeRequester } from "../Synchronize";
+import { ChangeRequester } from "../ChangeRequester";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 
