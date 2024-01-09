@@ -19,13 +19,13 @@ export class ConnectionPlugin implements Plugin {
     private _onConnected = (userId: string) => {
         if (!this._model)
             return
-        this._model.syncTo(Address.to(userId))
+        this._model.sync(Address.to(userId))
     }
 
     private _onSync = () => {
         if (!this._model)
             return
-        this._model.syncTo(Address.broadcast())
+        this._model.sync(Address.broadcast())
     }
 
 }

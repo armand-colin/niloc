@@ -35,9 +35,9 @@ export class SendLoopPlugin implements Plugin {
     init(model: Model): void {
         this._model = model
 
-        model.changeQueue().emitter().on('needsSend', this._needsSend)
+        model.changeQueue.on('needsSend', this._needsSend)
 
-        if (model.changeQueue().needsSend())
+        if (model.changeQueue.needsSend)
             this._needsSend()
     }
 
@@ -49,7 +49,7 @@ export class SendLoopPlugin implements Plugin {
     }
 
     private _send = () => {
-        if (!this._model.changeQueue().needsSend()) {
+        if (!this._model.changeQueue.needsSend) {
             this._uselessTicks++
 
             if (this._uselessTicks >= this._options.tolerance) {

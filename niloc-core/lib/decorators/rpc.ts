@@ -59,7 +59,7 @@ export function broadcast<Args extends any[], O, K extends KeyOfType<(...args: A
  * Useful if you have a `Presence` for example, where every user instance has the id of the user.
  */
 export function owner<Args extends any[], O extends SyncObject, K extends KeyOfType<(...args: Args) => any, O> & string>() {
-    return _rpc<Args, O, K>(object => Address.to(object.id()))
+    return _rpc<Args, O, K>(object => Address.to(object.id))
 }
 
 export function dynamic<Args extends any[], O, K extends KeyOfType<(...args: Args) => any, O> & string>(getTargetId: () => string) {

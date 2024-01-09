@@ -9,6 +9,7 @@ type KeyOfType<T, O> = KeyOfSelf<{
 export function syncObjectRef<Type extends SyncObject, Source extends SyncObject, Key extends KeyOfType<Type | null, Source> & string>(objectId: string | null) {
 
     return function (target: Source, propertyKey: Key) {
+        
         const accessor = '$' + propertyKey
         const storage = Symbol(propertyKey)
 

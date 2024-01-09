@@ -17,6 +17,21 @@ describe("Test", () => {
             @field.any(3)
             age: number
 
+            @field.number(3)
+            mark: number
+
+            @field.float(3)
+            x: number
+
+            @field.integer(3)
+            i: number
+
+            @field.string("armand")
+            name: string
+
+            @field.boolean()
+            died: boolean
+
             @field.syncObject(Sub)
             sub: Sub
 

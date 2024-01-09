@@ -15,7 +15,10 @@ export type FrameworkOptions<P extends SyncObject> = {
     relay?: boolean,
     network: Network,
     presenceType: SyncObjectType<P>,
-    connectionList?: ConnectionList
+    /**
+     * @default FrameworkChannels.ConnectionList
+     */
+    connectionListChannel?: number
 }
 
 export enum FrameworkChannels {
@@ -52,15 +55,18 @@ export class Framework<P extends SyncObject> {
             this.router.channel(FrameworkChannels.RPC)
         )
 
-        this.connectionList = options.connectionList ??
-            ConnectionList.client(this.router.channel(FrameworkChannels.ConnectionList))
+        const connectionListChannel = options.connectionListChannel ?? 
+            FrameworkChannels.ConnectionList
+
+        this.connectionList = ConnectionList.client(this.router.channel(connectionListChannel))
 
         this.model = new Model({
             channel: this.router.channel(FrameworkChannels.Model),
             context: this.router.context()
         })
-        this.model.addPlugin(new RPCPlugin(this.rpcHandler))
-        this.model.addPlugin(new ConnectionPlugin(this.connectionList))
+        this.model
+            .addPlugin(new RPCPlugin(this.rpcHandler))
+            .addPlugin(new ConnectionPlugin(this.connectionList))
 
         this.presence = new Presence({
             channel: this.router.channel(FrameworkChannels.Presence),
@@ -68,7 +74,11 @@ export class Framework<P extends SyncObject> {
             connectionList: this.connectionList,
             type: options.presenceType
         })
-        this.presence.model().plugin(new RPCPlugin(this.rpcHandler))
+
+        this.presence.model()
+            .addPlugin(new RPCPlugin(this.rpcHandler))
+            // Already added in Presence constructor
+            // .addPlugin(new ConnectionPlugin(this.connectionList))
     }
 
 }

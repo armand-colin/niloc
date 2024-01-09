@@ -1,15 +1,15 @@
-import { Emitter, IEmitter } from "@niloc/utils"
+import { Emitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
 import { Reader } from "../Reader"
 import { ChangeRequester } from "../Synchronize"
 import { Writer } from "../Writer"
 import { Model } from "../Model.interface"
 
-interface FieldEvents {
-    changed: void
+interface FieldEvents<T> {
+    change: T
 }
 
-export abstract class Field {
+export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
 
     static setIndex(field: Field, index: number) {
         field._index = index
@@ -63,23 +63,26 @@ export abstract class Field {
         const _fields = [...fields]
 
         for (const field of _fields)
-            field.emitter().on('changed', callback)
+            field.on('change', callback)
 
         return () => {
             for (const field of _fields)
-                field.emitter().off('changed', callback)
+                field.off('change', callback)
         }
     }
 
-    private _emitter = new Emitter<FieldEvents>()
     private _index: number = -1
 
     protected changeRequester!: ChangeRequester
     protected model!: Model
     protected dirty: boolean = false
 
-    index() { return this._index }
-    emitter(): IEmitter<FieldEvents> { return this._emitter }
+    get index() { 
+        return this._index 
+    }
+
+    abstract get(): T
+    abstract set(value: T): void
 
     protected abstract read(reader: Reader): void
     protected abstract write(writer: Writer): void
@@ -91,7 +94,7 @@ export abstract class Field {
     protected changed(): void {
         this.dirty = true
         this.changeRequester?.change(this._index)
-        this._emitter.emit('changed')
+        this.emit('change', this.get())
     }
 
     // Method called once field is initialized

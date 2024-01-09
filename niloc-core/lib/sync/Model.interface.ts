@@ -14,17 +14,23 @@ export type ObjectRequest = {
     dispose(): void
 }
 
-export interface Model {
+export interface Model extends IEmitter<ModelEvents> {
 
-    emitter(): IEmitter<ModelEvents>
-    changeQueue(): ChangeQueue
-    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
+    changeQueue: ChangeQueue
+
+    addType<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
+
+    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
+
     get<T extends SyncObject>(id: string): T | null
     getAll(): SyncObject[]
-    plugin(plugin: Plugin): void
-    instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
+
+    addPlugin(plugin: Plugin): this
+    
     send(): void
-    syncTo(address: Address): void
-    requestObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): ObjectRequest
+    sync(address: Address): void
+
+    registerObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void
+    unregisterObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void
 
 }

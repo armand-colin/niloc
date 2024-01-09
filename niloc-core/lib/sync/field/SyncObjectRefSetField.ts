@@ -3,22 +3,34 @@ import { SyncObject } from "../SyncObject";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 
-export class SyncObjectRefSetField<T extends SyncObject> extends Field {
+export class SyncObjectRefSetField<T extends SyncObject> extends Field<T[]> {
 
     private _objects = new Map<string, T | null>()
 
     add(object: T) {
-        this._objects.set(object.id(), object)
+        this._objects.set(object.id, object)
         this.changed()
     }
 
     remove(object: T) {
-        this._objects.delete(object.id())
+        this._objects.delete(object.id)
         this.changed()
     }
 
     has(object: T): boolean {
-        return this._objects.has(object.id())
+        return this._objects.has(object.id)
+    }
+
+    get(): T[] {
+        return [...this._objects.values()].filter((object): object is T => !!object)
+    }
+
+    set(objects: T[]) {
+        this._objects.clear()
+        for (const object of objects)
+            this._objects.set(object.id, object)
+
+        this.changed()
     }
 
     *values(): IterableIterator<T> {
@@ -34,7 +46,7 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
             const objectId = reader.readString()
             this._objects.set(objectId, this.model.get(objectId))
         }
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     write(writer: Writer): void {
@@ -44,12 +56,12 @@ export class SyncObjectRefSetField<T extends SyncObject> extends Field {
     }
 
     protected onInit(): void {
-        this.model.emitter().on('created', object => {
-            const objectId = object.id()
+        this.model.on('created', object => {
+            const objectId = object.id
             if (this._objects.has(objectId))
                 this._objects.set(objectId, object as T)
-            this.emitter().emit('changed')
-        })   
+            this.emit('change', this.get())
+        })
     }
 
 }

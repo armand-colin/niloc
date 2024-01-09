@@ -1,19 +1,14 @@
-import { Emitter, IEmitter } from "@niloc/utils"
+import { Emitter } from "@niloc/utils"
 
 type Events = {
     needsSend: void
 }
 
-export class ChangeQueue {
+export class ChangeQueue extends Emitter<Events> {
 
     private _changes = new Set<string>()
-    private _emitter = new Emitter<Events>()
 
-    emitter(): IEmitter<Events> {
-        return this._emitter
-    }
-
-    needsSend(): boolean {
+    get needsSend(): boolean {
         return this._changes.size > 0
     }
 
@@ -22,7 +17,7 @@ export class ChangeQueue {
         this._changes.add(objectId)
 
         if (startSize === 0)
-            this._emitter.emit('needsSend')
+            this.emit('needsSend')
     }
 
     deleteChange(objectId: string) {

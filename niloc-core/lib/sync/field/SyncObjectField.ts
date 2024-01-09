@@ -6,7 +6,7 @@ import { ChangeRequester } from "../Synchronize";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 
-export class SyncObjectField<T extends SyncObject> extends Field {
+export class SyncObjectField<T extends SyncObject> extends Field<T> {
 
     private _object: T
     private _changes: number[] = []
@@ -20,9 +20,14 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         return this._object
     }
 
+    set(value: T): void {
+        this._object = value
+        this.changed()
+    }
+
     read(reader: Reader): void {
         SyncObject.read(this._object, reader)
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     write(writer: Writer): void {
@@ -35,7 +40,7 @@ export class SyncObjectField<T extends SyncObject> extends Field {
             const fieldIndex = reader.readInt()
             Field.readDelta(this._object.fields()[fieldIndex], reader)
         }
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     writeDelta(writer: Writer): void {
@@ -59,8 +64,8 @@ export class SyncObjectField<T extends SyncObject> extends Field {
         const changeRequester: ChangeRequester = {
             change: (fieldIndex) => {
                 this._changes.push(fieldIndex)
-                this.changeRequester.change(this.index())
-                this.emitter().emit('changed')
+                this.changeRequester.change(this.index)
+                this.emit('change', this.get())
             },
             send: () => {
                 this.changeRequester.send()

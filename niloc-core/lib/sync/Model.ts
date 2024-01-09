@@ -8,12 +8,12 @@ import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
 import { Context } from "../core/Context"
 import { Authority } from "./Authority"
-import { Emitter, IEmitter } from "@niloc/utils"
+import { Emitter } from "@niloc/utils"
 import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 import { TypesHandler } from "./TypesHandler"
 import { SyncObjectType } from "./SyncObjectType"
-import { ModelEvents, Model as IModel, ObjectRequest } from "./Model.interface"
+import { ModelEvents, Model as IModel  } from "./Model.interface"
 import { Field } from "./field/Field"
 
 type ObjectId = string
@@ -35,12 +35,11 @@ enum ModelMessageType {
     Instantiate = 2
 }
 
-export class Model implements IModel {
+export class Model extends Emitter<ModelEvents> implements IModel {
 
     private _channel: Channel<ModelData>
     private _context: Context
 
-    private _emitter = new Emitter<ModelEvents>()
     private _objectsEmitter = new Emitter<{ [key: string]: SyncObject | null }>()
 
     private _typesHandler = new TypesHandler()
@@ -54,20 +53,16 @@ export class Model implements IModel {
     private _plugins = [] as Plugin[]
 
     constructor(opts: ModelOpts) {
+        super()
+
         this._channel = opts.channel
         this._channel.addListener(this._onMessage)
 
         this._context = opts.context
     }
 
-    emitter(): IEmitter<ModelEvents> { return this._emitter }
-    changeQueue() { return this._changeQueue }
-
-    /**
-     * @deprecated Use `addPlugin` instead
-     */
-    plugin(plugin: Plugin): void {
-        this.addPlugin(plugin)
+    get changeQueue() { 
+        return this._changeQueue 
     }
 
     addPlugin(plugin: Plugin): this {
@@ -76,8 +71,9 @@ export class Model implements IModel {
         return this
     }
 
-    register<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string) {
+    addType<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): this {
         this._typesHandler.register(type, typeId)
+        return this
     }
 
     instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T {
@@ -127,36 +123,7 @@ export class Model implements IModel {
         this._channel.post(Address.broadcast(), [ModelMessageType.Change, ...changes])
     }
 
-    private _writeChangesForObject(object: SyncObject, writer: Writer) {
-        if (!Authority.allows(object, this._context))
-            return
-
-        if (!SyncObject.isDirty(object))
-            return
-
-        const dirtyFields = SyncObject.getDirtyFields(object)
-        if (dirtyFields.length === 0)
-            return
-
-        writer.writeString(object.id())
-        writer.writeInt(dirtyFields.length)
-
-        const head = writer.cursor()
-        writer.writeInt(0)
-
-        for (const field of dirtyFields) {
-            writer.writeInt(field.index())
-            Field.writeDelta(field, writer)
-            Field.resetDelta(field)
-        }
-
-        const tail = writer.cursor()
-        writer.setCursor(head)
-        writer.writeInt(tail - head - 1)
-        writer.resume()
-    }
-
-    syncTo(address: Address) {
+    sync(address: Address) {
         const writer = this._writer
 
         for (const object of this._objects.values()) {
@@ -167,7 +134,7 @@ export class Model implements IModel {
             if (typeId === null)
                 continue
 
-            writer.writeString(object.id())
+            writer.writeString(object.id)
             writer.writeString(typeId)
             SyncObject.write(object, writer)
         }
@@ -188,17 +155,13 @@ export class Model implements IModel {
         return [...this._objects.values()]
     }
 
-    requestObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): ObjectRequest {
+    registerObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void {
         this._objectsEmitter.on(id, callback)
         callback(this.get(id))
+    }
 
-        const request: ObjectRequest = {
-            dispose: () => {
-                this._objectsEmitter.off(id, callback)
-            }
-        }
-
-        return request
+    unregisterObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void {
+        this._objectsEmitter.off(id, callback)
     }
 
     private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
@@ -213,7 +176,7 @@ export class Model implements IModel {
         for (const plugin of this._plugins)
             plugin.beforeCreate?.(object)
 
-        this._emitter.emit('created', object)
+        this.emit('created', object)
         this._objectsEmitter.emit(id, object)
 
         return object
@@ -236,7 +199,7 @@ export class Model implements IModel {
             return
 
         this._objects.delete(id)
-        this._emitter.emit('deleted', id)
+        this.emit('deleted', id)
         this._objectsEmitter.emit(id, null)
     }
 
@@ -319,6 +282,35 @@ export class Model implements IModel {
                 Field.readDelta(object.fields()[fieldIndex], reader)
             }
         }
+    }
+
+    private _writeChangesForObject(object: SyncObject, writer: Writer) {
+        if (!Authority.allows(object, this._context))
+            return
+
+        if (!SyncObject.isDirty(object))
+            return
+
+        const dirtyFields = SyncObject.getDirtyFields(object)
+        if (dirtyFields.length === 0)
+            return
+
+        writer.writeString(object.id)
+        writer.writeInt(dirtyFields.length)
+
+        const head = writer.cursor()
+        writer.writeInt(0)
+
+        for (const field of dirtyFields) {
+            writer.writeInt(field.index)
+            Field.writeDelta(field, writer)
+            Field.resetDelta(field)
+        }
+
+        const tail = writer.cursor()
+        writer.setCursor(head)
+        writer.writeInt(tail - head - 1)
+        writer.resume()
     }
 
 }

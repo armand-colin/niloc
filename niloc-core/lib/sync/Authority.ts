@@ -8,7 +8,7 @@ export enum Authority {
 }
 
 export namespace Authority {
-    
+
     export function allows(object: SyncObject, context: Context) {
         switch (object.authority) {
             case Authority.All:
@@ -16,9 +16,9 @@ export namespace Authority {
             case Authority.Host:
                 return context.host
             case Authority.Owner:
-                return context.userId === object.id()
+                return context.userId === object.id
         }
-        
+
         return false
     }
 

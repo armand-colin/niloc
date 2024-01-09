@@ -17,7 +17,7 @@ export class RPCPlugin implements Plugin {
             const rpc = object[key]
             if (!(rpc instanceof RPC))
                 continue
-            this._handler.register(rpc, `${object.id()}.${i++}`)
+            this._handler.register(rpc, `${object.id}.${i++}`)
         }
     }
 

@@ -12,16 +12,21 @@ export abstract class ValueField<T> extends Field {
         this.value = initValue
     }
 
-    public get() { return this.value }
+    get() { 
+        return this.value 
+    }
     
-    public set(value: T) {
+    set(value: T) {
+        if (this.equals(this.value, value))
+            return
+        
         this.value = value
         this.changed()
     }
 
     read(reader: Reader): void {
         this.readValue(reader)
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     write(writer: Writer): void {
@@ -30,6 +35,10 @@ export abstract class ValueField<T> extends Field {
 
     protected abstract writeValue(writer: Writer): void;
     protected abstract readValue(reader: Reader): void;
+
+    protected equals(a: T, b: T): boolean {
+        return a === b
+    }
 
     protected toString(writer: StringWriter): void {
         const type = typeof this.value

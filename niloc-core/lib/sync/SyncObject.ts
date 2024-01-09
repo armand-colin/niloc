@@ -1,3 +1,4 @@
+import { Emitter } from "@niloc/utils";
 import { StringWriter } from "../tools/StringWriter";
 import { Authority } from "./Authority";
 import { Model } from "./Model.interface";
@@ -5,11 +6,15 @@ import { Reader } from "./Reader";
 import { ChangeRequester } from "./Synchronize";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
-import { BooleanField } from "./field/customs/BooleanField";
+import { field } from "../main";
 
-export class SyncObject {
+type SyncObjectEvents = {
+    delete: void
+}
 
-    static __init(object: SyncObject, data: { 
+export class SyncObject extends Emitter<SyncObjectEvents> {
+
+    static __init(object: SyncObject, data: {
         changeRequester: ChangeRequester,
         model: Model
     }) {
@@ -31,7 +36,7 @@ export class SyncObject {
     }
 
     static writeString(object: SyncObject, writer: StringWriter) {
-        writer.writeLine(`${object.constructor.name}: ${object.id()} {`)
+        writer.writeLine(`${object.constructor.name}: ${object.id} {`)
         writer.startIndent()
 
         for (const field of object.fields())
@@ -65,30 +70,35 @@ export class SyncObject {
 
         return fields
     }
-    
-    readonly _id: string
-    readonly deleted = new BooleanField(false)
-    
+
+
     authority = Authority.All
-    
+
+    readonly id: string
+
+    @field.boolean(false)
+    deleted!: boolean
+
     /**
      * Only available after the object is initialized (onInit has been called)
      */
     protected model!: Model
+
     /**
      * Only available after the object is initialized (onInit has been called)
      */
     protected changeRequester!: ChangeRequester
-    
+
+
     private _fields: Field[] | null = null
+    
 
     constructor(id: string) {
-        this._id = id
+        super()
 
-        this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
+        this.id = id
+        this.register("deleted", this._onDeletedChange)
     }
-
-    id(): string { return this._id }
 
     fields(): Field[] {
         if (!this._fields)
@@ -111,30 +121,82 @@ export class SyncObject {
         this.changeRequester.send()
     }
 
-    register(callback: () => void): () => void {
-        return Field.register(this.fields(), callback)
+    private _registerMap = new Map<() => void, () => void>()
+
+    registerAll(callback: () => void): void {
+        if (this._registerMap.has(callback))
+            return
+
+        const unregister = Field.register(this.fields(), callback)
+        this._registerMap.set(callback, unregister)
+    }
+
+    unregisterAll(callback: () => void): void {
+        if (!this._registerMap.has(callback))
+            return
+
+        const unregister = this._registerMap.get(callback)!
+        unregister()
+        this._registerMap.delete(callback)
+    }
+
+    register<K extends keyof this & string>(fieldName: K, callback: (value: this[K]) => void): void {
+        const field = this[fieldName]
+        if (field && field instanceof Field) {
+            field.on('change', callback)
+            return
+        }
+
+        // Check if decorator exists
+        const decoratedFieldName = `$${fieldName}`
+        const decoratedField = this[decoratedFieldName as keyof this]
+        if (decoratedField && decoratedField instanceof Field) {
+            decoratedField.on('change', callback)
+            return
+        }
+
+        throw new Error(`Field ${fieldName} does not exist on type ${this.constructor.name}`)
+    }
+
+    unregister<K extends keyof this & string>(fieldName: K, callback: (value: this[K]) => void): void {
+        const field = this[fieldName]
+        if (field && field instanceof Field) {
+            field.off('change', callback)
+            return
+        }
+
+        // Check if decorator exists
+        const decoratedFieldName = `$${fieldName}`
+        const decoratedField = this[decoratedFieldName as keyof this]
+        if (decoratedField && decoratedField instanceof Field) {
+            decoratedField.off('change', callback)
+            return
+        }
+
+        throw new Error(`Field ${fieldName} does not exist on type ${this.constructor.name}`)
     }
 
     delete() {
-        if (this.deleted.get())
+        if (this.deleted)
             return
 
-        this.deleted.set(true)
-        this.changeRequester.send()
-        this.changeRequester.delete()
+        this.deleted = true
+    }
+
+    private _onDeletedChange = () => {
+        if (this.deleted) {
+            this.emit('delete')
+            this.onDelete()
+            this.changeRequester.delete()
+
+            // Point of no return
+            this.removeAllListeners()
+        }
     }
 
     // Method called when the object is created and everything is setup
     protected onInit() { }
-
-    private _onDeletedChanged = () => {
-        const deleted = this.deleted.get()
-        
-        if (deleted) {
-            this.changeRequester.delete()
-            this.deleted.emitter().on('changed', this._onDeletedChanged.bind(this))
-        }
-    }
+    protected onDelete() { }
 
     private _initFields(): Field[] {
         const fields: Field[] = []

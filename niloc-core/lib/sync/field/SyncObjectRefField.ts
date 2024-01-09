@@ -1,15 +1,14 @@
 import { StringWriter } from "../../tools/StringWriter";
-import { ObjectRequest } from "../Model.interface";
 import { Reader } from "../Reader";
 import { SyncObject } from "../SyncObject";
 import { Writer } from "../Writer";
 import { Field } from "./Field";
 
-export class SyncObjectRefField<T extends SyncObject> extends Field {
+export class SyncObjectRefField<T extends SyncObject> extends Field<T | null> {
 
     private _objectId: string | null
     private _object: T | null = null
-    private _objectRequest: ObjectRequest | null = null
+    private _objectRequest: ((object: T | null) => void) | null = null
 
     constructor(objectId: string | null) {
         super()
@@ -23,7 +22,7 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
             return
 
         this._setObjectId(objectId)
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     write(writer: Writer): void {
@@ -31,8 +30,8 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
     }
 
     set(object: T | null): void {
-        const objectId = object?.id() ?? null
-        
+        const objectId = object?.id ?? null
+
         if (objectId === this._objectId)
             return
 
@@ -46,24 +45,29 @@ export class SyncObjectRefField<T extends SyncObject> extends Field {
     }
 
     private _setObjectId(objectId: string | null) {
-        this._objectRequest?.dispose()
+        if (this._objectId && this._objectRequest) {
+            this.model.unregisterObject<T>(this._objectId, this._objectRequest)
+            this._objectRequest = null
+        }
 
         this._objectId = objectId
         this._object = null
 
         if (objectId) {
-            this._objectRequest = this.model.requestObject<T>(objectId, (object) => {
+            this._objectRequest = (object: T | null) => {
                 if (object === this._object)
                     return
 
                 this._object = object
-                this.emitter().emit('changed')
-            })
+                this.emit('change', this.get())
+            }
+
+            this.model.registerObject<T>(objectId, this._objectRequest)
         } else {
             this._objectRequest = null
         }
 
-        this.emitter().emit('changed')
+        this.emit('change', this.get())
     }
 
     protected onInit(): void {
