@@ -1,6 +1,7 @@
 import { SyncObjectRefField } from "../../sync/field/SyncObjectRefField"
 import { SyncObject } from "../../sync/SyncObject"
-import { custom, KeyOfType } from "./custom"
+import { KeyOfType } from "../KeyOfType"
+import { custom } from "./custom"
 
 export function syncObjectRef<
     Type extends SyncObject,

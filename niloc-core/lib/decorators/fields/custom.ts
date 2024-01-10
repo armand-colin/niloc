@@ -1,10 +1,6 @@
 import { Field } from "../../main";
 import { SyncObject } from "../../sync/SyncObject";
-
-type KeyOfSelf<T> = T[keyof T]
-export type KeyOfType<T, O> = KeyOfSelf<{
-    [K in keyof O]: O[K] extends T ? K : never
-}> & string
+import { KeyOfType } from "../KeyOfType";
 
 export function custom<
     T,

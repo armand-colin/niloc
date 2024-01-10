@@ -1,6 +1,7 @@
 import { SyncObject } from "../../main";
 import { StringField } from "../../sync/field/customs/StringField";
-import { KeyOfType, custom } from "./custom";
+import { KeyOfType } from "../KeyOfType";
+import { custom } from "./custom";
 
 export function string<
     Source extends SyncObject,

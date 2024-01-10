@@ -1,6 +1,7 @@
 import { SyncObject } from "../../main";
 import { NumberField } from "../../sync/field/customs/NumberField";
-import { KeyOfType, custom } from "./custom";
+import { KeyOfType } from "../KeyOfType";
+import { custom } from "./custom";
 
 export function number<
     Source extends SyncObject,

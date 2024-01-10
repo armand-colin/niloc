@@ -1,7 +1,8 @@
 import { SyncObjectType } from "../../main"
 import { SyncObjectField } from "../../sync/field/SyncObjectField"
 import { SyncObject } from "../../sync/SyncObject"
-import { custom, KeyOfType } from "./custom"
+import { KeyOfType } from "../KeyOfType"
+import { custom } from "./custom"
 
 export function syncObject<
     Type extends SyncObject, 

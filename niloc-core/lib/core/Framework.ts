@@ -6,7 +6,7 @@ import { ConnectionList } from "../sync/presence/ConnectionList"
 import { RPCHandler } from "../rpc/RPCHandler"
 import { RPCPlugin } from "../rpc/RPCPlugin"
 import { Router } from "./Router"
-import { ConnectionPlugin, Identity } from "../main"
+import { AssertPlugin, ConnectionPlugin, Identity } from "../main"
 import { User } from "../sync/presence/User"
 
 export type FrameworkOptions<P extends User> = {
@@ -53,7 +53,7 @@ export class Framework<P extends User> {
             this.router.channel(FrameworkChannels.RPC)
         )
 
-        const connectionListChannel = options.connectionListChannel ?? 
+        const connectionListChannel = options.connectionListChannel ??
             FrameworkChannels.ConnectionList
 
         this.connectionList = ConnectionList.client(this.router.channel(connectionListChannel))
@@ -64,6 +64,7 @@ export class Framework<P extends User> {
         })
             .addPlugin(new RPCPlugin(this.rpcHandler))
             .addPlugin(new ConnectionPlugin(this.connectionList))
+            .addPlugin(new AssertPlugin(options.identity))
 
         this.presence = new Presence({
             channel: this.router.channel(FrameworkChannels.Presence),
@@ -74,8 +75,9 @@ export class Framework<P extends User> {
 
         this.presence.model
             .addPlugin(new RPCPlugin(this.rpcHandler))
-            // Already added in Presence constructor
-            // .addPlugin(new ConnectionPlugin(this.connectionList))
+            .addPlugin(new AssertPlugin(options.identity))
+        // Already added in Presence constructor
+        // .addPlugin(new ConnectionPlugin(this.connectionList))
     }
 
 }

@@ -1,6 +1,7 @@
 import { SyncObject } from "../../main";
 import { AnyField } from "../../sync/field/AnyField";
-import { KeyOfType, custom } from "./custom";
+import { KeyOfType } from "../KeyOfType";
+import { custom } from "./custom";
 
 export function any<
     T,

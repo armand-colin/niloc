@@ -40,7 +40,13 @@ export { Emitter } from "@niloc/utils";
 // Plugins
 export { SendLoopPlugin } from "./sync/plugins/SendLoopPlugin"
 
-export { field, rpc } from "./decorators/main"
+// Assert 
+export { Assert } from "./assert/Assert"
+export type { AssertContext } from "./assert/AssertContext"
+export { AssertHandler } from "./assert/AssertHandler"
+export { AssertPlugin } from "./assert/AssertPlugin"
+
+export { field, rpc, assert } from "./decorators/main"
 
 export { Framework, FrameworkChannels } from "./core/Framework"
 export type { FrameworkOptions } from "./core/Framework"

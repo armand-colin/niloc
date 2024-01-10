@@ -1,6 +1,7 @@
 import { SyncObject } from "../../main";
 import { IntegerField } from "../../sync/field/customs/IntegerField";
-import { KeyOfType, custom } from "./custom";
+import { KeyOfType } from "../KeyOfType";
+import { custom } from "./custom";
 
 export function integer<
     Source extends SyncObject,

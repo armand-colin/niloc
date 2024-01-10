@@ -65,6 +65,10 @@ export class Model extends Emitter<ModelEvents> implements IModel {
         return this._changeQueue 
     }
 
+    get identity() {
+        return this._identity
+    }
+
     addPlugin(plugin: Plugin): this {
         this._plugins.push(plugin)
         plugin.init?.(this)

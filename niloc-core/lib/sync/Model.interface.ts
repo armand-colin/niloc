@@ -4,6 +4,7 @@ import type { IEmitter } from "@niloc/utils"
 import { Address } from "../core/Address"
 import { SyncObjectType } from "./SyncObjectType"
 import { ChangeQueue } from "./ChangeQueue"
+import { Identity } from "../main"
 
 export interface ModelEvents {
     created: SyncObject,
@@ -17,7 +18,8 @@ export type ObjectRequest = {
 export interface Model extends IEmitter<ModelEvents> {
 
     changeQueue: ChangeQueue
-
+    identity: Identity
+    
     addType<T extends SyncObject>(type: SyncObjectType<T>, typeId?: string): void
 
     instantiate<T extends SyncObject>(type: SyncObjectType<T>, id?: string): T
