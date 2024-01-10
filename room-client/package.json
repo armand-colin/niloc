@@ -1,7 +1,7 @@
 {
     "name": "@niloc/room-client",
     "private": false,
-    "version": "0.0.5",
+    "version": "0.1.0",
     "type": "module",
     "files": [
         "dist",
@@ -28,9 +28,9 @@
         "vitest": "^0.30.1"
     },
     "dependencies": {
-        "@niloc/core": "link:../niloc-core",
-        "@niloc/socketio-client": "link:../niloc-socketio-client",
-        "@niloc/utils": "^0.0.4",
+        "@niloc/core": "^0.3.0",
+        "@niloc/socketio-client": "^0.1.0",
+        "@niloc/utils": "^0.0.6",
         "socket.io-client": "^4.7.2"
     },
     "description": "",
