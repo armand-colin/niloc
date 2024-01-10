@@ -1,6 +1,6 @@
 {
     "name": "@niloc/core",
-    "version": "0.2.12",
+    "version": "0.3.0",
     "type": "module",
     "files": [
         "dist",
@@ -27,7 +27,7 @@
         "vitest": "^0.30.1"
     },
     "dependencies": {
-        "@niloc/utils": "^0.0.4",
+        "@niloc/utils": "^0.0.6",
         "nanoid": "^4.0.2"
     },
     "description": "Niloc is designed to give the tools to build a networking system, with a very modular approach. The core library does not ship any transport, however some have been implemented, such as Socket.IO and WebRTC. There are also some features available through the base `Router` or through other pluggable components :",
