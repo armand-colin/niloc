@@ -71,7 +71,7 @@ describe("Sync / Model", () => {
             const tree = apple?.tree.get()
             expect(tree).not.to.be.null
             expect(tree?.name.get()).to.equal("My apple tree")
-            expect(tree?.id()).to.equal("appleTree")
+            expect(tree?.id).to.equal("appleTree")
         }
     })
 
@@ -102,7 +102,7 @@ describe("Sync / Model", () => {
             const tree = apple?.tree.get()
             expect(tree).not.be.null
             expect(tree?.name.get()).to.equal("My apple tree")
-            expect(tree?.id()).to.equal("appleTree")
+            expect(tree?.id).to.equal("appleTree")
         }
 
         apple.tree.set(pearTree)
@@ -113,7 +113,7 @@ describe("Sync / Model", () => {
             const tree = apple?.tree.get()
             expect(tree).not.be.null
             expect(tree?.name.get()).to.equal("My pear tree")
-            expect(tree?.id()).to.equal("pearTree")
+            expect(tree?.id).to.equal("pearTree")
         }
     })
 })

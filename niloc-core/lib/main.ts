@@ -1,10 +1,10 @@
 export { Address } from "./core/Address";
 export type { Message } from "./core/Message";
 export type { Network, NetworkEvents } from "./core/Network";
-export type { Peer } from "./core/Peer";
+export { Peer } from "./core/Peer";
 export { Router } from "./core/Router";
 export { Channel } from "./channel/Channel";
-export { Context } from "./core/Context";
+export { Identity } from "./core/Identity";
 export { Authority } from "./sync/Authority";
 
 // sync
@@ -24,6 +24,7 @@ export { SyncObjectRefSetField } from "./sync/field/SyncObjectRefSetField"
 //  presence
 export { Presence } from "./sync/presence/Presence"
 export type { PresenceEvents } from "./sync/presence/Presence"
+export { User } from "./sync/presence/User"
 export { ConnectionList } from "./sync/presence/ConnectionList"
 export { ConnectionPlugin } from "./sync/presence/ConnectionPlugin"
 export type { ConnectionListEvents } from "./sync/presence/ConnectionList"

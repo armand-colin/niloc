@@ -6,7 +6,7 @@ import { Reader } from "./Reader";
 import { ChangeRequester } from "./ChangeRequester";
 import { Writer } from "./Writer";
 import { Field } from "./field/Field";
-import { field } from "../main";
+import { boolean } from "../decorators/fields/boolean";
 
 type SyncObjectEvents = {
     delete: void
@@ -76,7 +76,7 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
 
     readonly id: string
 
-    @field.boolean(false)
+    @boolean(false)
     deleted!: boolean
 
     /**

@@ -1,5 +1,5 @@
 import { Emitter } from "@niloc/utils";
-import { Address, Peer } from "../lib/main";
+import { Identity, Peer } from "../lib/main";
 
 interface PeerEvents {
     message: {
@@ -8,19 +8,20 @@ interface PeerEvents {
     }
 }
 
+class MockPeer extends Peer {
+
+    emitter = new Emitter<PeerEvents>()
+
+    send(channel: number, message: any): void {
+        this.emitter.emit('message', { channel, message })
+    }
+
+}
+
 export namespace MockPeers {
 
-    export function make(ids:string[]): Peer[] {
-        return ids.map(id => {
-            const emitter = new Emitter<PeerEvents>()
-
-            return {
-                address() { return Address.to(id) },
-                emitter() { return emitter },
-                id() { return id },
-                send(_channel, _message) { },
-            }
-        })
+    export function make(ids: string[]): Peer[] {
+        return ids.map(id => new MockPeer(new Identity(id)))
     }
 
 }

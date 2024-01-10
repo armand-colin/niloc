@@ -1,5 +1,5 @@
 import { Channel } from "../../channel/Channel";
-import { Context } from "../../core/Context";
+import { Identity } from "../../core/Identity";
 import { Model } from "../Model";
 import { SyncObject } from "../SyncObject";
 import { Emitter } from "@niloc/utils";
@@ -7,6 +7,7 @@ import { ConnectionList } from "./ConnectionList";
 import { ConnectionPlugin } from "./ConnectionPlugin";
 import { SyncObjectType } from "../SyncObjectType";
 import { OwnerAuthorityPlugin } from "./OwnerAuthorityPlugin";
+import { User } from "./User";
 
 export type PresenceEvents<T extends SyncObject> = {
     changed: T[],
@@ -16,14 +17,14 @@ export type PresenceEvents<T extends SyncObject> = {
 
 type UnregisterCallback = () => void
 
-type Options<T extends SyncObject> = {
-    context: Context,
+type Options<T extends User> = {
+    identity: Identity,
     channel: Channel<any>,
     type: SyncObjectType<T>,
     connectionList: ConnectionList
 }
 
-export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
+export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
 
     private _connectionList: ConnectionList
     private _model: Model
@@ -39,7 +40,7 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
 
         this._model = new Model({
             channel: options.channel,
-            context: options.context
+            identity: options.identity
         })
 
         this._model
@@ -47,7 +48,7 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
             .addPlugin(new ConnectionPlugin(options.connectionList))
             .addPlugin(new OwnerAuthorityPlugin())
 
-        this._user = this._model.instantiate(options.type, options.context.userId)
+        this._user = this._model.instantiate(options.type, options.identity.userId)
         
         options.connectionList.on('connected', this._onConnected)
         options.connectionList.on('disconnected', this._onDisconnected)
@@ -133,7 +134,9 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
         }
     }
 
-    private _onConnected = (userId: string) => {
+    private _onConnected = (identity: Identity) => {
+        const userId = identity.userId
+
         if (userId === this._user.id)
             return
 
@@ -141,8 +144,9 @@ export class Presence<T extends SyncObject> extends Emitter<PresenceEvents<T>> {
             return
 
         const user = this._model.get<T>(userId)
-
+        
         if (user) {
+            User.__setIdentity(user, identity)
             this._others.push(user)
             this._emitter.emit('changed', this.users)
             this._emitter.emit('connected', user)

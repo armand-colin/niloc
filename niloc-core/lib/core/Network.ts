@@ -1,6 +1,6 @@
-import type { IEmitter } from "@niloc/utils";
-import { Message } from "./Message";
-import { Peer } from "./Peer";
+import type { IEmitter } from "@niloc/utils"
+import { Message } from "./Message"
+import { Peer } from "./Peer"
 
 export interface NetworkEvents {
     message: {
@@ -10,16 +10,11 @@ export interface NetworkEvents {
     }
 }
 
-export interface Network {
+export interface Network extends IEmitter<NetworkEvents> {
 
     /**
      * Returns the list of connected peers to this network
      */
     peers(): Iterable<Peer>
-
-    /**
-     * 
-     */
-    emitter(): IEmitter<NetworkEvents>
 
 }

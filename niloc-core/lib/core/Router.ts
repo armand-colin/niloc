@@ -4,16 +4,13 @@ import { Network } from "./Network";
 import { DataChannel } from "../channel/DataChannel";
 import { Channel } from "../channel/Channel";
 import { Peer } from "./Peer";
-import { Context } from "./Context";
+import { Identity } from "./Identity";
 
-export interface RouterOpts {
+export interface RouterOpts<N extends Network = Network> {
 
-    /**
-     * peerId of this router
-     */
-    id: string,
-
-    network: Network,
+    identity: Identity,
+    
+    network: N,
 
     /**
      * Whether this router should relay messages upon reception or not
@@ -21,66 +18,68 @@ export interface RouterOpts {
      */
     relay?: boolean
 
-    /**
-     * Whether this router is a host or not
-     * @default false
-     */
-    host?: boolean
+}
+
+class SelfPeer extends Peer {
+
+    constructor(
+        identity: Identity, 
+        readonly onMessage: (peerId: string, channel: number, message: Message) => void
+    ) {
+        super(identity)
+    }
+
+    send(channel: number, message: Message<any>): void {
+        this.onMessage(this.id, channel, message)
+    }
 
 }
 
-export class Router {
+export class Router<N extends Network = Network> {
 
-    private _id: string
+    public readonly network: N
+
     private _relay: boolean
-    private _address: Address
+    private _identity: Identity
     private _self: Peer
-
-    private _context: Context
 
     private readonly _channels: Record<number, DataChannel<any>> = {}
 
-    public readonly network: Network
+    constructor(opts: RouterOpts<N>) {
+        const network = opts.network
 
-    constructor(opts: RouterOpts) {
-        this._id = opts.id
         this._relay = opts.relay ?? false
-        this._address = opts.host ? Address.host() : Address.to(opts.id)
+        this._identity = opts.identity
 
-        this._context = new Context(opts.id, opts.host ?? false)
+        this._self = new SelfPeer(
+            opts.identity,
+            this._onMessage
+        )
 
-        this._self = {
-            id: () => this._id,
-            address: () => this._address,
-            send: (channel, message) => {
-                this._onMessage(this._id, channel, message)
-            }
-        }
+        network.on('message', ({ peerId, channel, message }) => this._onMessage(peerId, channel, message))
 
-        this.network = opts.network
+        this.network = network
+    }
 
-        this.network.emitter().on('message', ({ peerId, channel, message }) => this._onMessage(peerId, channel, message))
+    get id() {
+        return this._self.id
+    }
+
+    get identity(): Identity {
+        return this._identity
     }
 
     /**
-     * @returns peerId of the router
-     */
-    id(): string { return this._id }
-
-    /**
-     * @returns address of the router
-     */
-    address(): Address { return this._address }
-
-    /**
-     * Gives a peer representing this router. This could be useful to test is an address matches a router for example.
+     * Gives a peer representing this router. This could be useful to test if an address matches a router for example.
      * 
      * @example
      * ```ts
      * Address.match(address, router.self())
      * ```
      */
-    self(): Peer { return this._self }
+    get self(): Peer { 
+        return this._self 
+    }
 
     /**
      * Get a channel by index, creating it if needed. This will then be usefull to send / retrieve data from the network
@@ -99,11 +98,7 @@ export class Router {
         return this._channels[channel].input()
     }
 
-    context(): Context {
-        return this._context
-    }
-
-    private _onMessage(peerId: string, channel: number, message: Message) {
+    private _onMessage = (peerId: string, channel: number, message: Message) => {
         if (Address.match(peerId, message.address, this._self))
             this._receive(channel, message)
 
@@ -113,7 +108,7 @@ export class Router {
         for (const peer of this.network.peers()) {
             // Absolutely forbidden to send back a message 
             // to someone who sent it to us
-            if (peer.id() === peerId)
+            if (peer.id === peerId)
                 continue
 
             if (Address.match(peerId, message.address, peer))
@@ -138,18 +133,18 @@ export class Router {
 
     private _send(address: Address, channel: number, data: any): void {
         const message: Message = {
-            originId: this._id,
+            originId: this.id,
             address,
             data
         }
 
         for (const peer of this.network.peers()) {
-            if (Address.match(this._id, address, peer)) {
+            if (Address.match(this.id, address, peer)) {
                 peer.send(channel, message)
             }
         }
 
-        if (Address.match(this._id, address, this._self))
+        if (Address.match(this.id, address, this._self))
             this._receive(channel, message)
     }
 

@@ -1,9 +1,17 @@
-import { Emitter, Network, NetworkEvents, Peer } from "@niloc/core";
+import { Emitter, Identity, Network, NetworkEvents, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
-export declare class SocketIONetwork implements Network {
+type SocketIONetworkOpts = {
+    /**
+     * @default false
+     */
+    host?: boolean;
+};
+export declare class SocketIONetwork extends Emitter<NetworkEvents> implements Network {
     private _peers;
-    private _emitter;
+    private _identity;
+    constructor(opts?: SocketIONetworkOpts);
+    identity(): Identity;
     peers(): Iterable<Peer>;
-    emitter(): Emitter<NetworkEvents>;
     addSocket(socket: Socket, peerId: string, host: boolean): void;
 }
+export {};

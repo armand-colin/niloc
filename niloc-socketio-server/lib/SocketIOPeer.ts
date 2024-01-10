@@ -1,28 +1,27 @@
-import { Address, Emitter, Message, Peer } from "@niloc/core";
+import { Emitter, Identity, Message, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
 
 interface SocketIOPeerEvents {
     disconnect: void
 }
 
-interface PeerEvents {
-    message: {
-        channel: number,
-        message: Message
-    }
+type PeerMessage = {
+    channel: number,
+    message: Message
 }
 
-export class SocketIOPeer implements Peer {
+interface PeerEvents {
+    message: PeerMessage
+}
 
-    private _id: string
-    private _address: Address
+export class SocketIOPeer extends Peer {
+
     private _emitter = new Emitter<PeerEvents>()
     private _socketIOEmitter = new Emitter<SocketIOPeerEvents>()
     private _socket: Socket
 
-    constructor(socket: Socket, id: string, host: boolean) {
-        this._id = id
-        this._address = host ? Address.host() : Address.to(id)
+    constructor(identity: Identity, socket: Socket) {
+        super(identity)
         this._socket = socket
 
         socket.on('message', this._onMessage)
@@ -32,15 +31,24 @@ export class SocketIOPeer implements Peer {
         })
     }
 
-    id(): string { return this._id }
-    address(): Address { return this._address }
-    emitter(): Emitter<PeerEvents> { return this._emitter }
-    socketIOEmitter() { return this._socketIOEmitter }
+    get socketIOEmitter() { 
+        return this._socketIOEmitter 
+    }
 
     send(channel: number, message: Message): void {
         this._socket.send(channel, JSON.stringify(message))
     }
 
+
+    addListener(callback: (message: PeerMessage) => void) {
+        this._emitter.on('message', callback)
+    }
+
+    removeListener(callback: (message: PeerMessage) => void) {
+        this._emitter.off('message', callback)
+    }
+
+    
     destroy() {
         this._socket.removeAllListeners()
     }
@@ -57,7 +65,7 @@ export class SocketIOPeer implements Peer {
                 return
             this._emitter.emit('message', { channel, message: messageObject })
         } catch (e) {
-            console.error(`Error receiving network message (${this._id})`, e)
+            console.error(`Error receiving network message (${this.id})`, e)
         }
     }
 

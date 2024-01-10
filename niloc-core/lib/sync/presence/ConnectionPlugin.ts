@@ -1,4 +1,4 @@
-import { Address } from "../../main";
+import { Address, Identity } from "../../main";
 import { Model } from "../Model.interface";
 import { Plugin } from "../Plugin";
 import { ConnectionList } from "./ConnectionList";
@@ -16,10 +16,11 @@ export class ConnectionPlugin implements Plugin {
         this._model = model
     }
 
-    private _onConnected = (userId: string) => {
+    private _onConnected = (identity: Identity) => {
         if (!this._model)
             return
-        this._model.sync(Address.to(userId))
+
+        this._model.sync(Address.to(identity.userId))
     }
 
     private _onSync = () => {

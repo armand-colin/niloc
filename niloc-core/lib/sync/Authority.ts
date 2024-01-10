@@ -1,4 +1,4 @@
-import { Context } from "../core/Context"
+import { Identity } from "../core/Identity"
 import { SyncObject } from "./SyncObject"
 
 export enum Authority {
@@ -9,7 +9,7 @@ export enum Authority {
 
 export namespace Authority {
 
-    export function allows(object: SyncObject, context: Context) {
+    export function allows(object: SyncObject, context: Identity) {
         switch (object.authority) {
             case Authority.All:
                 return true

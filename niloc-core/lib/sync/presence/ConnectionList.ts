@@ -2,20 +2,22 @@ import { Address } from "../../core/Address"
 import { Channel  } from "../../channel/Channel"
 import { Emitter } from "@niloc/utils"
 import { Message } from "../../core/Message"
+import { Identity } from "../../main"
+import { SerializedIdentity } from "../../core/Identity"
 
 type ConnectionListMessage = {
     type: "connected",
-    userId: string
+    identity: SerializedIdentity
 } | {
     type: "disconnected",
     userId: string
 } | {
     type: "sync",
-    userIds: string[]
+    users: SerializedIdentity[]
 }
 
 export type ConnectionListEvents = {
-    connected: string
+    connected: Identity
     disconnected: string
     sync: void
 }
@@ -33,7 +35,7 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
     private _isOwner: boolean
     private _channel: Channel<ConnectionListMessage>
 
-    private _users = new Set<string>()
+    private _users = new Map<string, Identity>()
     private _emitter = new Emitter<ConnectionListEvents>()
 
     private constructor(owner: boolean, channel: Channel<any>) {
@@ -45,7 +47,7 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
         this._channel.addListener(this._onMessage)
     }
 
-    users(): IterableIterator<string> {
+    users(): IterableIterator<Identity> {
         return this._users.values()
     }
 
@@ -53,18 +55,23 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
         return this._users.has(userId)
     }
 
-    connected(userId: string): void {
-        if (this._users.has(userId))
+    connected(identity: Identity): void {
+        if (this._users.has(identity.userId))
             return
 
-        this._connected(userId)
+        this._connected(identity)
 
         // Broadcast message
         if (this._isOwner) {
-            this._channel.post(Address.broadcast(), { type: "connected", userId })
-            this._channel.post(Address.to(userId), { 
+            this._channel.post(Address.broadcast(), { 
+                type: "connected",
+                identity: identity.serialize()
+            })
+
+            this._channel.post(Address.to(identity.userId), { 
                 type: "sync",
-                userIds: [...this._users]
+                users: [...this._users.values()]
+                    .map(identity => identity.serialize())
             })
         }
     }
@@ -80,9 +87,9 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
             this._channel.post(Address.broadcast(), { type: "disconnected", userId })
     }
 
-    private _connected(userId: string) {
-        this._users.add(userId)
-        this._emitter.emit('connected', userId)
+    private _connected(identity: Identity) {
+        this._users.set(identity.userId, identity)
+        this._emitter.emit('connected', identity)
     }
 
     private _disconnected(userId: string) {
@@ -90,15 +97,15 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
         this._emitter.emit('disconnected', userId)
     }
 
-    private _sync(userIds: string[]) {
-        for (const userId of [...this._users]) {
-            if (!userIds.includes(userId))
+    private _sync(users: SerializedIdentity[]) {
+        for (const userId of [...this._users.keys()]) {
+            if (!users.find(user => user.userId === userId))
                 this._disconnected(userId)
         }
 
-        for (const userId of userIds) {
-            if (!this._users.has(userId))
-                this._connected(userId)
+        for (const user of users) {
+            if (!this._users.has(user.userId))
+                this._connected(Identity.deserialize(user))
         }
 
         this._emitter.emit('sync')
@@ -107,10 +114,10 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
     private _onMessage = (message: Message<ConnectionListMessage>) => {
         switch (message.data.type) {
             case "connected": {
-                if (this._isOwner || this._users.has(message.data.userId))
+                if (this._isOwner || this._users.has(message.data.identity.userId))
                     return
 
-                this._connected(message.data.userId)
+                this._connected(Identity.deserialize(message.data.identity))
                 break
             }
             case "disconnected": {
@@ -124,7 +131,7 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
                 if (this._isOwner)
                     return
 
-                this._sync(message.data.userIds)
+                this._sync(message.data.users)
             } 
         }
     }

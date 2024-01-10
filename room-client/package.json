@@ -28,8 +28,8 @@
         "vitest": "^0.30.1"
     },
     "dependencies": {
-        "@niloc/core": "^0.2.7",
-        "@niloc/socketio-client": "^0.0.5",
+        "@niloc/core": "link:../niloc-core",
+        "@niloc/socketio-client": "link:../niloc-socketio-client",
         "@niloc/utils": "^0.0.4",
         "socket.io-client": "^4.7.2"
     },

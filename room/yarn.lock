@@ -2,28 +2,13 @@
 # yarn lockfile v1
 
 
-"@niloc/core@0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.15.tgz#e6f2624c5a3dac057b28b12edfbd7da6ca978e5f"
-  integrity sha512-5ioaDf1y4lRIWbS8VDbhFpi3UMo2c/XjgxNEhbAO7Zvfop/xoM4Q3mPz/jNWjQmEhlwK0h1DLakr5TcDsfasnQ==
-  dependencies:
-    nanoid "^4.0.2"
+"@niloc/core@link:../niloc-core":
+  version "0.0.0"
+  uid ""
 
-"@niloc/core@0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.4.tgz#c25f4941e2a8fa3e8aecfcd635d194f0bacbb955"
-  integrity sha512-jHxuuf2GDTrYO6lJEOxee7/7tFIlaqFABMfp4DYcZAA45PT9Iqk877L6QifPJNlRQLtOuSjyAoA+6AJyjky2cA==
-  dependencies:
-    "@niloc/utils" "^0.0.4"
-    nanoid "^4.0.2"
-
-"@niloc/socketio-server@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.0.6.tgz#76c4060a290136cf512d1bac22e2da5f75008df1"
-  integrity sha512-+zk0T16rEBNDtW4ky0I7fTiz09Zl29qkuYHMByKJf/bE8D8nOWdNKytzxmFQ1gofIgQhCux+I2S1UjZiDe5Jkg==
-  dependencies:
-    "@niloc/core" "0.1.15"
-    "@niloc/utils" "0.0.2"
+"@niloc/socketio-server@link:../niloc-socketio-server":
+  version "0.0.0"
+  uid ""
 
 "@niloc/utils@0.0.2":
   version "0.0.2"

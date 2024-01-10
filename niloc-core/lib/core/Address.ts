@@ -1,3 +1,4 @@
+import { Identity } from "./Identity"
 import { Peer } from "./Peer"
 
 enum AddressType {
@@ -56,29 +57,35 @@ export namespace Address {
         return { type: AddressType.Dynamic, get: getTargetId }
     }
 
+    export function fromIdentity(identity: Identity): Address {
+        if (identity.host)
+            return host()
+        return to(identity.userId)
+    }
+
     /**
      * Checks if the given address matches the given peer
      * Used when receiving a message from the network to check if the message should be handled
      */
     export function match(senderId: string, address: Address, peer: Peer): boolean {
         if (
-            peer.address().type === AddressType.Broadcast ||
-            peer.address().type === AddressType.All ||
+            peer.address.type === AddressType.Broadcast ||
+            peer.address.type === AddressType.All ||
             address.type === AddressType.All    
         )  
             return true
 
         if (address.type === AddressType.Broadcast)
-            return peer.id() !== senderId
+            return peer.id !== senderId
 
         if (address.type === AddressType.Host)
-            return peer.address().type === AddressType.Host
+            return peer.address.type === AddressType.Host
 
         let targetId = address.type === AddressType.Dynamic ? 
             address.get() : 
             address.id
 
-        return targetId === peer.id()
+        return targetId === peer.id
     }
 
     export function toString(address: Address): string {

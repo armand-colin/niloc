@@ -1,35 +1,40 @@
-import { Address, Emitter, Message, Peer } from "@niloc/core";
+import { Address, Emitter, Identity, Message, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
 
-interface PeerEvents {
-    message: {
-        channel: number,
-        message: Message
-    }
+type PeerMessage = {
+    channel: number,
+    message: Message
 }
 
-export class SocketIOPeer implements Peer {
+interface PeerEvents {
+    message: PeerMessage
+}
 
-    private _id: string
-    private _address: Address
+export class SocketIOPeer extends Peer {
+
     private _emitter = new Emitter<PeerEvents>()
     private _socket: Socket
 
-    constructor(id: string, socket: Socket) {
-        this._id = id
+    constructor(identity: Identity, socket: Socket) {
+        super(identity, Address.broadcast())
         this._socket = socket
-        this._address = Address.broadcast()
 
         this._socket.on('message', this._onMessage)
     }
 
-    id(): string { return this._id }
-    address(): Address { return this._address }
-    emitter(): Emitter<PeerEvents> { return this._emitter }
-
     send(channel: number, message: Message): void {
         this._socket.send(channel, JSON.stringify(message))
     }
+
+
+    addListener(callback: (message: PeerMessage) => void) {
+        this._emitter.on('message', callback)
+    }
+
+    removeListener(callback: (message: PeerMessage) => void) {
+        this._emitter.off('message', callback)
+    }
+    
 
     private _onMessage = (channel: any, message: any) => {
         if (typeof channel !== "number")

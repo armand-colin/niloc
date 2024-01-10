@@ -222,12 +222,9 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.19.tgz#8cfaf2ff603e9aabb910e9c0558c26cf32744061"
   integrity sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==
 
-"@niloc/core@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.0.tgz#5287c11b590260c5a42327a0dbe7198db853b1b2"
-  integrity sha512-ezwHYjLMBUHxIx+vp1J36I7PC4hKF9GggAgtjULwwzFIJBFVZ66qaUfJ73vJCOzN2SxlZ5gZthXvWKEXG3rI/g==
-  dependencies:
-    nanoid "^4.0.2"
+"@niloc/core@link:../niloc-core":
+  version "0.0.0"
+  uid ""
 
 "@niloc/utils@^0.0.1":
   version "0.0.1"
@@ -246,6 +243,13 @@
     rollup "^3.20.2"
     source-map-js "^1.0.2"
     supports-preserve-symlinks-flag "^1.0.0"
+
+"@niloc/utils@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.4.tgz#72f3adb7ff564c7486113424a92b9877dc3058c4"
+  integrity sha512-VKr4VjLktWfxGVhju3vnzP7kFI1PYvPRwJlw9Dq1Br64qideb4UFZlWSxd866EOQeY5+x2XnvmKEXhj6eRWuBw==
+  dependencies:
+    nanoid "^3.3.6"
 
 esbuild@^0.17.14:
   version "0.17.19"

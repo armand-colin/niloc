@@ -1,21 +1,16 @@
-import { Address, Emitter, Message, Peer } from "@niloc/core";
+import { Identity, Message, Peer } from "@niloc/core";
 import { Socket } from "./Socket";
-interface PeerEvents {
-    message: {
-        channel: number;
-        message: Message;
-    };
-}
-export declare class SocketIOPeer implements Peer {
-    private _id;
-    private _address;
+type PeerMessage = {
+    channel: number;
+    message: Message;
+};
+export declare class SocketIOPeer extends Peer {
     private _emitter;
     private _socket;
-    constructor(id: string, socket: Socket);
-    id(): string;
-    address(): Address;
-    emitter(): Emitter<PeerEvents>;
+    constructor(identity: Identity, socket: Socket);
     send(channel: number, message: Message): void;
+    addListener(callback: (message: PeerMessage) => void): void;
+    removeListener(callback: (message: PeerMessage) => void): void;
     private _onMessage;
 }
 export {};

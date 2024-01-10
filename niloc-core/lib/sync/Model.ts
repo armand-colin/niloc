@@ -6,7 +6,7 @@ import { ChangeQueue } from "./ChangeQueue"
 import { Reader } from "./Reader"
 import { Writer } from "./Writer"
 import { Plugin } from "./Plugin"
-import { Context } from "../core/Context"
+import { Identity } from "../core/Identity"
 import { Authority } from "./Authority"
 import { Emitter } from "@niloc/utils"
 import { Address } from "../core/Address"
@@ -25,7 +25,7 @@ type ModelData =
     [ModelMessageType.Instantiate, ObjectId, TypeId]
 
 interface ModelOpts {
-    context: Context,
+    identity: Identity,
     channel: Channel<ModelData>,
 }
 
@@ -38,7 +38,7 @@ enum ModelMessageType {
 export class Model extends Emitter<ModelEvents> implements IModel {
 
     private _channel: Channel<ModelData>
-    private _context: Context
+    private _identity: Identity
 
     private _objectsEmitter = new Emitter<{ [key: string]: SyncObject | null }>()
 
@@ -58,7 +58,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
         this._channel = opts.channel
         this._channel.addListener(this._onMessage)
 
-        this._context = opts.context
+        this._identity = opts.identity
     }
 
     get changeQueue() { 
@@ -80,7 +80,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
         const objectId = id ?? nanoid()
         const object = this._create(type, objectId)
 
-        if (Authority.allows(object, this._context)) {
+        if (Authority.allows(object, this._identity)) {
             const typeId = this._typesHandler.getTypeId(object)
             if (typeId === null)
                 throw new Error('Error while instantiating object: Type not registered')
@@ -127,7 +127,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
         const writer = this._writer
 
         for (const object of this._objects.values()) {
-            if (!Authority.allows(object, this._context))
+            if (!Authority.allows(object, this._identity))
                 continue
 
             const typeId = this._typesHandler.getTypeId(object)
@@ -285,7 +285,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
     }
 
     private _writeChangesForObject(object: SyncObject, writer: Writer) {
-        if (!Authority.allows(object, this._context))
+        if (!Authority.allows(object, this._identity))
             return
 
         if (!SyncObject.isDirty(object))

@@ -1,5 +1,13 @@
-import { Emitter, Model, RPCHandler, RPCPlugin, Router, SyncObject, rpc } from "../../lib/main"
-import { describe, expect, it } from "vitest"
+import { Emitter, Identity, Model, Network, NetworkEvents, Peer, RPCHandler, RPCPlugin, Router, SyncObject, rpc } from "../../lib/main"
+import { describe, it } from "vitest"
+
+class MockNetwork extends Emitter<NetworkEvents> implements Network {
+
+    *peers(): Iterable<Peer> {
+        
+    }
+
+}
 
 describe("RPC", () => {
 
@@ -26,22 +34,19 @@ describe("RPC", () => {
         }
 
         const router = new Router({
-            id: "a",
-            network: {
-                emitter() { return new Emitter<any>() },
-                *peers() { }
-            } 
+            identity: new Identity("a"),
+            network: new MockNetwork()
         })
 
         const model = new Model({
             channel: router.channel(0),
-            context: router.context()
+            identity: router.identity
         })
 
-        const rpcHandler = new RPCHandler(router.self(), router.channel(1))
+        const rpcHandler = new RPCHandler(router.self, router.channel(1))
 
-        model.plugin(new RPCPlugin(rpcHandler))
-        model.register(Test)
+        model.addPlugin(new RPCPlugin(rpcHandler))
+        model.addType(Test)
 
         const test = model.instantiate(Test, "a")
 

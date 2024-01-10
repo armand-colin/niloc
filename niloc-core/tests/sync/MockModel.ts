@@ -1,4 +1,4 @@
-import { Channel, Context, Message } from "../../lib/main"
+import { Channel, Identity, Message } from "../../lib/main"
 import { Model } from "../../lib/sync/Model"
 import { SyncObjectType } from "../../lib/sync/SyncObjectType"
 
@@ -44,17 +44,17 @@ export namespace MockModel {
         
         const modelA = new Model({
             channel: channelA,
-            context: new Context("a", false)
+            identity: new Identity("a"),
         })
 
         const modelB = new Model({
             channel: channelB,
-            context: new Context("b", false)
+            identity: new Identity("b"),
         })
 
         for (const type of types ?? []) {
-            modelA.register(type)
-            modelB.register(type)
+            modelA.addType(type)
+            modelB.addType(type)
         }
 
         return [modelA, modelB]

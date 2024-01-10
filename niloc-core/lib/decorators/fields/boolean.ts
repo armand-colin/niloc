@@ -1,4 +1,4 @@
-import { SyncObject } from "../../main";
+import type { SyncObject } from "../../main";
 import { BooleanField } from "../../sync/field/customs/BooleanField";
 import { KeyOfType, custom } from "./custom";
 

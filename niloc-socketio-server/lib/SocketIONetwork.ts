@@ -1,29 +1,46 @@
-import { Emitter, Network, NetworkEvents, Peer } from "@niloc/core"
+import { Emitter, Identity, Network, NetworkEvents, Peer } from "@niloc/core"
 import { SocketIOPeer } from "./SocketIOPeer";
 import { Socket } from "./Socket";
 
-export class SocketIONetwork implements Network {
+type SocketIONetworkOpts = {
+    /**
+     * @default false
+     */
+    host?: boolean
+}
+
+export class SocketIONetwork extends Emitter<NetworkEvents> implements Network {
 
     private _peers = new Map<string, SocketIOPeer>()
-    private _emitter = new Emitter<NetworkEvents>()
+    private _identity: Identity
 
-    peers(): Iterable<Peer> { return this._peers.values() }
-    emitter(): Emitter<NetworkEvents> { return this._emitter }
+    constructor(opts?: SocketIONetworkOpts) {
+        super()
+        this._identity = new Identity("SERVER", opts?.host ?? false)
+    }
+
+    identity(): Identity {
+        return this._identity
+    }
+
+    peers(): Iterable<Peer> { 
+        return this._peers.values() 
+    }
 
     addSocket(socket: Socket, peerId: string, host: boolean) {
         if (this._peers.has(peerId))
             return // TODO: disconnect socket ?
 
-        const peer = new SocketIOPeer(socket, peerId, host)
+        const peer = new SocketIOPeer(new Identity(peerId, host), socket)
 
-        peer.socketIOEmitter().on('disconnect', () => {
+        peer.socketIOEmitter.on('disconnect', () => {
             const current = this._peers.get(peerId)
             if (current === peer)
                 this._peers.delete(peerId)
         })
 
-        peer.emitter().on('message', data => {
-            this._emitter.emit('message', { peerId, ...data })
+        peer.addListener(data => {
+            this.emit('message', { peerId, ...data })
         })
 
         this._peers.set(peerId, peer)
