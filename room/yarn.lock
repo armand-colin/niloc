@@ -2,25 +2,26 @@
 # yarn lockfile v1
 
 
-"@niloc/core@link:../niloc-core":
-  version "0.0.0"
-  uid ""
-
-"@niloc/socketio-server@link:../niloc-socketio-server":
-  version "0.0.0"
-  uid ""
-
-"@niloc/utils@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.2.tgz#8b34bb11985f5148664bb32d0317d957bc317715"
-  integrity sha512-OJhm1XVQELSod5Eo8cXAO2QxnnqhQGq44bajEt3FRlC8Vpv13wh2sGuGNQ5RVnkodp1IL4b2poxmmB4TvLostw==
+"@niloc/core@0.3.0", "@niloc/core@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.3.0.tgz#7332d5a462b3088af77667b752afa99f13484397"
+  integrity sha512-wVaNfKrB8gcrqV5SUInR/ocgGKgX/OoXCV2kON4+nTAyxfv5VWnEKnCrIV/fvyo5p6LNZIuUvlqvSHq3qW1rfw==
   dependencies:
-    nanoid "^3.3.6"
+    "@niloc/utils" "^0.0.6"
+    nanoid "^4.0.2"
 
-"@niloc/utils@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.4.tgz#72f3adb7ff564c7486113424a92b9877dc3058c4"
-  integrity sha512-VKr4VjLktWfxGVhju3vnzP7kFI1PYvPRwJlw9Dq1Br64qideb4UFZlWSxd866EOQeY5+x2XnvmKEXhj6eRWuBw==
+"@niloc/socketio-server@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.1.0.tgz#aa63e33e9035836b139b5588bd9bf8e28edab03c"
+  integrity sha512-CdxnjGizTG0WfJT8k1VN5tv7uRHofYZu8EINGQD6ztemu6vM3sO11lFHKDF9Gsxp/kpKn5fwKDJOIbYXvr101w==
+  dependencies:
+    "@niloc/core" "^0.3.0"
+    "@niloc/utils" "^0.0.6"
+
+"@niloc/utils@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.6.tgz#fd34819e34ed7a72e4a4ab2288a329ed62ad8bf9"
+  integrity sha512-66nNolJro68HfGsNQYIcsRUqwzO6GCEl+pip3+LBSAvLPOvW/MYvcAHkWhBUTNfYEyiP5eohpdZzPYchy05PVQ==
   dependencies:
     nanoid "^3.3.6"
 
