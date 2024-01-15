@@ -23,7 +23,7 @@ export function createNetwork(options: {
         }
     })
 
-    const network = new SocketIONetwork(options.identity, socket)
+    const network = new SocketIONetwork(socket)
 
     return network
 }

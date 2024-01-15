@@ -12,7 +12,6 @@ import { User } from "../sync/presence/User"
 export type FrameworkOptions<P extends User> = {
     identity: Identity,
     network: Network,
-    relay?: boolean,
     userType: SyncObjectType<P>,
     /**
      * @default FrameworkChannels.ConnectionList
@@ -45,11 +44,10 @@ export class Framework<P extends User> {
         this.router = new Router({
             network: options.network,
             identity: options.identity,
-            relay: options.relay
         })
 
         this.rpcHandler = new RPCHandler(
-            this.router.self,
+            this.router.identity,
             this.router.channel(FrameworkChannels.RPC)
         )
 
@@ -67,8 +65,8 @@ export class Framework<P extends User> {
             .addPlugin(new AssertPlugin(options.identity))
 
         this.presence = new Presence({
-            channel: this.router.channel(FrameworkChannels.Presence),
             identity: this.router.identity,
+            channel: this.router.channel(FrameworkChannels.Presence),
             connectionList: this.connectionList,
             type: options.userType
         })

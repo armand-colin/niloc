@@ -12,8 +12,8 @@ describe('RPC', () => {
     it("Should handle rpc correctly", async () => {
         const [channelA, channelB] = MockChannels.bounded()
         const [peerA, peerB] = MockPeers.make(["a", "b"])
-        const handlerA = new RPCHandler(peerA, channelA)
-        const handlerB = new RPCHandler(peerB, channelB)
+        const handlerA = new RPCHandler(peerA.identity, channelA)
+        const handlerB = new RPCHandler(peerB.identity, channelB)
 
         let response: string = ""
 
@@ -61,8 +61,8 @@ describe('RPC', () => {
         const [modelA, modelB] = MockModel.models([Avatar])
         const [peerA, peerB] = MockPeers.make(["a", "b"])
         
-        const rpcHandlerA = new RPCHandler(peerA, channelA)
-        const rpcHandlerB = new RPCHandler(peerB, channelB)
+        const rpcHandlerA = new RPCHandler(peerA.identity, channelA)
+        const rpcHandlerB = new RPCHandler(peerB.identity, channelB)
 
         modelA.addPlugin(new RPCPlugin(rpcHandlerA))
         modelB.addPlugin(new RPCPlugin(rpcHandlerB))

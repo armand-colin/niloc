@@ -2,7 +2,7 @@ import { Message } from "../core/Message"
 import { RPC, RPCCallHandler } from "./RPC"
 import { Channel } from "../channel/Channel"
 import { Address } from "../core/Address"
-import { Peer } from "../core/Peer"
+import { Identity } from "../main"
 
 type RPCMessage = {
     id: string,
@@ -24,12 +24,12 @@ export interface RPCHandler {
 
 export class RPCHandler implements RPCHandler {
 
-    private _self: Peer
+    private _identity: Identity
     private _channel: Channel<RPCMessage>
     private _rpcs: Record<string, RPC<any>> = {}
 
-    constructor(self: Peer, channel: Channel<RPCMessage>) {
-        this._self = self
+    constructor(identity: Identity, channel: Channel<RPCMessage>) {
+        this._identity = identity
         this._channel = channel
 
         this._channel.addListener(this._onMessage)
@@ -68,7 +68,7 @@ export class RPCHandler implements RPCHandler {
         const rpcMessage = message.data as RPCMessage
         const originId = message.originId
 
-        if (!Address.match(message.originId, message.address, this._self))
+        if (!Address.match(message.originId, message.address, this._identity))
             return
 
         this._onRequest(rpcMessage, originId)

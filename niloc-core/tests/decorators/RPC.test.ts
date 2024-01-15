@@ -1,11 +1,9 @@
 import { Emitter, Identity, Model, Network, NetworkEvents, Peer, RPCHandler, RPCPlugin, Router, SyncObject, rpc } from "../../lib/main"
 import { describe, it } from "vitest"
 
-class MockNetwork extends Emitter<NetworkEvents> implements Network {
+class MockNetwork extends Network {
 
-    *peers(): Iterable<Peer> {
-        
-    }
+    *peers(): Iterable<Peer> { }
 
 }
 
@@ -43,7 +41,7 @@ describe("RPC", () => {
             identity: router.identity
         })
 
-        const rpcHandler = new RPCHandler(router.self, router.channel(1))
+        const rpcHandler = new RPCHandler(router.identity, router.channel(1))
 
         model.addPlugin(new RPCPlugin(rpcHandler))
         model.addType(Test)

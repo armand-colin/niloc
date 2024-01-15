@@ -3,7 +3,7 @@ import { Message } from "../lib/core/Message";
 import { Router } from "../lib/core/Router";
 import { FlatNetwork } from "./FlatNetwork";
 import { describe, it } from "vitest";
-import { Identity } from "../lib/main";
+import { Address, Identity } from "../lib/main";
 
 function waitMessage(router: Router, channel: number): Promise<Message> {
     return new Promise((resolve, reject) => {
@@ -31,11 +31,11 @@ describe("Router", () => {
 
         const wait = waitMessage(client1, 0)
 
-        host.channel(0).post(client1.self.address, { name: "orange" })
+        host.channel(0).post(Address.fromIdentity(client1.identity), { name: "orange" })
 
         const message = await wait;
 
-        expect(message.originId).to.equal(host.id)
+        expect(message.originId).to.equal(host.identity.userId)
         expect(message.data.name).to.equal("orange")
     })
 

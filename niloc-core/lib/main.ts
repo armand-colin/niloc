@@ -1,7 +1,9 @@
 export { Address } from "./core/Address";
 export type { Message } from "./core/Message";
-export type { Network, NetworkEvents } from "./core/Network";
+export { Network } from "./core/Network";
+export type { NetworkEvents } from "./core/Network";
 export { Peer } from "./core/Peer";
+export type { PeerEvents } from "./core/Peer";
 export { Router } from "./core/Router";
 export { Channel } from "./channel/Channel";
 export { Identity } from "./core/Identity";

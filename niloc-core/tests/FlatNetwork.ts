@@ -22,7 +22,7 @@ class FlatPeer extends Peer {
 
 }
 
-export class FlatNetwork extends Emitter<NetworkEvents> implements Network {
+export class FlatNetwork extends Network {
 
     constructor(readonly id, private readonly _peers: Peer[]) {
         super()
@@ -47,7 +47,7 @@ export namespace FlatNetwork {
 
         const identity = new Identity(id)
 
-        return new FlatPeer(identity, address)
+        return new FlatPeer(identity)
     }
 
     function network(id: string, peers: FlatPeer[]): FlatNetwork {
@@ -55,7 +55,7 @@ export namespace FlatNetwork {
 
         for (const peer of peers) {
             peer.emitter.on('message', ({ channel, message }) => {
-                network.emit('message', ({ peerId: peer.id, channel, message }))
+                network.emit('message', ({ peerId: peer.identity.userId, channel, message }))
             })
         }
 
@@ -70,7 +70,7 @@ export namespace FlatNetwork {
         for (const hostPeer of hostPeers) {
             const clientPeer = peer('host', false)
             bind(hostPeer, clientPeer)
-            const client = network(hostPeer.id, [clientPeer])
+            const client = network(hostPeer.identity.userId, [clientPeer])
             networks.push(client)
         }
 

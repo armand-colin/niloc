@@ -1,46 +1,46 @@
-var D = Object.defineProperty;
-var $ = (s, e, t) => e in s ? D(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var l = (s, e, t) => ($(s, typeof e != "symbol" ? e + "" : e, t), t);
-var _;
-((s) => {
+var O = Object.defineProperty;
+var $ = (r, e, t) => e in r ? O(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var f = (r, e, t) => ($(r, typeof e != "symbol" ? e + "" : e, t), t);
+var w;
+((r) => {
   const e = Object.freeze({
     type: 0
     /* All */
   }), t = Object.freeze({
     type: 1
     /* Broadcast */
-  }), r = Object.freeze({
+  }), s = Object.freeze({
     type: 3
     /* Host */
   });
   function i() {
     return e;
   }
-  s.all = i;
+  r.all = i;
   function n() {
     return t;
   }
-  s.broadcast = n;
-  function a() {
-    return r;
+  r.broadcast = n;
+  function c() {
+    return s;
   }
-  s.host = a;
-  function h(o) {
+  r.host = c;
+  function a(o) {
     return { type: 2, id: o };
   }
-  s.to = h;
-  function u(o) {
+  r.to = a;
+  function l(o) {
     return { type: 4, get: o };
   }
-  s.dynamic = u;
+  r.dynamic = l;
   function I(o) {
-    return o.host ? a() : h(o.userId);
+    return o.host ? c() : a(o.userId);
   }
-  s.fromIdentity = I;
-  function O(o, d, f) {
-    return f.address.type === 1 || f.address.type === 0 || d.type === 0 ? !0 : d.type === 1 ? f.id !== o : d.type === 3 ? f.address.type === 3 : (d.type === 4 ? d.get() : d.id) === f.id;
+  r.fromIdentity = I;
+  function x(o, d, _) {
+    return d.type === 0 ? !0 : d.type === 1 ? _.userId !== o : d.type === 3 ? _.host : (d.type === 4 ? d.get() : d.id) === _.userId;
   }
-  s.match = O;
+  r.match = x;
   function b(o) {
     switch (o.type) {
       case 0:
@@ -57,25 +57,14 @@ var _;
         return "?";
     }
   }
-  s.toString = b;
-  function x(o) {
-    return o === "*" ? i() : o === "#" ? n() : o === "host" ? a() : o.startsWith(":") ? h(o.slice(1)) : null;
+  r.toString = b;
+  function D(o) {
+    return o === "*" ? i() : o === "#" ? n() : o === "host" ? c() : o.startsWith(":") ? a(o.slice(1)) : null;
   }
-  s.parse = x;
-})(_ || (_ = {}));
-class k {
-  constructor(e, t = _.fromIdentity(e)) {
-    this.identity = e, this.address = t;
-  }
-  get id() {
-    return this.identity.userId;
-  }
-  get host() {
-    return this.identity.host;
-  }
-}
-var j = Object.defineProperty, P = (s, e, t) => e in s ? j(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t, y = (s, e, t) => (P(s, typeof e != "symbol" ? e + "" : e, t), t);
-class g {
+  r.parse = D;
+})(w || (w = {}));
+var k = Object.defineProperty, j = (r, e, t) => e in r ? k(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, y = (r, e, t) => (j(r, typeof e != "symbol" ? e + "" : e, t), t);
+class u {
   constructor() {
     y(this, "_listeners", {}), y(this, "_onceListeners", {});
   }
@@ -93,11 +82,11 @@ class g {
   }
   emit(e, t) {
     if (this._listeners[e])
-      for (const r of [...this._listeners[e]])
-        r(t);
+      for (const s of [...this._listeners[e]])
+        s(t);
     if (this._onceListeners[e]) {
-      for (const r of [...this._onceListeners[e]])
-        r(t);
+      for (const s of [...this._onceListeners[e]])
+        s(t);
       delete this._onceListeners[e];
     }
   }
@@ -105,29 +94,58 @@ class g {
     this._listeners = {}, this._onceListeners = {};
   }
 }
-var m;
-((s) => {
-  function e(t, r) {
-    const i = [], n = new g();
-    t.addListener((a) => {
-      const [h, u] = a.data;
-      n.emit(h.toString(), { ...a, data: u });
+class q extends u {
+  send(e, t, s) {
+    for (const i of this.peers())
+      i.identity.userId !== s && i.match(t.address, s) && i.send(e, t);
+  }
+  connect(e) {
+    e.on("message", ({ channel: t, message: s }) => {
+      this.emit("message", {
+        peerId: e.identity.userId,
+        channel: t,
+        message: s
+      });
     });
-    for (let a = 0; a < r; a++)
+  }
+}
+class P extends u {
+  constructor(e) {
+    super(), this.identity = e, this._closed = !1;
+  }
+  get closed() {
+    return this._closed;
+  }
+  match(e, t) {
+    return w.match(t, e, this.identity);
+  }
+  destroy() {
+    this._closed || (this._closed = !0, this.emit("destroy", this), this.removeAllListeners());
+  }
+}
+var m;
+((r) => {
+  function e(t, s) {
+    const i = [], n = new u();
+    t.addListener((c) => {
+      const [a, l] = c.data;
+      n.emit(a.toString(), { ...c, data: l });
+    });
+    for (let c = 0; c < s; c++)
       i.push({
-        post: (h, u) => {
-          t.post(h, [a, u]);
+        post: (a, l) => {
+          t.post(a, [c, l]);
         },
-        addListener: (h) => {
-          n.on(a.toString(), h);
+        addListener: (a) => {
+          n.on(c.toString(), a);
         },
-        removeListener: (h) => {
-          n.off(a.toString(), h);
+        removeListener: (a) => {
+          n.off(c.toString(), a);
         }
       });
     return i;
   }
-  s.split = e;
+  r.split = e;
 })(m || (m = {}));
 class p {
   static deserialize(e) {
@@ -143,21 +161,21 @@ class p {
     };
   }
 }
-var w = /* @__PURE__ */ ((s) => (s[s.All = 0] = "All", s[s.Host = 1] = "Host", s[s.Owner = 2] = "Owner", s))(w || {});
-((s) => {
-  function e(t, r) {
+var g = /* @__PURE__ */ ((r) => (r[r.All = 0] = "All", r[r.Host = 1] = "Host", r[r.Owner = 2] = "Owner", r))(g || {});
+((r) => {
+  function e(t, s) {
     switch (t.authority) {
       case 0:
         return !0;
       case 1:
-        return r.host;
+        return s.host;
       case 2:
-        return r.userId === t.id;
+        return s.userId === t.id;
     }
     return !1;
   }
-  s.allows = e;
-})(w || (w = {}));
+  r.allows = e;
+})(g || (g = {}));
 class v {
   constructor() {
     this._string = "";
@@ -193,7 +211,7 @@ class S {
     return this.nextLine(), this._string;
   }
 }
-class c extends g {
+class h extends u {
   constructor() {
     super(...arguments), this._index = -1, this.dirty = !1;
   }
@@ -229,11 +247,11 @@ class c extends g {
     e.resetDelta(), e.dirty = !1;
   }
   static register(e, t) {
-    const r = [...e];
-    for (const i of r)
+    const s = [...e];
+    for (const i of s)
       i.on("change", t);
     return () => {
-      for (const i of r)
+      for (const i of s)
         i.off("change", t);
     };
   }
@@ -259,7 +277,7 @@ class c extends g {
     e.writeLine("???");
   }
 }
-class q extends c {
+class A extends h {
   constructor(e) {
     super(), this.value = e;
   }
@@ -292,7 +310,7 @@ class q extends c {
     }
   }
 }
-class R extends q {
+class M extends A {
   readValue(e) {
     this.value = e.readBoolean();
   }
@@ -300,43 +318,43 @@ class R extends q {
     e.writeBoolean(this.value);
   }
 }
-function M(s) {
+function R(r) {
   return function(e, t) {
-    const r = "$" + t, i = Symbol(t);
+    const s = "$" + t, i = Symbol(t);
     Object.defineProperty(e, t, {
       get() {
-        return this[r].get();
+        return this[s].get();
       },
       set(n) {
-        this[r].set(n);
+        this[s].set(n);
       }
-    }), Object.defineProperty(e, r, {
+    }), Object.defineProperty(e, s, {
       get() {
         let n = this[i];
-        return n || (n = s(), this[i] = n), n;
+        return n || (n = r(), this[i] = n), n;
       },
       enumerable: !0
     });
   };
 }
-function A(s = !1) {
-  return M(() => new R(s));
+function z(r = !1) {
+  return R(() => new M(r));
 }
-var z = Object.defineProperty, F = Object.getOwnPropertyDescriptor, E = (s, e, t, r) => {
-  for (var i = r > 1 ? void 0 : r ? F(e, t) : e, n = s.length - 1, a; n >= 0; n--)
-    (a = s[n]) && (i = (r ? a(e, t, i) : a(i)) || i);
-  return r && i && z(e, t, i), i;
+var F = Object.defineProperty, N = Object.getOwnPropertyDescriptor, E = (r, e, t, s) => {
+  for (var i = s > 1 ? void 0 : s ? N(e, t) : e, n = r.length - 1, c; n >= 0; n--)
+    (c = r[n]) && (i = (s ? c(e, t, i) : c(i)) || i);
+  return s && i && F(e, t, i), i;
 };
-class N extends g {
+class J extends u {
   constructor(e) {
-    super(), this.authority = w.All, this._fields = null, this._registerMap = /* @__PURE__ */ new Map(), this._onDeletedChange = () => {
+    super(), this.authority = g.All, this._fields = null, this._registerMap = /* @__PURE__ */ new Map(), this._onDeletedChange = () => {
       this.deleted && (this.emit("delete"), this.onDelete(), this.changeRequester.delete(), this.removeAllListeners());
     }, this.id = e, this.register("deleted", this._onDeletedChange);
   }
   static __init(e, t) {
     e.changeRequester = t.changeRequester, e.model = t.model;
-    for (const r of e.fields())
-      c.__init(r, t);
+    for (const s of e.fields())
+      h.__init(s, t);
     e.onInit();
   }
   static toString(e) {
@@ -345,8 +363,8 @@ class N extends g {
   }
   static writeString(e, t) {
     t.writeLine(`${e.constructor.name}: ${e.id} {`), t.startIndent();
-    for (const r of e.fields())
-      c.writeString(r, t);
+    for (const s of e.fields())
+      h.writeString(s, t);
     t.endIndent(), t.writeLine("}");
   }
   static write(e, t) {
@@ -357,14 +375,14 @@ class N extends g {
   }
   static isDirty(e) {
     for (const t of e.fields())
-      if (c.isDirty(t))
+      if (h.isDirty(t))
         return !0;
     return !1;
   }
   static getDirtyFields(e) {
     const t = [];
-    for (const r of e.fields())
-      c.isDirty(r) && t.push(r);
+    for (const s of e.fields())
+      h.isDirty(s) && t.push(s);
     return t;
   }
   fields() {
@@ -372,11 +390,11 @@ class N extends g {
   }
   read(e) {
     for (const t of this.fields())
-      c.read(t, e);
+      h.read(t, e);
   }
   write(e) {
     for (const t of this.fields())
-      c.write(t, e);
+      h.write(t, e);
   }
   send() {
     this.changeRequester.send();
@@ -384,33 +402,33 @@ class N extends g {
   registerAll(e) {
     if (this._registerMap.has(e))
       return;
-    const t = c.register(this.fields(), e);
+    const t = h.register(this.fields(), e);
     this._registerMap.set(e, t);
   }
   unregisterAll(e) {
     this._registerMap.has(e) && (this._registerMap.get(e)(), this._registerMap.delete(e));
   }
   register(e, t) {
-    const r = this[e];
-    if (r && r instanceof c) {
-      r.on("change", t);
+    const s = this[e];
+    if (s && s instanceof h) {
+      s.on("change", t);
       return;
     }
     const i = `$${e}`, n = this[i];
-    if (n && n instanceof c) {
+    if (n && n instanceof h) {
       n.on("change", t);
       return;
     }
     throw new Error(`Field ${e} does not exist on type ${this.constructor.name}`);
   }
   unregister(e, t) {
-    const r = this[e];
-    if (r && r instanceof c) {
-      r.off("change", t);
+    const s = this[e];
+    if (s && s instanceof h) {
+      s.off("change", t);
       return;
     }
     const i = `$${e}`, n = this[i];
-    if (n && n instanceof c) {
+    if (n && n instanceof h) {
       n.off("change", t);
       return;
     }
@@ -427,65 +445,51 @@ class N extends g {
   _initFields() {
     const e = [];
     for (const t in this) {
-      const r = this[t];
-      r instanceof c && (c.setIndex(r, e.length), e.push(r));
+      const s = this[t];
+      s instanceof h && (h.setIndex(s, e.length), e.push(s));
     }
     return e;
   }
 }
 E([
-  A(!1)
-], N.prototype, "deleted", 2);
+  z(!1)
+], J.prototype, "deleted", 2);
 var L;
-((s) => {
-  function e(t, r) {
-    return { id: t, args: r };
+((r) => {
+  function e(t, s) {
+    return { id: t, args: s };
   }
-  s.make = e;
+  r.make = e;
 })(L || (L = {}));
-class V extends k {
-  constructor(t, r) {
-    super(t, _.broadcast());
-    l(this, "_emitter", new g());
-    l(this, "_socket");
-    l(this, "_onMessage", (t, r) => {
-      if (typeof t == "number" && typeof r == "string")
+class C extends P {
+  constructor(t, s) {
+    super(t);
+    f(this, "_socket");
+    f(this, "_onMessage", (t, s) => {
+      if (typeof t == "number" && typeof s == "string")
         try {
-          const i = JSON.parse(r);
+          const i = JSON.parse(s);
           if (typeof i != "object")
             return;
-          this._emitter.emit("message", { channel: t, message: i });
+          this.emit("message", { channel: t, message: i });
         } catch (i) {
           console.error("Error while parsing message", i);
         }
     });
-    this._socket = r, this._socket.on("message", this._onMessage);
+    this._socket = s, this._socket.on("message", this._onMessage);
   }
-  send(t, r) {
-    this._socket.send(t, JSON.stringify(r));
+  send(t, s) {
+    this._socket.send(t, JSON.stringify(s));
   }
-  addListener(t) {
-    this._emitter.on("message", t);
-  }
-  removeListener(t) {
-    this._emitter.off("message", t);
+  match() {
+    return !0;
   }
 }
-class B extends g {
-  constructor(t, r) {
+class B extends q {
+  constructor(t) {
     super();
-    l(this, "_serverPeer");
-    l(this, "_identity");
-    this._identity = t, this._serverPeer = new V(new p("SERVER"), r), this._serverPeer.addListener(({ channel: i, message: n }) => {
-      this.emit("message", {
-        peerId: this._serverPeer.id,
-        channel: i,
-        message: n
-      });
-    });
-  }
-  identity() {
-    return this._identity;
+    f(this, "_serverPeer");
+    this._serverPeer = new C(new p("SERVER"), t), this.connect(this._serverPeer);
   }
   *peers() {
     yield this._serverPeer;

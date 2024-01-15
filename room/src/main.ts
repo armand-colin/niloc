@@ -28,12 +28,11 @@ class Room {
     constructor(public readonly id: string, presence?: number) {
         const identity = new Identity("SERVER")
 
-        this._network = new SocketIONetwork(identity)
+        this._network = new SocketIONetwork()
 
         this._router = new Router({ 
             network: this._network,
             identity,
-            relay: true
         })
 
         if (presence !== undefined) {
