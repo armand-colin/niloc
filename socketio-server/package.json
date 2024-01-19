@@ -1,0 +1,35 @@
+{
+  "name": "@niloc/socketio-server",
+  "version": "0.1.4",
+  "type": "module",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/dist.umd.cjs",
+  "module": "./dist/dist.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/dist.js",
+    "require": "./dist/dist.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  },
+  "dependencies": {
+    "@niloc/core": "^0.3.4",
+    "@niloc/utils": "^0.0.6"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
