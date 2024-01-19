@@ -1,6 +1,6 @@
 {
   "name": "@niloc/socketio-client",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "files": [
     "dist",
@@ -24,7 +24,7 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
-    "@niloc/core": "^0.3.3",
+    "@niloc/core": "^0.3.4",
     "@niloc/utils": "^0.0.6"
   },
   "directories": {
