@@ -2,19 +2,19 @@ import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
-import { ConnectionList, Router } from "@niloc/core"
+import { ConnectionList, Identity, Router } from "@niloc/core"
 
 const PORT = process.argv[2] ?? 3000
 
 const app = express()
-const server = http.createServer(app);
+const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
         origin: "*",
         methods: "*",
         allowedHeaders: "*"
     }
-});
+})
 
 class Room {
 
@@ -26,11 +26,13 @@ class Room {
     private _sockets: { socket: Socket, peerId: string }[] = []
 
     constructor(public readonly id: string, presence?: number) {
+        const identity = new Identity("SERVER")
+
         this._network = new SocketIONetwork()
+
         this._router = new Router({ 
-            id: "SERVER", 
             network: this._network,
-            relay: true
+            identity,
         })
 
         if (presence !== undefined) {
@@ -45,7 +47,7 @@ class Room {
         this._sockets.push({ socket, peerId: id })
 
         if (this._connectionList)
-            this._connectionList.connected(id)
+            this._connectionList.connected(new Identity(id, host))
     }
 
     remove(socket: Socket) {
@@ -67,7 +69,6 @@ class Room {
 
 const rooms = new Map<string, Room>()
 
-// For now we suppose we only have 1 room
 io.on('connection', socket => {
     const peerId = socket.handshake.query.peerId
     const host = socket.handshake.query.host === "true"
@@ -102,5 +103,5 @@ io.on('connection', socket => {
 })
 
 server.listen(PORT, () => {
-    console.info(`Listening on http://localhost:${PORT}`);
+    console.info(`Listening on http://localhost:${PORT}`)
 })

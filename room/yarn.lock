@@ -2,40 +2,26 @@
 # yarn lockfile v1
 
 
-"@niloc/core@0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.1.15.tgz#e6f2624c5a3dac057b28b12edfbd7da6ca978e5f"
-  integrity sha512-5ioaDf1y4lRIWbS8VDbhFpi3UMo2c/XjgxNEhbAO7Zvfop/xoM4Q3mPz/jNWjQmEhlwK0h1DLakr5TcDsfasnQ==
+"@niloc/core@0.3.2", "@niloc/core@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.3.2.tgz#53056653a7714b3ab17e3d4a152c2c050c55b3b3"
+  integrity sha512-AxgUFwxy61iPuObQvX7R9XXe2cR6oQzhQ5PCIa3nxv/RBYY8NmE0m0+k90xninLHHGrRf2VQHqDWd63zh3JTpw==
   dependencies:
+    "@niloc/utils" "^0.0.6"
     nanoid "^4.0.2"
 
-"@niloc/core@0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.2.4.tgz#c25f4941e2a8fa3e8aecfcd635d194f0bacbb955"
-  integrity sha512-jHxuuf2GDTrYO6lJEOxee7/7tFIlaqFABMfp4DYcZAA45PT9Iqk877L6QifPJNlRQLtOuSjyAoA+6AJyjky2cA==
+"@niloc/socketio-server@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.1.3.tgz#0e0ea9a06468736f4432f5bfa4e20ae7e9e7ab25"
+  integrity sha512-h8XD5eEUO8a0vIaJIPShZO7G1eSyh+2vdKX9Ik59sPoPSW8jyF54RS/DgE/jEdikClsN4iHZbjg1QifkeaMn3g==
   dependencies:
-    "@niloc/utils" "^0.0.4"
-    nanoid "^4.0.2"
+    "@niloc/core" "^0.3.2"
+    "@niloc/utils" "^0.0.6"
 
-"@niloc/socketio-server@0.0.6":
+"@niloc/utils@^0.0.6":
   version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@niloc/socketio-server/-/socketio-server-0.0.6.tgz#76c4060a290136cf512d1bac22e2da5f75008df1"
-  integrity sha512-+zk0T16rEBNDtW4ky0I7fTiz09Zl29qkuYHMByKJf/bE8D8nOWdNKytzxmFQ1gofIgQhCux+I2S1UjZiDe5Jkg==
-  dependencies:
-    "@niloc/core" "0.1.15"
-    "@niloc/utils" "0.0.2"
-
-"@niloc/utils@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.2.tgz#8b34bb11985f5148664bb32d0317d957bc317715"
-  integrity sha512-OJhm1XVQELSod5Eo8cXAO2QxnnqhQGq44bajEt3FRlC8Vpv13wh2sGuGNQ5RVnkodp1IL4b2poxmmB4TvLostw==
-  dependencies:
-    nanoid "^3.3.6"
-
-"@niloc/utils@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.4.tgz#72f3adb7ff564c7486113424a92b9877dc3058c4"
-  integrity sha512-VKr4VjLktWfxGVhju3vnzP7kFI1PYvPRwJlw9Dq1Br64qideb4UFZlWSxd866EOQeY5+x2XnvmKEXhj6eRWuBw==
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.6.tgz#fd34819e34ed7a72e4a4ab2288a329ed62ad8bf9"
+  integrity sha512-66nNolJro68HfGsNQYIcsRUqwzO6GCEl+pip3+LBSAvLPOvW/MYvcAHkWhBUTNfYEyiP5eohpdZzPYchy05PVQ==
   dependencies:
     nanoid "^3.3.6"
 

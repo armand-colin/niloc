@@ -1,19 +1,25 @@
+import { FrameworkChannels, Identity } from '@niloc/core'
 import { SocketIONetwork } from '@niloc/socketio-client'
 import io from "socket.io-client"
 
 export function createNetwork(options: {
     url: string,
-    id: string,
+    identity: Identity,
     room: string,
-    host: boolean,
-    connectionListChannel?: number
+    /**
+     * @default `FrameworkChannels.ConnectionList`. If the value is `null`, 
+     * the connection list will not be sent.
+     */
+    connectionListChannel?: number | null
 }) {
     const socket = io(options.url, {
         query: {
-            peerId: options.id,
-            host: options.host,
+            peerId: options.identity.userId,
+            host: options.identity.host,
             roomId: options.room,
-            presence: options.connectionListChannel
+            presence: options.connectionListChannel === null ?
+                undefined :
+                options.connectionListChannel ?? FrameworkChannels.ConnectionList
         }
     })
 

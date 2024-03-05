@@ -1,8 +1,0 @@
-.PieceView {
-    position: absolute;
-    bottom: calc(var(--cell-size) * var(--y));
-    left: calc(var(--cell-size) * var(--x));
-    pointer-events:all;
-    transition: 0.2s ease-in-out;
-    transition-property: left, bottom;
-}
