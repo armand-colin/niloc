@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc",
-    "prepare": "yarn build"
+    "prepare": "yarn install && yarn build"
   },
   "devDependencies": {
     "typescript": "^4.9.4",

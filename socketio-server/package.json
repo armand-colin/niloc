@@ -1,6 +1,6 @@
 {
   "name": "@niloc/socketio-server",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "files": [
     "dist",
@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc"
+    "build": "vite build && tsc",
+    "prepare": "yarn build"
   },
   "devDependencies": {
     "typescript": "^4.9.4",
