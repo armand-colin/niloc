@@ -1,7 +1,7 @@
-var n = Object.defineProperty;
-var o = (i, s, e) => s in i ? n(i, s, { enumerable: !0, configurable: !0, writable: !0, value: e }) : i[s] = e;
-var r = (i, s, e) => (o(i, typeof s != "symbol" ? s + "" : s, e), e);
-class _ {
+var o = Object.defineProperty;
+var _ = (i, s, e) => s in i ? o(i, s, { enumerable: !0, configurable: !0, writable: !0, value: e }) : i[s] = e;
+var r = (i, s, e) => (_(i, typeof s != "symbol" ? s + "" : s, e), e);
+class l {
   constructor() {
     r(this, "_listeners", {});
     r(this, "_onceListeners", {});
@@ -32,6 +32,31 @@ class _ {
     this._listeners = {}, this._onceListeners = {};
   }
 }
+class f {
+  constructor() {
+    r(this, "_types", /* @__PURE__ */ new Map());
+    r(this, "_history", []);
+  }
+  get(s) {
+    return this._get(s);
+  }
+  set(s, e) {
+    this._types.set(s, e);
+  }
+  _get(s, e = []) {
+    if (!this._types.has(s)) {
+      if (this._history.includes(s)) {
+        const n = e.map((h) => h.name).join(" -> ");
+        throw new Error(`Circular dependency detected for ${s.name}: ${n}`);
+      }
+      this._history.push(s);
+      const t = new s(this);
+      return this._types.set(s, t), this._history.pop(), t;
+    }
+    return this._types.get(s);
+  }
+}
 export {
-  _ as Emitter
+  l as Emitter,
+  f as Provider
 };
