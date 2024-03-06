@@ -1,4 +1,4 @@
-export type Callback<T> = T extends void ? (data?: T) => void : (data: T) => void
+export type Callback<T> = (data: T) => void
 
 type VoidKeys<T> = {
     [K in keyof T]: T[K] extends void ? K : never
