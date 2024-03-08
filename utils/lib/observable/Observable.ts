@@ -6,7 +6,7 @@ export class Observable<T> {
     private _subscribers: ((value: T) => void)[] = []
 
     private _dispatching = false
-    private _pendingSubscribers: ((value: T) => void)[] = []
+    private _pendingUnsubscribers: ((value: T) => void)[] = []
 
     private _destroyed = false
     private _onDestroy?: () => void
@@ -33,6 +33,15 @@ export class Observable<T> {
         this.dispatch()
     }
 
+    async next(): Promise<T> {
+        return new Promise(resolve => {
+            const subscriber = this.subscribe(value => {
+                this.unsubscribe(subscriber)
+                resolve(value)
+            }, false)
+        })
+    }
+
     dispatch() {
         this._dispatching = true
 
@@ -41,8 +50,8 @@ export class Observable<T> {
 
         this._dispatching = false
 
-        while (this._pendingSubscribers.length > 0) {
-            const subscriber = this._pendingSubscribers.pop()!
+        while (this._pendingUnsubscribers.length > 0) {
+            const subscriber = this._pendingUnsubscribers.pop()!
             const index = this._subscribers.indexOf(subscriber)
 
             if (index > -1)
@@ -50,16 +59,18 @@ export class Observable<T> {
         }
     }
 
-    subscribe(subscriber: (value: T) => void, dispatch = true) {
+    subscribe(subscriber: (value: T) => void, dispatch = true): typeof subscriber {
         this._subscribers.push(subscriber)
 
         if (dispatch)
             subscriber(this._value)
+
+        return subscriber
     }
 
     unsubscribe(subscriber: (value: T) => void) {
         if (this._dispatching) {
-            this._pendingSubscribers.push(subscriber)
+            this._pendingUnsubscribers.push(subscriber)
             return
         }
 
@@ -86,7 +97,7 @@ export class Observable<T> {
             return
 
         this._subscribers = []
-        this._pendingSubscribers = []
+        this._pendingUnsubscribers = []
 
         this._destroyed = true
 
