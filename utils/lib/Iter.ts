@@ -3,6 +3,8 @@ type Zipped<T extends any[]> =
     T extends [Iterable<infer A>, ...(infer Rest)] ? [A, ...Zipped<Rest>] : 
     never
 
+type Predicate<T, U extends T> = (value: T) => value is U
+
 export class Iter<T> implements Iterable<T> {
 
     private readonly _iterable: Iterable<T>
@@ -26,9 +28,12 @@ export class Iter<T> implements Iterable<T> {
     constructor(iterable: Iterable<T>) {
         this._iterable = iterable
     }
+    
+    filter(predicate: (value: T) => boolean): Iter<T>
+    filter<U extends T>(predicate: Predicate<T, U>): Iter<U>
 
-    filter(predicate: (value: T) => boolean): Iter<T> {
-        return new Iter<T>(filter(this._iterable, predicate))
+    filter<U extends T = T>(predicate: Predicate<T, U>): Iter<U> {
+        return new Iter<U>(filter(this._iterable, predicate))
     }
 
     map<U>(mapping: (value: T) => U): Iter<U> {
@@ -49,7 +54,7 @@ export class Iter<T> implements Iterable<T> {
 
 }
 
-function *filter<T>(iterable: Iterable<T>, predicate: (value: T) => boolean) {
+function *filter<T, U extends T>(iterable: Iterable<T>, predicate: Predicate<T, U>) {
     for (const value of iterable) {
         if (predicate(value)) {
             yield value

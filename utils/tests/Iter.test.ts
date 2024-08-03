@@ -14,7 +14,6 @@ describe("Iter", () => {
     it("Should filter", () => {
         const iter = Iter.from([1, 2, 3, 4, 5])
             .filter(x => !!(x % 2))
-
         const result = iter.collect()
 
         expect(result).toEqual([1, 3, 5])

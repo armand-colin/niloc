@@ -1,16 +1,11 @@
 export type Callback<T> = (data: T) => void
 
-type VoidKeys<T> = {
-    [K in keyof T]: T[K] extends void ? K : never
-}[keyof T]
-
 export interface IEmitter<Events> {
 
     once<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
     off<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
     on<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
     offOnce<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
-    emit<K extends VoidKeys<Events>>(event: K): void
     emit<K extends keyof Events & string>(event: K, data: Events[K]): void
     removeAllListeners(): void
 
@@ -49,9 +44,7 @@ export class Emitter<Events> implements IEmitter<Events> {
             delete this._onceListeners[event]
     }
 
-    emit<K extends VoidKeys<Events>>(event: K): void
-    emit<K extends keyof Events & string>(event: K, data: Events[K]): void
-    emit<K extends keyof Events & string>(event: K, data?: any): void {
+    emit<K extends keyof Events & string>(event: K, data: Events[K]): void {
         if (this._listeners[event]) {
             for (const callback of [...this._listeners[event]])
                 callback(data)
