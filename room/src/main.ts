@@ -4,7 +4,7 @@ import express from "express"
 import { SocketIONetwork } from "@niloc/socketio-server";
 import { ConnectionList, Identity, Router } from "@niloc/core"
 
-const PORT = process.argv[2] ?? 3000
+const PORT = process.env.PORT || 3000
 
 const app = express()
 const server = http.createServer(app)

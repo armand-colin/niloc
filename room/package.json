@@ -12,9 +12,8 @@
     "typescript": "5.1.6"
   },
   "scripts": {
-    "prepare": "tsc",
     "build": "tsc",
-    "start": "tsc && node dist/main.js",
-    "dev": "tsc && node dist/main.js 3456"
+    "start": "node dist/main.js",
+    "dev": "node dist/main.js 3456"
   }
 }
