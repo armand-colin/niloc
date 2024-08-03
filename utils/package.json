@@ -1,6 +1,6 @@
 {
   "name": "@niloc/utils",
-  "version": "0.0.7",
+  "version": "0.0.10",
   "type": "module",
   "files": [
     "dist",
