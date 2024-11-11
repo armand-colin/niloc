@@ -1,12 +1,12 @@
 import { Emitter } from "@niloc/utils";
 import { StringWriter } from "../tools/StringWriter";
 import { Authority } from "./Authority";
-import { Model } from "./Model.interface";
 import { ChangeRequester } from "./ChangeRequester";
 import { Field } from "./field/Field";
 import { boolean } from "../decorators/fields/boolean";
 import { Reader } from "../serialize/Reader";
 import { Writer } from "../serialize/Writer";
+import type { Model } from "./Model";
 
 type SyncObjectEvents = {
     delete: void
@@ -91,11 +91,10 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
 
 
     private _fields: Field[] | null = null
-    
+
 
     constructor(id: string) {
         super()
-
         this.id = id
         this.register("deleted", this._onDeletedChange)
     }
@@ -185,7 +184,7 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
 
     private _onDeletedChange = () => {
         if (this.deleted) {
-            this.emit('delete')
+            this.emit('delete', undefined)
             this.onDelete()
             this.changeRequester.delete()
 
@@ -210,4 +209,5 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
 
         return fields
     }
+
 }

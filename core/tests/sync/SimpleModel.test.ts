@@ -32,8 +32,8 @@ describe("Sync / Model", () => {
         red.value.set('#ff0000')
         modelA.send()
 
-        expect(modelB.get('red')).not.to.be.null;
-        expect(modelB.get<Color>('red')?.value.get()).to.equal("#ff0000");
+        expect(modelB.get('red')).not.to.be.null
+        expect(modelB.get<Color>('red')?.value.get()).to.equal("#ff0000")
     })
 
     it("Should handle simple object change", () => {

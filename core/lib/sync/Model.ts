@@ -11,12 +11,12 @@ import { Address } from "../core/Address"
 import { Message } from "../core/Message"
 import { TypesHandler } from "./TypesHandler"
 import { SyncObjectType } from "./SyncObjectType"
-import { ModelEvents, IModel  } from "./Model.interface"
 import { Field } from "./field/Field"
 import { BinaryReader } from "../serialize/BinaryReader"
 import { BinaryWriter } from "../serialize/BinaryWriter"
 import { staticImplements } from "../tools/staticImplements"
 import { Deserializer } from "../serialize/Deserializer"
+import { Serializable } from "../serialize/Serializable"
 
 type ModelMessageData = {
     type: ModelMessageType.Change,
@@ -31,9 +31,31 @@ type ModelMessageData = {
 }
 
 @staticImplements<Deserializer<ModelMessage>>()
-class ModelMessage {
+class ModelMessage implements Serializable {
 
     constructor(readonly data: ModelMessageData) { }
+
+    serialize(writer: BinaryWriter): void {
+        writer.writeU8(this.data.type)
+
+        switch (this.data.type) {
+            case ModelMessageType.Sync: {
+                writer.writeU(this.data.buffer.length)
+                writer.write(this.data.buffer)
+                break
+            }
+            case ModelMessageType.Change: {
+                writer.writeU(this.data.changes.length)
+                writer.write(this.data.changes)
+                break
+            }
+            case ModelMessageType.Instantiate: {
+                writer.writeString(this.data.objectId)
+                writer.writeString(this.data.typeId)
+                break
+            }
+        }
+    }
 
     static deserialize(reader: BinaryReader): ModelMessage {
         const type = reader.readU8()
@@ -41,12 +63,12 @@ class ModelMessage {
         switch (type) {
             case ModelMessageType.Change: {
                 const length = reader.readU()
-                const changes = reader.readBuffer(length)
+                const changes = reader.read(length)
                 return new ModelMessage({ type, changes })
             }
             case ModelMessageType.Sync: {
                 const length = reader.readU()
-                const buffer = reader.readBuffer(length)
+                const buffer = reader.read(length)
                 return new ModelMessage({ type, buffer })
             }
             case ModelMessageType.Instantiate: {
@@ -54,7 +76,7 @@ class ModelMessage {
                 const typeId = reader.readString()
                 return new ModelMessage({ type, objectId, typeId })
             }
-        }   
+        }
 
         throw new Error(`Unknown message type: ${type}`)
     }
@@ -72,7 +94,12 @@ enum ModelMessageType {
     Instantiate = 2
 }
 
-export class Model extends Emitter<ModelEvents> implements IModel {
+interface ModelEvents {
+    created: SyncObject,
+    deleted: string
+}
+
+export class Model extends Emitter<ModelEvents> {
 
     private _channel: Channel<ModelMessage>
     private _identity: Identity
@@ -98,8 +125,8 @@ export class Model extends Emitter<ModelEvents> implements IModel {
         this._identity = opts.identity
     }
 
-    get changeQueue() { 
-        return this._changeQueue 
+    get changeQueue() {
+        return this._changeQueue
     }
 
     get identity() {
@@ -127,22 +154,14 @@ export class Model extends Emitter<ModelEvents> implements IModel {
             if (typeId === null)
                 throw new Error('Error while instantiating object: Type not registered')
 
-            const writer = new BinaryWriter()
-
-            writer.writeU8(ModelMessageType.Instantiate)
-            writer.writeString(objectId)
-            writer.writeString(typeId)
-
-            const buffer = writer.collect()
-
-            const message = new Message<ModelMessage>({
-                address: Address.broadcast(),
-                originId: this._identity.userId,
+            this._channel.post({
+                data: new ModelMessage({
+                    type: ModelMessageType.Instantiate,
+                    objectId: objectId,
+                    typeId: typeId
+                }),
+                address: Address.broadcast()
             })
-
-            message.buffer = buffer
-
-            this._channel.post(message)
         }
 
         return object
@@ -150,8 +169,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
 
     send(objectId?: string) {
         const writer = this._writer
-        
-        writer.writeU8(ModelMessageType.Change)
+        writer.clear()
 
         if (objectId !== undefined) {
             const object = this._objects.get(objectId)
@@ -171,24 +189,21 @@ export class Model extends Emitter<ModelEvents> implements IModel {
             this._changeQueue.clear()
         }
 
-        const changes = writer.collect()
-        if (changes.length === 0)
+        if (writer.cursor() === 0)
             return
 
-        const message = new Message<ModelMessage>({
-            originId: this._identity.userId,
+        this._channel.post({
             address: Address.broadcast(),
+            data: new ModelMessage({
+                type: ModelMessageType.Change,
+                changes: writer.collect()
+            })
         })
-
-        message.setBuffer(changes)
-
-        this._channel.post(message)
     }
 
     sync(address: Address) {
         const writer = this._writer
-
-        writer.writeU8(ModelMessageType.Sync)
+        writer.clear()
 
         for (const object of this._objects.values()) {
             if (!Authority.allows(object, this._identity))
@@ -203,19 +218,16 @@ export class Model extends Emitter<ModelEvents> implements IModel {
             SyncObject.write(object, writer)
         }
 
-        const changes = writer.collect()
+        if (writer.cursor() === 0)
+            return // Wrote nothing
 
-        if (changes.length === 0)
-            return
-
-        const message = new Message<ModelMessage>({
-            originId: this._identity.userId,
+        this._channel.post({
             address,
+            data: new ModelMessage({
+                type: ModelMessageType.Sync,
+                buffer: writer.collect()
+            })
         })
-
-        message.setBuffer(changes)
-
-        this._channel.post(message)
     }
 
     get<T extends SyncObject>(id: string): T | null {
@@ -227,12 +239,12 @@ export class Model extends Emitter<ModelEvents> implements IModel {
     }
 
     registerObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void {
-        this._objectsEmitter.on(id, callback)
+        this._objectsEmitter.on(id, callback as (object: SyncObject | null) => void)
         callback(this.get(id))
     }
 
     unregisterObject<T extends SyncObject>(id: string, callback: (object: T | null) => void): void {
-        this._objectsEmitter.off(id, callback)
+        this._objectsEmitter.off(id, callback as (object: SyncObject | null) => void)
     }
 
     private _create<T extends SyncObject>(type: SyncObjectType<T>, id: string) {
@@ -342,7 +354,7 @@ export class Model extends Emitter<ModelEvents> implements IModel {
             const objectId = reader.readString()
             const fieldCount = reader.readU8()
             const changeCount = reader.readU32()
-            
+
             const object = this._objects.get(objectId)
 
             if (!object) {

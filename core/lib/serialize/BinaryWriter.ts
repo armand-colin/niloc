@@ -14,15 +14,19 @@ export class BinaryWriter implements Writer<Buffer> {
 
     private _stringEncoder = new TextEncoder();
 
-    constructor(unitSize: number = BUFFER_UNIT_SIZE) { 
+    constructor(unitSize: number = BUFFER_UNIT_SIZE) {
         this._buffer = new Uint8Array(unitSize);
         this._view = new DataView(this._buffer.buffer, 0);
     }
 
-    collect(): Buffer {
-        const buffer = this._buffer.slice(0, this._cursor)
+    clear() {
         this._cursor = 0
         this._length = 0
+    }
+
+    collect(): Buffer {
+        const buffer = this._buffer.slice(0, this._cursor)
+        this.clear()
         return buffer
     }
 
@@ -58,14 +62,14 @@ export class BinaryWriter implements Writer<Buffer> {
         this._buffer = newBuffer
     }
 
-    private _write(buffer: ArrayBuffer): void {
+    write(buffer: Uint8Array): void {
         const cursor = this._cursor
         const size = buffer.byteLength
 
         if (cursor + size > this._buffer.length)
             this._allocate(cursor + size)
 
-        this._buffer.set(new Uint8Array(buffer), cursor)
+        this._buffer.set(buffer, cursor)
         this._cursor += size
         this._length += size
     }
@@ -78,7 +82,7 @@ export class BinaryWriter implements Writer<Buffer> {
     writeString(string: string): void {
         const buffer = this._stringEncoder.encode(string)
         this.writeU32(buffer.byteLength)
-        this._write(buffer)
+        this.write(buffer)
     }
 
     writeF32(number: number): void {

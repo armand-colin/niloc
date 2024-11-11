@@ -1,4 +1,5 @@
-import { Channel, Identity, Message } from "../../lib/main"
+import { ChannelMessage } from "../../lib/channel/Channel"
+import { Address, Channel, Identity, Message } from "../../lib/main"
 import { Model } from "../../lib/sync/Model"
 import { SyncObjectType } from "../../lib/sync/SyncObjectType"
 
@@ -10,28 +11,30 @@ export namespace MockModel {
 
         const a: Channel<any> = {
             addListener: (callback) => { aListeners.push(callback) },
-            post: (address, message) => {
-                const _message: Message<any> = {
-                    address,
-                    data: message,
-                    originId: idA
-                }
+            post: (channelMessage: ChannelMessage) => {
+                const message = new Message({
+                    address: channelMessage.address ?? Address.broadcast(),
+                    data: channelMessage.data,
+                    originId: "a",
+                })
+
                 for (const listener of bListeners)
-                    listener(_message)
+                    listener(message)
             },
             removeListener: (_callback) => { },
         }
 
         const b: Channel<any> = {
             addListener: (callback) => { bListeners.push(callback) },
-            post: (address, message) => {
-                const _message: Message<any> = {
-                    address,
-                    data: message,
-                    originId: idB
-                }
+            post: (channelMessage: ChannelMessage) => {
+                const message = new Message({
+                    address: channelMessage.address ?? Address.broadcast(),
+                    data: channelMessage.data,
+                    originId: "b",
+                })
+
                 for (const listener of aListeners)
-                    listener(_message)
+                    listener(message)
             },
             removeListener: (_callback) => { },
         }

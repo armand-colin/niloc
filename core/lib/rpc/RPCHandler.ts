@@ -78,14 +78,10 @@ export class RPCHandler implements RPCHandler {
             call: (address, args) => {
                 const rpcMessage = new RPCMessage(rpcId, args)
 
-                const message = new Message<RPCMessage>({
-                    originId: this._identity.userId,
-                    address: address
+                this._channel.post({
+                    data: rpcMessage,
+                    address,
                 })
-
-                message.serialize(rpcMessage)
-
-                this._channel.post(message)
             }
         }
 

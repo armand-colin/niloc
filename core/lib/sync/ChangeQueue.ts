@@ -17,7 +17,7 @@ export class ChangeQueue extends Emitter<Events> {
         this._changes.add(objectId)
 
         if (startSize === 0)
-            this.emit('needsSend')
+            this.emit('needsSend', undefined)
     }
 
     deleteChange(objectId: string) {

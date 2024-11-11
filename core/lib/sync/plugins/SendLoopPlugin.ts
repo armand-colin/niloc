@@ -1,4 +1,4 @@
-import { IModel } from "../Model.interface";
+import { Model } from "../Model";
 import { Plugin } from "../Plugin";
 
 type Options = {
@@ -23,7 +23,7 @@ const defaultOptions: Options = {
 export class SendLoopPlugin implements Plugin {
 
     private _interval: number | null = null
-    private _model!: IModel
+    private _model!: Model
     private _options: Options
 
     private _uselessTicks = 0
@@ -32,7 +32,7 @@ export class SendLoopPlugin implements Plugin {
         this._options = { ...defaultOptions, ...options }
     }
 
-    init(model: IModel): void {
+    init(model: Model): void {
         this._model = model
 
         model.changeQueue.on('needsSend', this._needsSend)

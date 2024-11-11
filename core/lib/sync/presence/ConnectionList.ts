@@ -1,7 +1,7 @@
 import { Address } from "../../core/Address"
-import { Channel  } from "../../channel/Channel"
+import { Channel } from "../../channel/Channel"
 import { Emitter } from "@niloc/utils"
-import { Identity, SerializedIdentity } from "../../core/Identity"
+import { Identity } from "../../core/Identity"
 import { Message } from "../../core/Message"
 import { Serializable } from "../../serialize/Serializable"
 import { staticImplements } from "../../tools/staticImplements"
@@ -19,7 +19,7 @@ type ConnectionListMessageData = {
     identity: Identity
 } | {
     type: ConnectionListMessageType.Disconnected,
-    identity: Identity
+    userId: string
 } | {
     type: ConnectionListMessageType.Sync,
     users: Identity[]
@@ -40,7 +40,7 @@ class ConnectionListMessage implements Serializable {
 
     serialize(writer: BinaryWriter): void {
         writer.writeU8(this.data.type)
-        
+
         const data = this.data
 
         switch (data.type) {
@@ -49,7 +49,7 @@ class ConnectionListMessage implements Serializable {
                 break
 
             case ConnectionListMessageType.Disconnected:
-                data.identity.serialize(writer)
+                writer.writeString(data.userId)
                 break
 
             case ConnectionListMessageType.Sync:
@@ -73,7 +73,7 @@ class ConnectionListMessage implements Serializable {
             case ConnectionListMessageType.Disconnected:
                 return new ConnectionListMessage({
                     type,
-                    identity: Identity.deserialize(reader)
+                    userId: reader.readString()
                 })
 
             case ConnectionListMessageType.Sync:
@@ -93,14 +93,25 @@ class ConnectionListMessage implements Serializable {
 
 }
 
+export type ConnectionListOpts = {
+    isOwner: boolean,
+    channel: Channel<any>,
+}
+
 export class ConnectionList extends Emitter<ConnectionListEvents> {
 
     static owner(channel: Channel<any>) {
-        return new ConnectionList(true, channel)
+        return new ConnectionList({
+            isOwner: true,
+            channel
+        })
     }
 
     static client(channel: Channel<any>) {
-        return new ConnectionList(false, channel)
+        return new ConnectionList({
+            isOwner: false,
+            channel
+        })
     }
 
     private _isOwner: boolean
@@ -108,11 +119,11 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
 
     private _users = new Map<string, Identity>()
 
-    private constructor(owner: boolean, channel: Channel<any>) {
+    private constructor(opts: ConnectionListOpts) {
         super()
 
-        this._isOwner = owner
-        this._channel = channel
+        this._isOwner = opts.isOwner
+        this._channel = opts.channel
 
         this._channel.addListener(this._onMessage)
     }
@@ -133,15 +144,21 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
 
         // Broadcast message
         if (this._isOwner) {
-            this._channel.post(Address.broadcast(), { 
-                type: "connected",
-                identity: identity.serialize()
+
+            this._channel.post({
+                address: Address.broadcast(),
+                data: new ConnectionListMessage({
+                    type: ConnectionListMessageType.Connected,
+                    identity,
+                })
             })
 
-            this._channel.post(Address.to(identity.userId), { 
-                type: "sync",
-                users: [...this._users.values()]
-                    .map(identity => identity.serialize())
+            this._channel.post({
+                address: Address.to(identity.userId),
+                data: new ConnectionListMessage({
+                    type: ConnectionListMessageType.Sync,
+                    users: [...this._users.values()]
+                })
             })
         }
     }
@@ -154,7 +171,13 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
 
         // Broadcast message
         if (this._isOwner)
-            this._channel.post(Address.broadcast(), { type: "disconnected", userId })
+            this._channel.post({
+                address: Address.broadcast(),
+                data: new ConnectionListMessage({
+                    type: ConnectionListMessageType.Disconnected,
+                    userId: userId
+                }),
+            })
     }
 
     private _connected(identity: Identity) {
@@ -167,7 +190,7 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
         this.emit('disconnected', userId)
     }
 
-    private _sync(users: SerializedIdentity[]) {
+    private _sync(users: Identity[]) {
         for (const userId of [...this._users.keys()]) {
             if (!users.find(user => user.userId === userId))
                 this._disconnected(userId)
@@ -175,35 +198,36 @@ export class ConnectionList extends Emitter<ConnectionListEvents> {
 
         for (const user of users) {
             if (!this._users.has(user.userId))
-                this._connected(Identity.deserialize(user))
+                this._connected(user)
         }
 
-        this.emit('sync')
+        this.emit('sync', undefined)
     }
 
-    private _onMessage = (message: Message<ConnectionListMessage>) => {
-        console.log('message recv', message)
+    private _onMessage = (channelMessage: Message<ConnectionListMessage>) => {
+        const message = channelMessage.deserialize(ConnectionListMessage)
+
         switch (message.data.type) {
-            case "connected": {
+            case ConnectionListMessageType.Connected: {
                 if (this._isOwner || this._users.has(message.data.identity.userId))
                     return
 
-                this._connected(Identity.deserialize(message.data.identity))
+                this._connected(message.data.identity)
                 break
             }
-            case "disconnected": {
+            case ConnectionListMessageType.Disconnected: {
                 if (this._isOwner || !this._users.has(message.data.userId))
                     return
 
                 this._disconnected(message.data.userId)
                 break
             }
-            case "sync": {
+            case ConnectionListMessageType.Sync: {
                 if (this._isOwner)
                     return
 
                 this._sync(message.data.users)
-            } 
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 import { Address } from "../../core/Address";
 import { Identity } from "../../core/Identity";
-import { Model } from "../Model.interface";
+import type { Model } from "../Model";
 import { Plugin } from "../Plugin";
 import { ConnectionList } from "./ConnectionList";
 

@@ -7,8 +7,6 @@ import { RPCHandler } from "../rpc/RPCHandler"
 import { RPCPlugin } from "../rpc/RPCPlugin"
 import { Router } from "./Router"
 import { User } from "../sync/presence/User"
-import { Time } from "../time/Time"
-import { TimeSynchronizer } from "../time/TimeSynchronizer"
 import { AssertPlugin } from "../assert/AssertPlugin"
 import { Identity } from "./Identity"
 import { ConnectionPlugin } from "../sync/presence/ConnectionPlugin"
@@ -34,19 +32,19 @@ export enum FrameworkChannels {
 /**
  * Utiliy class for initializing a networked application
  */
-export class Framework<P extends User> {
+export class Framework<P extends User = User> {
 
+    readonly identity: Identity
     readonly network: Network
     readonly router: Router
     readonly connectionList: ConnectionList
     readonly presence: Presence<P>
     readonly rpcHandler: RPCHandler
     readonly model: Model
-    readonly time: Time
-
-    private _timeSynchronizer: TimeSynchronizer
 
     constructor(options: FrameworkOptions<P>) {
+        this.identity = options.identity
+        
         this.network = options.network
 
         this.router = new Router({
@@ -79,22 +77,11 @@ export class Framework<P extends User> {
             type: options.userType
         })
 
-        this.presence.model
-            .addPlugin(new RPCPlugin(this.rpcHandler))
-            .addPlugin(new AssertPlugin(options.identity))
-        // Already added in Presence constructor
-        // .addPlugin(new ConnectionPlugin(this.connectionList))
-
-        this.time = new Time()
-        this._timeSynchronizer = new TimeSynchronizer({
-            channel: this.router.channel(FrameworkChannels.Time),
-            identity: this.router.identity,
-            time: this.time
-        })
+        // this.presence.model
+        //     .addPlugin(new RPCPlugin(this.rpcHandler))
+        //     .addPlugin(new AssertPlugin(options.identity))
     }
 
-    dispose() {
-        this._timeSynchronizer.dispose()
-    }
+    dispose() { }
 
 }

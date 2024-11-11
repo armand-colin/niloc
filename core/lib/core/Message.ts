@@ -5,19 +5,28 @@ import { Address } from "./Address";
 
 const EMPTY_BUFFER = new Uint8Array(0)
 
+type MessageOpts<T> = {
+    originId: string,
+    address: Address,
+    data: Uint8Array | T & Serializable,
+}
 export class Message<T = any> {
 
     originId: string
     address: Address
     buffer: Uint8Array
 
-    constructor(opts: {
-        originId: string,
-        address?: Address,
-    }) {
+    constructor(opts: MessageOpts<T>) {
         this.originId = opts.originId
         this.address = opts?.address ?? Address.broadcast()
+
         this.buffer = EMPTY_BUFFER
+        
+        if (opts.data instanceof Uint8Array) {
+            this.buffer = opts.data
+        } else {
+            this.serialize(opts.data)
+        }
     }
 
     setBuffer(buffer: Uint8Array) {

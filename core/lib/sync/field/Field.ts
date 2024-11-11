@@ -1,9 +1,9 @@
 import { Emitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
 import { ChangeRequester } from "../ChangeRequester"
-import { IModel } from "../Model.interface"
 import { Writer } from "../../serialize/Writer"
 import { Reader } from "../../serialize/Reader"
+import type { Model } from "../Model"
 
 interface FieldEvents<T> {
     change: T
@@ -17,7 +17,7 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
 
     static __init(field: Field, data: {
         changeRequester: ChangeRequester,
-        model: IModel
+        model: Model
     }) {
         field.changeRequester = data.changeRequester
         field.model = data.model
@@ -74,7 +74,7 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
     private _index: number = -1
 
     protected changeRequester!: ChangeRequester
-    protected model!: IModel
+    protected model!: Model
     protected dirty: boolean = false
 
     get index() { 
