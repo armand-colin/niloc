@@ -93,7 +93,7 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
 
     protected changed(): void {
         this.dirty = true
-        this.changeRequester?.change(this._index)
+        this.changeRequester.change(this._index)
         this.emit('change', this.get())
     }
 
