@@ -1,3 +1,4 @@
+import { BinaryReader, BinaryWriter } from "../main"
 import { Identity } from "./Identity"
 
 export enum AddressType {
@@ -120,6 +121,33 @@ export namespace Address {
             return to(string.slice(1))
 
         return null
+    }
+
+    export function write(address: Address, writer: BinaryWriter): void {
+        if (address.type === AddressType.Dynamic)
+            address = {
+                type: AddressType.Target,
+                id: address.get()
+            }
+
+        writer.writeU8(address.type)
+
+        if (address.type === AddressType.Target)
+            writer.writeString(address.id)
+    }
+
+    export function read(reader: BinaryReader): Address {
+        const addressType = reader.readU8() as AddressType
+
+        if (addressType === AddressType.Target)
+            return {
+                type: AddressType.Target,
+                id: reader.readString()
+            }
+
+        return {
+            type: addressType
+        } as Address
     }
 
 }

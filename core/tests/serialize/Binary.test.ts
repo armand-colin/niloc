@@ -1,4 +1,4 @@
-import { BinaryReader, BinaryWriter } from "../../../lib/main"
+import { BinaryReader, BinaryWriter } from "../../lib/main"
 import { describe, expect, it } from "vitest"
 
 describe("Binary read / write", () => {
@@ -65,7 +65,7 @@ describe("Binary read / write", () => {
     function equalWithTolerance(a: number, b: number, tolerance: number) {
         return Math.abs(a - b) < tolerance
     }
-    
+
     it("Should read / write floats", () => {
         const writer = new BinaryWriter()
 
@@ -84,7 +84,7 @@ describe("Binary read / write", () => {
 
         expect(reader.empty()).to.be.true
     })
-    
+
     it("Should read / write strings", () => {
         const writer = new BinaryWriter()
 
@@ -104,5 +104,31 @@ describe("Binary read / write", () => {
         expect(reader.empty()).to.be.true
     })
 
+
+    it("Should handle array offsets (read)", () => {
+        const origin = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+        {
+            const buffer = origin.subarray(2, 5)
+            const reader = new BinaryReader(buffer)
+
+            expect(reader.readU8()).to.equal(2)
+            expect(reader.readU8()).to.equal(3)
+            expect(reader.readU8()).to.equal(4)
+            expect(reader.empty()).to.be.true
+        }
+
+        {
+            const reader = new BinaryReader(origin)
+            reader.setCursor(3)
+            const buffer = reader.read(4)
+            const reader2 = new BinaryReader(buffer)
+            expect(reader2.readU8()).to.equal(3)
+            expect(reader2.readU8()).to.equal(4)
+            expect(reader2.readU8()).to.equal(5)
+            expect(reader2.readU8()).to.equal(6)
+            expect(reader2.empty()).to.be.true
+        }
+    })
 
 })

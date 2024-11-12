@@ -1,7 +1,6 @@
 import { StringWriter } from "../../tools/StringWriter";
 import { SyncObject } from "../SyncObject";
 import { SyncObjectType } from "../SyncObjectType";
-import { ChangeRequester } from "../ChangeRequester";
 import { Field } from "./Field";
 import { Reader } from "../../serialize/Reader";
 import { Writer } from "../../serialize/Writer";
@@ -61,24 +60,7 @@ export class SyncObjectField<T extends SyncObject> extends Field<T> {
     protected onInit(): void {
         super.onInit()
 
-        const changeRequester: ChangeRequester = {
-            change: (fieldIndex) => {
-                this._changes.push(fieldIndex)
-                this.changeRequester.change(this.index)
-                this.emit('change', this.get())
-            },
-            send: () => {
-                this.changeRequester.send()
-            },
-            delete: () => {
-                console.error('SyncObjectField: delete is not supported, as it cannot be null for its parent object. This is an undefined behaviour.')
-            }
-        }
-
-        SyncObject.__init(this._object, {
-            changeRequester,
-            model: this.model
-        })
+        SyncObject.__init(this._object, {  model: this.model })
     }
 
     protected toString(writer: StringWriter): void {

@@ -1,6 +1,7 @@
 import { BinaryReader, BinaryWriter } from "../main";
 import { Deserializer } from "../serialize/Deserializer";
 import { Serializable } from "../serialize/Serializable";
+import { staticImplements } from "../tools/staticImplements";
 import { Address } from "./Address";
 
 const EMPTY_BUFFER = new Uint8Array(0)
@@ -10,7 +11,9 @@ type MessageOpts<T> = {
     address: Address,
     data: Uint8Array | T & Serializable,
 }
-export class Message<T = any> {
+
+@staticImplements<Deserializer<Message>>()
+export class Message<T = any> implements Serializable {
 
     originId: string
     address: Address
@@ -25,15 +28,31 @@ export class Message<T = any> {
         if (opts.data instanceof Uint8Array) {
             this.buffer = opts.data
         } else {
-            this.serialize(opts.data)
+            this._serialize(opts.data)
         }
     }
 
-    setBuffer(buffer: Uint8Array) {
-        this.buffer = buffer
+    static deserialize(reader: BinaryReader): Message {
+        const originId = reader.readString()
+        const address = Address.read(reader)
+        const bufferLength = reader.readU()
+        const buffer = reader.read(bufferLength)
+
+        return new Message({
+            originId,
+            address,
+            data: buffer,
+        })
+    } 
+
+    serialize(writer: BinaryWriter): void {
+        writer.writeString(this.originId)
+        Address.write(this.address, writer)
+        writer.writeU(this.buffer.length)
+        writer.write(this.buffer)
     }
-    
-    serialize(serializable: Serializable) {
+
+    private _serialize(serializable: Serializable) {
         const writer = new BinaryWriter()
         serializable.serialize(writer)
         this.buffer = writer.collect()

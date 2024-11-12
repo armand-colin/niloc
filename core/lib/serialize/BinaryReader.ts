@@ -8,19 +8,23 @@ export class BinaryReader implements Reader<Buffer> {
 
     private _buffer: Buffer
     private _view: DataView
-    private _cursor: number
+    private _cursor: number = 0
 
     private _stringDecoder = new TextDecoder()
 
+    private static _makeDataView(buffer: Buffer): DataView {
+        return new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+    }
+    
     constructor(buffer?: Buffer) {
         this._buffer = buffer ?? EMPTY_BUFFER
-        this._view = new DataView(this._buffer.buffer, 0)
+        this._view = BinaryReader._makeDataView(this._buffer)
         this._cursor = 0
     }
 
     feed(buffer: Buffer): void {
         this._buffer = buffer
-        this._view = new DataView(this._buffer.buffer, this._buffer.byteOffset, this._buffer.byteLength)
+        this._view = BinaryReader._makeDataView(buffer)
         this._cursor = 0
     }
 

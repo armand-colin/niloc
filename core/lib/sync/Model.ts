@@ -1,8 +1,6 @@
 import { SyncObject } from "./SyncObject"
 import { Channel } from "../channel/Channel"
 import { nanoid } from "nanoid"
-import { ChangeRequester } from "./ChangeRequester"
-import { ChangeQueue } from "./ChangeQueue"
 import { Plugin } from "./Plugin"
 import { Identity } from "../core/Identity"
 import { Authority } from "./Authority"
@@ -109,8 +107,6 @@ export class Model extends Emitter<ModelEvents> {
     private _typesHandler = new TypesHandler()
     private _objects = new Map<string, SyncObject>()
 
-    private _changeQueue = new ChangeQueue()
-
     private _reader = new BinaryReader()
     private _writer = new BinaryWriter()
 
@@ -123,10 +119,6 @@ export class Model extends Emitter<ModelEvents> {
         this._channel.addListener(this._onMessage)
 
         this._identity = opts.identity
-    }
-
-    get changeQueue() {
-        return this._changeQueue
     }
 
     get identity() {
@@ -177,18 +169,12 @@ export class Model extends Emitter<ModelEvents> {
                 return
 
             this._writeChangesForObject(object, writer)
-            this._changeQueue.deleteChange(objectId)
         } else {
-            for (const objectId of this._changeQueue.changes()) {
-                const object = this._objects.get(objectId)
-                if (!object)
-                    continue
-
+            for (const object of this._objects.values())
                 this._writeChangesForObject(object, writer)
-            }
-            this._changeQueue.clear()
         }
 
+        // We wrote nothing
         if (writer.cursor() === 0)
             return
 
@@ -215,18 +201,23 @@ export class Model extends Emitter<ModelEvents> {
 
             writer.writeString(object.id)
             writer.writeString(typeId)
+
             SyncObject.write(object, writer)
         }
 
         if (writer.cursor() === 0)
             return // Wrote nothing
 
+        const buffer = writer.collect()
+
+        const message = new ModelMessage({
+            type: ModelMessageType.Sync,
+            buffer
+        })
+
         this._channel.post({
             address,
-            data: new ModelMessage({
-                type: ModelMessageType.Sync,
-                buffer: writer.collect()
-            })
+            data: message
         })
     }
 
@@ -251,39 +242,20 @@ export class Model extends Emitter<ModelEvents> {
         const object = new type(id)
         this._objects.set(id, object)
 
-        SyncObject.__init(object, {
-            changeRequester: this._makeChangeRequester(id),
-            model: this
-        })
+        SyncObject.__init(object, { model: this })
 
         for (const plugin of this._plugins)
             plugin.beforeCreate?.(object)
 
         this.emit('created', object)
+        object.on('delete', () => this._delete(object))
         this._objectsEmitter.emit(id, object)
 
         return object
     }
 
-    private _makeChangeRequester(id: string): ChangeRequester {
-        return {
-            change: () => this._onChangeRequest(id),
-            send: () => this.send(id),
-            delete: () => this._delete(id),
-        }
-    }
-
-    private _onChangeRequest(id: string) {
-        this._changeQueue.addChange(id)
-    }
-
-    private _delete(id: string) {
-        if (!this._objects.has(id))
-            return
-
-        this._objects.delete(id)
-        this.emit('deleted', id)
-        this._objectsEmitter.emit(id, null)
+    private _delete(object: SyncObject) {
+        this.emit('deleted', object.id)
     }
 
     private _onMessage = (message: Message<ModelMessage>) => {
@@ -304,6 +276,7 @@ export class Model extends Emitter<ModelEvents> {
                 break
             }
             case ModelMessageType.Sync: {
+                console.log('Receiving sync from', message.originId)
                 this._onSync(modelMessage.data.buffer)
                 break
             }

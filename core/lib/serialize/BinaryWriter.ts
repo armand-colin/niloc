@@ -9,14 +9,14 @@ export class BinaryWriter implements Writer<Buffer> {
     private _buffer: Buffer
     private _view: DataView
 
-    private _cursor: number = 0;
-    private _length: number = 0;
+    private _cursor: number = 0
+    private _length: number = 0
 
-    private _stringEncoder = new TextEncoder();
+    private _stringEncoder = new TextEncoder()
 
     constructor(unitSize: number = BUFFER_UNIT_SIZE) {
-        this._buffer = new Uint8Array(unitSize);
-        this._view = new DataView(this._buffer.buffer, 0);
+        this._buffer = new Uint8Array(unitSize)
+        this._view = new DataView(this._buffer.buffer, 0)
     }
 
     clear() {
@@ -25,6 +25,7 @@ export class BinaryWriter implements Writer<Buffer> {
     }
 
     collect(): Buffer {
+        // TODO: check if we could not clone?
         const buffer = this._buffer.slice(0, this._cursor)
         this.clear()
         return buffer
@@ -59,7 +60,9 @@ export class BinaryWriter implements Writer<Buffer> {
 
         const newBuffer = new Uint8Array(newSize)
         newBuffer.set(this._buffer)
+
         this._buffer = newBuffer
+        this._view = new DataView(newBuffer.buffer)
     }
 
     write(buffer: Uint8Array): void {

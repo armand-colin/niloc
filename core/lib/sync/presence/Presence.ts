@@ -28,7 +28,6 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
 
     private _connectionList: ConnectionList
     private _model: Model
-    private _emitter = new Emitter<PresenceEvents<T>>()
 
     private _user: T
     private _others = [] as T[]
@@ -113,13 +112,13 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
             delete registeredObjects[userId]
         }
 
-        // TODO: resolve issue
         this.on('connected', onConnected as any)
         this.on('disconnected', onDisconnected)
         
         return () => {
             this.off('connected', onConnected as any)
             this.off('disconnected', onDisconnected)
+            
             for (const object of Object.values(registeredObjects)) 
                 object.unregisterAll(callback)
         }
@@ -129,8 +128,8 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
         const isConnected = this._connectionList.isConnected(user.id)
         if (isConnected && !this._others.includes(user)) {
             this._others.push(user)
-            this._emitter.emit('changed', this.users)
-            this._emitter.emit('connected', user)
+            this.emit('changed', this.users)
+            this.emit('connected', user)
         }
     }
 
@@ -148,8 +147,8 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
         if (user) {
             User.__setIdentity(user, identity)
             this._others.push(user)
-            this._emitter.emit('changed', this.users)
-            this._emitter.emit('connected', user)
+            this.emit('changed', this.users)
+            this.emit('connected', user)
         }
     }
 
@@ -162,8 +161,8 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
             return
         
         this._others.splice(index, 1)
-        this._emitter.emit('changed', this.users)
-        this._emitter.emit('disconnected', userId)
+        this.emit('changed', this.users)
+        this.emit('disconnected', userId)
     }
 
 }

@@ -78,7 +78,7 @@ export class Router<N extends Network = Network> {
 
         dataChannel.output().setListener((message) => {
             this._send(message, channel)
-        })
+        }) 
 
         return dataChannel
     }

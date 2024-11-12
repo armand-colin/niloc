@@ -1,6 +1,5 @@
 import { Emitter } from "@niloc/utils"
 import { StringWriter } from "../../tools/StringWriter"
-import { ChangeRequester } from "../ChangeRequester"
 import { Writer } from "../../serialize/Writer"
 import { Reader } from "../../serialize/Reader"
 import type { Model } from "../Model"
@@ -15,11 +14,7 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
         field._index = index
     }
 
-    static __init(field: Field, data: {
-        changeRequester: ChangeRequester,
-        model: Model
-    }) {
-        field.changeRequester = data.changeRequester
+    static __init(field: Field, data: { model: Model }) {
         field.model = data.model
         field.onInit()
     }
@@ -73,7 +68,6 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
 
     private _index: number = -1
 
-    protected changeRequester!: ChangeRequester
     protected model!: Model
     protected dirty: boolean = false
 
@@ -93,7 +87,6 @@ export abstract class Field<T = any> extends Emitter<FieldEvents<T>> {
 
     protected changed(): void {
         this.dirty = true
-        this.changeRequester.change(this._index)
         this.emit('change', this.get())
     }
 

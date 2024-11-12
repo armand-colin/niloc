@@ -1,7 +1,6 @@
 import { Emitter } from "@niloc/utils";
 import { StringWriter } from "../tools/StringWriter";
 import { Authority } from "./Authority";
-import { ChangeRequester } from "./ChangeRequester";
 import { Field } from "./field/Field";
 import { boolean } from "../decorators/fields/boolean";
 import { Reader } from "../serialize/Reader";
@@ -14,12 +13,8 @@ type SyncObjectEvents = {
 
 export class SyncObject extends Emitter<SyncObjectEvents> {
 
-    static __init(object: SyncObject, data: {
-        changeRequester: ChangeRequester,
-        model: Model
-    }) {
+    static __init(object: SyncObject, data: { model: Model }) {
         // First set the change requester
-        object.changeRequester = data.changeRequester
         object.model = data.model
 
         for (const field of object.fields())
@@ -84,12 +79,6 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
      */
     protected model!: Model
 
-    /**
-     * Only available after the object is initialized (onInit has been called)
-     */
-    protected changeRequester!: ChangeRequester
-
-
     private _fields: Field[] | null = null
 
 
@@ -107,17 +96,15 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
     }
 
     protected read(reader: Reader) {
-        for (const field of this.fields())
+        for (const field of this.fields()) {
             Field.read(field, reader)
+        }
     }
 
     protected write(writer: Writer) {
-        for (const field of this.fields())
+        for (const field of this.fields()) {
             Field.write(field, writer)
-    }
-
-    send() {
-        this.changeRequester.send()
+        }
     }
 
     private _registerMap = new Map<() => void, () => void>()
@@ -186,7 +173,6 @@ export class SyncObject extends Emitter<SyncObjectEvents> {
         if (this.deleted) {
             this.emit('delete', undefined)
             this.onDelete()
-            this.changeRequester.delete()
 
             // Point of no return
             this.removeAllListeners()

@@ -18,15 +18,21 @@ export class ConnectionPlugin implements Plugin {
     }
 
     private _onConnected = (identity: Identity) => {
-        if (!this._model)
+        if (
+            !this._model ||
+            identity.userId === this._model.identity.userId
+        )
             return
 
+        console.log("Syncing with", identity.userId, "...")
+        
         this._model.sync(Address.to(identity.userId))
     }
 
     private _onSync = () => {
         if (!this._model)
             return
+
         this._model.sync(Address.broadcast())
     }
 

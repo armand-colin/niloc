@@ -77,8 +77,9 @@ class ConnectionListMessage implements Serializable {
                 })
 
             case ConnectionListMessageType.Sync:
-                const users = new Array(reader.readU())
-                for (let i = 0; i < users.length; i++)
+                const n = reader.readU()
+                const users = new Array(n)
+                for (let i = 0; i < n; i++)
                     users[i] = Identity.deserialize(reader)
 
                 return new ConnectionListMessage({
