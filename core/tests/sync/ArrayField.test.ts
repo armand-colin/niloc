@@ -22,13 +22,13 @@ describe("ArrayField", () => {
         expect(objectB.values.get()).toEqual([])
 
         objectA.values.set([1, 2, 3])
-        objectA.send()
+        modelA.send()
 
         expect(objectA.values.get()).toEqual([1, 2, 3])
         expect(objectB.values.get()).toEqual([1, 2, 3])
         
         objectA.values.push(4)
-        objectA.send()
+        modelA.send()
 
         expect(objectA.values.get()).toEqual([1, 2, 3, 4])
         expect(objectB.values.get()).toEqual([1, 2, 3, 4])

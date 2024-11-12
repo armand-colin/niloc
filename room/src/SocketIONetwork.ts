@@ -26,8 +26,6 @@ class ConnectedSocket {
     }
 
     private _onMessage = (channel: number, buffer: ArrayBuffer) => {
-        console.log('on message', channel, new Uint8Array(buffer))
-
         const reader = new BinaryReader(new Uint8Array(buffer))
         const message = Message.deserialize(reader)
 

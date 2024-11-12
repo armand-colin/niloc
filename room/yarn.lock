@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@niloc/core@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.4.1.tgz#7517cb381349e4478fac68f1c4d49cad51b6901f"
-  integrity sha512-c8ILzMJRlrUxvmqBfu9fEKArVfimRuhuDVP4vLuxY6dZ2nP7A8HdNF7eof8mEVhf5KbDGOmsKB1ZLfsSNkPCqw==
+"@niloc/core@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.5.0.tgz#270428b8232f0159c041d72f0bcfc752474da943"
+  integrity sha512-igWsfD0zvunHgd+z+YGNc3vm8PXnD7cUWiuejs9tdS1B6Odj2VGu6i0LJGsmNTJgNqnp/jLKOF8kU3P6zvfCJw==
   dependencies:
     "@niloc/utils" "0.0.11"
     nanoid "^4.0.2"

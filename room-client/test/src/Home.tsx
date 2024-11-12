@@ -30,7 +30,6 @@ function usePresence(presence: Presence<User>) {
 
     useEffect(() => {
         function update() {
-            console.log('updating presence', presence)
             setUsers([...presence.users])
         }
 

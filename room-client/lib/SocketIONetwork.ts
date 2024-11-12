@@ -15,8 +15,6 @@ export class SocketIONetwork implements Network {
         if (message.originId !== this.userId)
             return
 
-        console.log('Sending', channel, message)
-        
         this._writer.clear()
         message.serialize(this._writer)
         this.io.send(channel, this._writer.collect())
@@ -27,10 +25,7 @@ export class SocketIONetwork implements Network {
     }
 
     private _onMessage = (channel: number, buffer: ArrayBuffer) => {
-        Object.assign(window, { BinaryReader })
-        console.log("onmessage", channel, new BinaryReader(new Uint8Array(buffer)))
         const reader = new BinaryReader(new Uint8Array(buffer))
-        console.log()
         const message = Message.deserialize(reader)
 
         for (const handler of this._messageHandlers)

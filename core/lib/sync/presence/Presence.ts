@@ -118,7 +118,7 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
         return () => {
             this.off('connected', onConnected as any)
             this.off('disconnected', onDisconnected)
-            
+
             for (const object of Object.values(registeredObjects)) 
                 object.unregisterAll(callback)
         }
@@ -126,7 +126,12 @@ export class Presence<T extends User> extends Emitter<PresenceEvents<T>> {
 
     private _onUserCreated = (user: T) => {
         const isConnected = this._connectionList.isConnected(user.id)
-        if (isConnected && !this._others.includes(user)) {
+        if (isConnected) {
+            const currentIndex = this._others.findIndex(other => other.id === user.id)
+            
+            if (currentIndex > -1)
+                this._others.splice(currentIndex, 1)
+
             this._others.push(user)
             this.emit('changed', this.users)
             this.emit('connected', user)

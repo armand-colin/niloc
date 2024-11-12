@@ -276,7 +276,6 @@ export class Model extends Emitter<ModelEvents> {
                 break
             }
             case ModelMessageType.Sync: {
-                console.log('Receiving sync from', message.originId)
                 this._onSync(modelMessage.data.buffer)
                 break
             }

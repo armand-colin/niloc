@@ -24,8 +24,6 @@ export class ConnectionPlugin implements Plugin {
         )
             return
 
-        console.log("Syncing with", identity.userId, "...")
-        
         this._model.sync(Address.to(identity.userId))
     }
 
