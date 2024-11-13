@@ -6,12 +6,17 @@ export type { Channel } from "./channel/Channel";
 export { Identity } from "./core/Identity";
 export { Authority } from "./sync/Authority";
 
+// Serialize
+export { BinaryReader } from "./serialize/BinaryReader"
+export { BinaryWriter } from "./serialize/BinaryWriter"
+export { staticImplements } from "./tools/staticImplements"
+export type { Serializable } from "./serialize/Serializable"
+export type { Deserializer } from "./serialize/Deserializer"
+
 // sync
 export { Model } from "./sync/Model"
 export { SyncObject } from "./sync/SyncObject"
 export type { SyncObjectType } from "./sync/SyncObjectType"
-export { BinaryReader } from "./serialize/BinaryReader"
-export { BinaryWriter } from "./serialize/BinaryWriter"
 
 //  field
 export { Field } from "./sync/field/Field"
