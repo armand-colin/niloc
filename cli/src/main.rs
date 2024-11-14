@@ -17,7 +17,8 @@ enum Commands {
         domain: String,
         port: u32,
         websocket: Option<bool>
-    }
+    },
+    Reload
 
 }
 
@@ -27,17 +28,24 @@ fn main() {
     match (args.command) {
         Commands::Update { domain, port, websocket } => {
             update(domain, port, websocket.unwrap_or(false));
+        },
+        Commands::Reload => {
+            reload();
         }
     }
 }
 
 fn update(domain: String, port: u32, websocket: bool) {
 
-    let websocket_options = match websocket {
+    let websocket_options_before = match websocket {
         false => "".to_string(),
         true => "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $host;
-        proxy_http_version 1.1;
+      proxy_set_header Host $host;".to_string()
+    };
+
+    let websocket_options_after = match websocket {
+        false => "".to_string(),
+        true => "proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection \"upgrade\";".to_string()
     };
@@ -46,8 +54,9 @@ fn update(domain: String, port: u32, websocket: bool) {
     server_name {domain}.armandcolin.fr;
 
     location / {{
+        {websocket_options_before}
         proxy_pass http://127.0.0.1:{port}/;
-        {websocket_options}
+        {websocket_options_after}
     }}
 
     listen 443 ssl;
@@ -67,14 +76,12 @@ server {{
     # return 404;
     root /var/www/{domain}.armandcolin.fr;
     index index.html;
-    }}
+}}
 ");
 
     let file_destination = format!("/etc/nginx/sites-enabled/{domain}.armandcolin.fr");
 
     std::fs::write(file_destination, nginx_config_file).expect("Failed to write config file");
-
-    reload();
 }
 
 fn reload() {
