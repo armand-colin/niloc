@@ -4,3 +4,4 @@ export { Provider } from "./Provider";
 export { Iter } from "./Iter";
 export { Observable } from "./observable/Observable";
 export { Transformer } from "./observable/Transformer";
+export { Duration } from "./Duration";

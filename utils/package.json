@@ -28,7 +28,8 @@
     "lib": "lib"
   },
   "dependencies": {
-    "nanoid": "^3.3.6"
+    "nanoid": "^3.3.6",
+    "zod": "^3.24.2"
   },
   "author": "",
   "license": "ISC",
