@@ -1,11 +1,11 @@
 import { Message } from "../main";
-import { Channel } from "./Channel";
+import { Channel, ChannelMessage } from "./Channel";
 import { MPSC } from "./MPSC";
 
 export interface OutputChannel<T> {
 
     post(message: Message<T>): void
-    setListener(callback: (message: Message<T>) => void): void
+    setListener(callback: (message: ChannelMessage<T>) => void): void
 
 }
 
@@ -22,11 +22,10 @@ export interface DataChannel<T> {
  * Output: posts [Message<data>]
  */
 
-
 export class DataChannel<T> implements DataChannel<T> {
 
     private _channel: number
-    private _mpsc = new MPSC<[Message<T>], [Message<T>]>()
+    private _mpsc = new MPSC<[ChannelMessage<T>], [Message<T>]>()
     private _input: Channel<T>
     private _output: OutputChannel<T>
 

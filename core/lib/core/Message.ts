@@ -1,30 +1,58 @@
 import { BinaryReader, BinaryWriter } from "../main";
 import { Deserializer } from "../serialize/Deserializer";
 import { Serializable } from "../serialize/Serializable";
+import { staticImplements } from "../tools/staticImplements";
 import { Address } from "./Address";
 
 const EMPTY_BUFFER = new Uint8Array(0)
 
-export class Message<T = any> {
+type MessageOpts<T> = {
+    originId: string,
+    address: Address,
+    data: Uint8Array | T & Serializable,
+}
+
+@staticImplements<Deserializer<Message>>()
+export class Message<T = any> implements Serializable {
 
     originId: string
     address: Address
     buffer: Uint8Array
 
-    constructor(opts: {
-        originId: string,
-        address?: Address,
-    }) {
+    constructor(opts: MessageOpts<T>) {
         this.originId = opts.originId
         this.address = opts?.address ?? Address.broadcast()
+
         this.buffer = EMPTY_BUFFER
+        
+        if (opts.data instanceof Uint8Array) {
+            this.buffer = opts.data
+        } else {
+            this._serialize(opts.data)
+        }
     }
 
-    setBuffer(buffer: Uint8Array) {
-        this.buffer = buffer
+    static deserialize(reader: BinaryReader): Message {
+        const originId = reader.readString()
+        const address = Address.read(reader)
+        const bufferLength = reader.readU()
+        const buffer = reader.read(bufferLength)
+
+        return new Message({
+            originId,
+            address,
+            data: buffer,
+        })
+    } 
+
+    serialize(writer: BinaryWriter): void {
+        writer.writeString(this.originId)
+        Address.write(this.address, writer)
+        writer.writeU(this.buffer.length)
+        writer.write(this.buffer)
     }
-    
-    serialize(serializable: Serializable) {
+
+    private _serialize(serializable: Serializable) {
         const writer = new BinaryWriter()
         serializable.serialize(writer)
         this.buffer = writer.collect()

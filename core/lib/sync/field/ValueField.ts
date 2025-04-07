@@ -30,7 +30,7 @@ export abstract class ValueField<T> extends Field {
     }
 
     write(writer: Writer): void {
-        writer.writeJSON(this.value)
+        this.writeValue(writer)
     }
 
     protected abstract writeValue(writer: Writer): void;

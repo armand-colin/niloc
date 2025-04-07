@@ -1,6 +1,6 @@
 import { Address } from "../../core/Address";
 import { Identity } from "../../core/Identity";
-import { Model } from "../Model.interface";
+import type { Model } from "../Model";
 import { Plugin } from "../Plugin";
 import { ConnectionList } from "./ConnectionList";
 
@@ -18,7 +18,10 @@ export class ConnectionPlugin implements Plugin {
     }
 
     private _onConnected = (identity: Identity) => {
-        if (!this._model)
+        if (
+            !this._model ||
+            identity.userId === this._model.identity.userId
+        )
             return
 
         this._model.sync(Address.to(identity.userId))
@@ -27,6 +30,7 @@ export class ConnectionPlugin implements Plugin {
     private _onSync = () => {
         if (!this._model)
             return
+
         this._model.sync(Address.broadcast())
     }
 

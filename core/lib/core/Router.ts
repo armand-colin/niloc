@@ -1,22 +1,21 @@
 import { Address } from "./Address";
 import { Message } from "./Message";
-import { INetwork } from "./Network.interface";
 import { DataChannel } from "../channel/DataChannel";
-import { Channel } from "../channel/Channel";
+import { Channel, ChannelMessage } from "../channel/Channel";
 import { Identity } from "./Identity";
+import { Network } from "./Network";
 
-export interface RouterOpts<N extends INetwork = INetwork> {
+export interface RouterOpts<N extends Network = Network> {
 
     identity: Identity,
-    
     network: N,
 
 }
 
 
-export class Router<N extends INetwork = INetwork> {
+export class Router<N extends Network = Network> {
 
-    public readonly network: INetwork
+    public readonly network: N
 
     private _identity: Identity
 
@@ -27,7 +26,7 @@ export class Router<N extends INetwork = INetwork> {
 
         this._identity = opts.identity
 
-        network.on('message', ({ peerId, channel, message }) => this._onMessage(peerId, channel, message))
+        network.onMessage(this._onMessage)
 
         this.network = network
     }
@@ -53,11 +52,20 @@ export class Router<N extends INetwork = INetwork> {
         return this._channels[channel].input()
     }
 
-    private _onMessage = (peerId: string, channel: number, message: Message) => {
-        if (Address.match(peerId, message.address, this._identity))
-            this._receive(channel, message)
+    private _onMessage = (channel: number, message: Message) => {
+        if (message.originId === this.identity.userId) {
+            // XXX: we may want tot handle this gracefully
+            console.warn('Received a message that was produced by this user. This may indicate an infinite loop in your network setup.')
+            return
+        }
 
-        this.network.send(channel, message, peerId)
+        const address = message.address
+
+        if (Address.match(message.originId, address, this._identity)) {
+            this._receive(channel, message)
+        }
+
+        this.network.send(channel, message)
     }
 
     private _receive(channel: number, message: Message) {
@@ -70,16 +78,22 @@ export class Router<N extends INetwork = INetwork> {
 
         dataChannel.output().setListener((message) => {
             this._send(message, channel)
-        })
+        }) 
 
         return dataChannel
     }
 
-    private _send(message: Message, channel: number): void {
-        if (Address.match(this.identity.userId, message.address, this._identity))
+    private _send(channelMessage: ChannelMessage, channel: number): void {
+        const message = new Message({
+            originId: channelMessage.originId ?? this._identity.userId,
+            address: channelMessage.address ?? Address.broadcast(),
+            data: channelMessage.data
+        })
+
+        if (Address.match(message.originId, message.address, this._identity))
             this._receive(channel, message)
 
-        this.network.send(channel, message, this.identity.userId)
+        this.network.send(channel, message)
     }
 
 }

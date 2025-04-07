@@ -1,8 +1,8 @@
 import http from "http"
 import { Server, Socket } from "socket.io"
 import express from "express"
-import { SocketIONetwork } from "@niloc/socketio-server";
 import { ConnectionList, Identity, Router } from "@niloc/core"
+import { SocketIONetwork } from "./SocketIONetwork"
 
 const PORT = process.env.PORT || 3000
 
@@ -18,10 +18,10 @@ const io = new Server(server, {
 
 class Room {
 
-    private readonly _network: SocketIONetwork
     private readonly _router: Router
 
     private _connectionList?: ConnectionList
+    private _network: SocketIONetwork
 
     private _sockets: { socket: Socket, peerId: string }[] = []
 
@@ -42,23 +42,18 @@ class Room {
         }
     }
 
-    add(socket: Socket, id: string, host: boolean) {
-        this._network.addSocket(socket, id, host)
+    add(socket: Socket, id: string, isHost: boolean) {
+        this._network.addSocket(socket, id, isHost)
         this._sockets.push({ socket, peerId: id })
 
         if (this._connectionList)
-            this._connectionList.connected(new Identity(id, host))
+            this._connectionList.connected(new Identity(id, isHost))
     }
 
     remove(socket: Socket) {
-        const index = this._sockets.findIndex(({ socket: s }) => socket === s)
-        if (index === -1)
-            return
-
-        const [{ peerId }] = this._sockets.splice(index, 1)
-
-        if (!this.empty && this._connectionList)
-            this._connectionList.disconnected(peerId)
+        const userId = this._network.removeSocket(socket)
+        if (userId && this._connectionList)
+            this._connectionList.disconnected(userId)
     }
 
     get empty() {
@@ -70,8 +65,8 @@ class Room {
 const rooms = new Map<string, Room>()
 
 io.on('connection', socket => {
-    const peerId = socket.handshake.query.peerId
-    const host = socket.handshake.query.host === "true"
+    const userId = socket.handshake.query.userId
+    const isHost = socket.handshake.query.isHost === "true"
     const roomId = socket.handshake.query.roomId
 
     const presence = typeof socket.handshake.query.presence === "string" ?
@@ -79,7 +74,7 @@ io.on('connection', socket => {
         -1
 
     if (
-        typeof peerId !== "string" ||
+        typeof userId !== "string" ||
         typeof roomId !== "string"
     ) {
         socket.disconnect(true)
@@ -92,12 +87,14 @@ io.on('connection', socket => {
         return room
     })()
 
-    room.add(socket, peerId, host)
+    room.add(socket, userId, isHost)
 
     socket.on('disconnect', () => {
         room.remove(socket)
+
         if (room.empty)
             rooms.delete(roomId)
+
         socket.removeAllListeners()
     })
 })

@@ -117,21 +117,20 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
-"@niloc/core@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.3.2.tgz#53056653a7714b3ab17e3d4a152c2c050c55b3b3"
-  integrity sha512-AxgUFwxy61iPuObQvX7R9XXe2cR6oQzhQ5PCIa3nxv/RBYY8NmE0m0+k90xninLHHGrRf2VQHqDWd63zh3JTpw==
+"@niloc/core@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@niloc/core/-/core-0.5.0.tgz#270428b8232f0159c041d72f0bcfc752474da943"
+  integrity sha512-igWsfD0zvunHgd+z+YGNc3vm8PXnD7cUWiuejs9tdS1B6Odj2VGu6i0LJGsmNTJgNqnp/jLKOF8kU3P6zvfCJw==
   dependencies:
-    "@niloc/utils" "^0.0.6"
+    "@niloc/utils" "0.0.11"
     nanoid "^4.0.2"
 
-"@niloc/socketio-client@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@niloc/socketio-client/-/socketio-client-0.1.2.tgz#4ebc84506edfecbc6b90ace384a59fcfc2d93bf2"
-  integrity sha512-qPHhS1r5eKBQ9y0usgsNm3zEWB2kd5SXzOhGu3oEXd/KRcRdkp81hyrPhcIsxLn1RZhcoEkO0si0RvK65Z7wGg==
+"@niloc/utils@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.0.11.tgz#73c7d6dbfcc76c277a3a6db0fbab2614585dbf37"
+  integrity sha512-bbfaenYEO6YIacg+QbSiKbsKsTVEdmPrdRMR8slvpGxVCy+w0zzvGFr8HDAjr3xmVS1jkRHGyfT7lST1gEAyQA==
   dependencies:
-    "@niloc/core" "^0.3.2"
-    "@niloc/utils" "^0.0.6"
+    nanoid "^3.3.6"
 
 "@niloc/utils@^0.0.6":
   version "0.0.6"

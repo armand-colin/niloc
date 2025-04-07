@@ -8,19 +8,23 @@ export class BinaryReader implements Reader<Buffer> {
 
     private _buffer: Buffer
     private _view: DataView
-    private _cursor: number
+    private _cursor: number = 0
 
     private _stringDecoder = new TextDecoder()
 
+    private static _makeDataView(buffer: Buffer): DataView {
+        return new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+    }
+    
     constructor(buffer?: Buffer) {
         this._buffer = buffer ?? EMPTY_BUFFER
-        this._view = new DataView(this._buffer.buffer, 0)
+        this._view = BinaryReader._makeDataView(this._buffer)
         this._cursor = 0
     }
 
     feed(buffer: Buffer): void {
         this._buffer = buffer
-        this._view = new DataView(this._buffer.buffer, 0)
+        this._view = BinaryReader._makeDataView(buffer)
         this._cursor = 0
     }
 
@@ -43,7 +47,7 @@ export class BinaryReader implements Reader<Buffer> {
         return this._cursor >= this._buffer.length
     }
 
-    readBuffer(length: number): Uint8Array {
+    read(length: number): Uint8Array {
         const buffer = this._buffer.subarray(this._cursor, this._cursor + length)
         this.setCursor(this._cursor + length)
         return buffer
@@ -92,22 +96,22 @@ export class BinaryReader implements Reader<Buffer> {
     }
 
     readU8(): number {
-        const value =  this._view.getUint8(this._cursor)
+        const value = this._view.getUint8(this._cursor)
         this.setCursor(this._cursor + 1)
         return value
     }
     readU16(): number {
-        const value =  this._view.getUint16(this._cursor)
+        const value = this._view.getUint16(this._cursor)
         this.setCursor(this._cursor + 2)
         return value
     }
     readU32(): number {
-        const value =  this._view.getUint32(this._cursor)
+        const value = this._view.getUint32(this._cursor)
         this.setCursor(this._cursor + 4)
         return value
     }
     readU64(): bigint {
-        const value =  this._view.getBigUint64(this._cursor)
+        const value = this._view.getBigUint64(this._cursor)
         this.setCursor(this._cursor + 8)
         return value
     }
