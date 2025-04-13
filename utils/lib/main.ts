@@ -3,6 +3,7 @@ export type { IEmitter } from "./Emitter"
 export { Provider } from "./Provider"
 export { Iter } from "./Iter"
 export { Duration } from "./Duration"
+export { Result } from "./result/Result"
 
 // Observable
 export { Observable } from "./observable/Observable"

@@ -1,28 +1,35 @@
 export type Callback<T> = (data: T) => void
 
-export interface IEmitter<Events> {
+type UndefinedKeysOf<T> = {
+    [K in keyof T]: T[K] extends undefined ? K :
+    T[K] extends void ?
+    K :
+    never
+}[keyof T]
 
-    once<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
-    off<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
-    on<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
-    offOnce<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void
-    emit<K extends keyof Events & string>(event: K, data: Events[K]): void
+export interface IEmitter<Events extends Record<string, any>> {
+
+    once<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void
+    off<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void
+    on<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void
+    offOnce<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void
+    emit<K extends keyof Events>(event: K, data: Events[K]): void
     removeAllListeners(): void
 
 }
 
-export class Emitter<Events> implements IEmitter<Events> {
+export class Emitter<Events extends Record<string, any>> implements IEmitter<Events> {
 
-    private _listeners: Record<string, Set<(data: any) => void>> = {}
-    private _onceListeners: Record<string, Set<(data: any) => void>> = {}
+    private _listeners: Partial<Record<keyof Events, Set<(data: any) => void>>> = {}
+    private _onceListeners: Partial<Record<keyof Events, Set<(data: any) => void>>> = {}
 
-    on<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void {
+    on<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void {
         if (!this._listeners[event])
             this._listeners[event] = new Set()
         this._listeners[event].add(callback)
     }
 
-    off<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void {
+    off<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void {
         if (!this._listeners[event])
             return
         this._listeners[event].delete(callback)
@@ -30,13 +37,13 @@ export class Emitter<Events> implements IEmitter<Events> {
             delete this._listeners[event]
     }
 
-    once<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void {
+    once<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void {
         if (!this._onceListeners[event])
             this._onceListeners[event] = new Set()
         this._onceListeners[event].add(callback)
     }
 
-    offOnce<K extends keyof Events & string>(event: K, callback: Callback<Events[K]>): void {
+    offOnce<K extends keyof Events>(event: K, callback: Callback<Events[K]>): void {
         if (!this._onceListeners[event])
             return
         this._onceListeners[event].delete(callback)
@@ -44,7 +51,9 @@ export class Emitter<Events> implements IEmitter<Events> {
             delete this._onceListeners[event]
     }
 
-    emit<K extends keyof Events & string>(event: K, data: Events[K]): void {
+    emit<K extends keyof Events>(event: K, data: Events[K]): void
+    emit<K extends UndefinedKeysOf<Events>>(event: K): void 
+    emit<K extends keyof Events>(event: K, data?: Events[K]): void {
         if (this._listeners[event]) {
             for (const callback of [...this._listeners[event]])
                 callback(data)

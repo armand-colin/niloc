@@ -6,7 +6,10 @@ type Opts<T, Required extends boolean, Multiple extends boolean> = {
     type: FieldType<T>,
     name: string,
     required: Required,
-    multiple: Multiple
+    multiple: Multiple,
+    label?: string,
+    placeholder?: string,
+    tooltip?: string
 }
 
 export class FieldDescriptor<T, Required extends boolean, Multiple extends boolean> {
@@ -16,11 +19,19 @@ export class FieldDescriptor<T, Required extends boolean, Multiple extends boole
     readonly multiple: Multiple
     readonly required: Required
 
+    readonly label: string | null
+    readonly placeholder: string | null
+    readonly tooltip: string | null
+
     constructor(opts: Opts<T, Required, Multiple>) {
         this.name = opts.name
         this.type = opts.type
         this.required = opts.required
         this.multiple = opts.multiple
+
+        this.label = opts.label ?? null
+        this.placeholder = opts.placeholder ?? null
+        this.tooltip = opts.tooltip ?? null
     }
 
     parse(data: FormData): Result<
@@ -34,12 +45,14 @@ export class FieldDescriptor<T, Required extends boolean, Multiple extends boole
 
             for (const entry of entries) {
                 const parsed = this.type.parse(entry)
-                if (!parsed.ok) {
-                    value = Result.error(undefined)
-                    break
-                }
+                if (!parsed.ok)
+                    return Result.error(FormError.invalid(this.name))
+
                 values.push(parsed.value)
             }
+
+            if (this.required && values.length === 0)
+                return Result.error(FormError.missing(this.name))
 
             value = Result.ok(values as FieldDescriptor.Parsed<T, Required, Multiple>)
         } else {

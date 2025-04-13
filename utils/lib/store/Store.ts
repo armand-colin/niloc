@@ -36,7 +36,7 @@ export class Store<T extends StoreObject> extends Emitter<Events<T>> {
     }
 
     getAll() {
-        return this._objects.values().toArray()
+        return [...this._objects.values()]
     }
 
 }
