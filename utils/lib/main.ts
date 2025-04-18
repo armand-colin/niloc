@@ -14,3 +14,6 @@ export { FormDescriptor } from "./form/FormDescriptor"
 export { FieldDescriptor } from "./form/FieldDescriptor"
 export { FormError } from "./form/FormError"
 export { FieldType } from "./form/FieldType"
+
+// Property
+export { Property } from "./property/Property" 
