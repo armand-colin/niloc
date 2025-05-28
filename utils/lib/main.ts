@@ -17,3 +17,4 @@ export { FieldType } from "./form/FieldType"
 
 // Property
 export { Property } from "./property/Property" 
+export type { PropertyPipe } from "./property/PropertyPipe" 

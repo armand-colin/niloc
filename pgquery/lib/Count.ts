@@ -3,7 +3,7 @@ import { ColumnType } from "./ColumnType";
 import { query } from "./query";
 import { Visitor } from "./Visitor";
 
-export class Count extends Column<"count", ColumnType<number>> {
+export class Count extends Column<"count", string, ColumnType<number>> {
 
     private _column: Column
 

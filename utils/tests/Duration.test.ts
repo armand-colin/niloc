@@ -4,48 +4,48 @@ import { describe, expect, it } from "vitest"
 describe('Duration', () => {
 
     it("Should create durations raw", () => {
-        const durationA = new Duration(1000)
-        const durationB = new Duration(2000)
-        const durationC = new Duration(1000)
+        const durationA = Duration.fromMilliseconds(1000)
+        const durationB = Duration.fromMilliseconds(2000)
+        const durationC = Duration.fromMilliseconds(1000)
 
-        expect(durationA.equals(durationB)).to.be.false
-        expect(durationA.equals(durationC)).to.be.true
+        expect(Duration.equals(durationA, durationB)).to.be.false
+        expect(Duration.equals(durationA, durationC)).to.be.true
     })
 
     it("Should handle seconds", () => {
-        const duration = Duration.seconds(34)
+        const duration = Duration.fromSeconds(34)
 
-        expect(duration.seconds).equal(34)
+        expect(Duration.seconds(duration)).equal(34)
     })
 
     it("Should handle minutes", () => {
-        const duration = Duration.minutes(12)
+        const duration = Duration.fromMinutes(12)
 
-        expect(duration.minutes).equal(12)
-        expect(duration.seconds).equal(12 * 60)
+        expect(Duration.minutes(duration)).equal(12)
+        expect(Duration.seconds(duration)).equal(12 * 60)
     })
 
     it("Should handle hours", () => {
-        const duration = Duration.hours(4)
+        const duration = Duration.fromHours(4)
 
-        expect(duration.hours).equal(4)
+        expect(Duration.hours(duration)).equal(4)
     })
 
     it("Should handle days", () => {
-        const duration = Duration.days(31)
+        const duration = Duration.fromDays(31)
 
-        expect(duration.days).equal(31)
+        expect(Duration.days(duration)).equal(31)
     })
 
     it("Should handle split", () => {
-        const duration = Duration.split({
+        const duration = Duration.fromSplit({
             days: 1,
             seconds: 34,
             hours: 2,
             milliseconds: 34
         })
 
-        const split = duration.split()
+        const split = Duration.split(duration)
         
         expect(split.days).to.equal(1)
         expect(split.seconds).to.equal(34)

@@ -12,7 +12,7 @@ type Opts<T, Required extends boolean, Multiple extends boolean> = {
     tooltip?: string
 }
 
-export class FieldDescriptor<T, Required extends boolean, Multiple extends boolean> {
+export class FieldDescriptor<T, Required extends boolean = boolean, Multiple extends boolean = boolean> {
 
     readonly name: string
     readonly type: FieldType<T>

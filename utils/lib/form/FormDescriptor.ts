@@ -22,9 +22,8 @@ type IsMultiple<T> = T extends { multiple: infer U } ?
     false :
     false
 
-type Schema = Record<string, FieldOpts>
 
-type Fields<S extends Schema> = {
+type Fields<S extends FormDescriptor.Schema> = {
     [K in keyof S]: FieldDescriptor<
         TypeOf<S[K]>,
         IsRequired<S[K]>,
@@ -32,7 +31,7 @@ type Fields<S extends Schema> = {
     >
 }
 
-type _Parsed<S extends Schema> = {
+type _Parsed<S extends FormDescriptor.Schema> = {
     [K in keyof S]: FieldDescriptor.Parsed<
         TypeOf<S[K]>,
         IsRequired<S[K]>,
@@ -42,9 +41,9 @@ type _Parsed<S extends Schema> = {
 
 type Unpack<T> = T extends object ? { [K in keyof T]: Unpack<T[K]> } : T
 
-type Parsed<S extends Schema> = Unpack<_Parsed<S>>
+type Parsed<S extends FormDescriptor.Schema> = Unpack<_Parsed<S>>
 
-export class FormDescriptor<S extends Schema> {
+export class FormDescriptor<S extends FormDescriptor.Schema = FormDescriptor.Schema> {
 
     readonly fields: Fields<S>
 
@@ -83,4 +82,8 @@ export class FormDescriptor<S extends Schema> {
         return Result.ok(result as Parsed<S>)
     }
 
+}
+
+export namespace FormDescriptor {
+    export type Schema = Record<string, FieldOpts>
 }
