@@ -1,18 +1,15 @@
-export type Result<T, E> = {
-    ok: true,
-    value: T
-} | {
-    ok: false,
-    error: E
-}
+export type Result<T = unknown, E = unknown> = Result.Ok<T> | Result.Error<E>
 
 export namespace Result {
 
-    export function ok<T, E = unknown>(value: T): Result<T, E> {
+    export type Ok<T> = { ok: true, value: T }
+    export type Error<E> = { ok: false, error: E }
+
+    export function ok<T>(value: T): Ok<T> {
         return { ok: true, value: value }
     }
 
-    export function error<E, T = unknown>(error: E): Result<T, E> {
+    export function error<E>(error: E): Error<E> {
         return { ok: false, error: error }
     }
 
