@@ -2,6 +2,7 @@ import { ParamValue } from "./ParamValue"
 
 export class ColumnType<T extends ParamValue = ParamValue, Optionnal extends boolean = false> {
 
+    // @ts-ignore
     private _mark: T
 
     constructor(mark: T) {

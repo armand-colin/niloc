@@ -1,69 +1,73 @@
-type Split = {
-    milliseconds: number,
-    seconds: number,
-    minutes: number,
-    hours: number,
-    days: number
-}
+export type Duration = { milliseconds: number }
 
-export class Duration {
+export namespace Duration {
 
-    constructor(readonly milliseconds: number) { }
+    export type Split = {
+        milliseconds: number,
+        seconds: number,
+        minutes: number,
+        hours: number,
+        days: number
+    }
 
-    static split(split: Partial<Split>) {
+    export function fromSplit(split: Partial<Split>): Duration {
         const milliseconds = split?.milliseconds ?? 0
         const seconds = split?.seconds ?? 0
         const minutes = split?.minutes ?? 0
         const hours = split?.hours ?? 0
         const days = split?.days ?? 0
 
-        return new Duration(
-            milliseconds +
-            (seconds * 1000) +
-            (minutes * 1000 * 60) +
-            (hours * 1000 * 60 * 60) +
-            (days * 1000 * 60 * 60 * 24)
-        )
+        return {
+            milliseconds: milliseconds +
+                (seconds * 1000) +
+                (minutes * 1000 * 60) +
+                (hours * 1000 * 60 * 60) +
+                (days * 1000 * 60 * 60 * 24)
+        }
     }
 
-    static milliseconds(milliseconds: number) {
-        return new Duration(milliseconds)
+    export function fromMilliseconds(milliseconds: number): Duration {
+        return { milliseconds }
     }
 
-    static seconds(seconds: number) {
-        return new Duration(seconds * 1000)
+    export function fromSeconds(seconds: number): Duration {
+        return { milliseconds: seconds * 1000 }
     }
 
-    static minutes(minutes: number) {
-        return new Duration(minutes * 60 * 1000)
+    export function fromMinutes(minutes: number): Duration {
+        return { milliseconds: minutes * 60 * 1000 }
     }
 
-    static hours(hours: number) {
-        return new Duration(hours * 60 * 60 * 1000)
+    export function fromHours(hours: number): Duration {
+        return { milliseconds: hours * 60 * 60 * 1000 }
     }
 
-    static days(days: number) {
-        return new Duration(days * 24 * 60 * 60 * 1000)
+    export function fromDays(days: number): Duration {
+        return { milliseconds: days * 24 * 60 * 60 * 1000 }
     }
 
-    get seconds() {
-        return this.milliseconds / 1000
+    export function milliseconds(duration: Duration) {
+        return duration.milliseconds
     }
 
-    get minutes() {
-        return this.milliseconds / (1000 * 60)
+    export function seconds(duration: Duration) {
+        return duration.milliseconds / 1000
     }
 
-    get hours() {
-        return this.milliseconds / (1000 * 60 * 60)
+    export function minutes(duration: Duration) {
+        return duration.milliseconds / (1000 * 60)
     }
 
-    get days() {
-        return this.milliseconds / (1000 * 60 * 60 * 24)
+    export function hours(duration: Duration) {
+        return duration.milliseconds / (1000 * 60 * 60)
     }
 
-    split(): Split {
-        let time = this.milliseconds
+    export function days(duration: Duration) {
+        return duration.milliseconds / (1000 * 60 * 60 * 24)
+    }
+
+    export function split(duration: Duration): Split {
+        let time = duration.milliseconds
 
         const milliseconds = time % 1000
         time = (time - milliseconds) / 1000
@@ -88,16 +92,16 @@ export class Duration {
         }
     }
 
-    add(other: Duration) {
-        return new Duration(this.milliseconds + other.milliseconds)
+    export function add(first: Duration, other: Duration): Duration {
+        return { milliseconds: first.milliseconds + other.milliseconds }
     }
 
-    subtract(other: Duration) {
-        return new Duration(this.milliseconds - other.milliseconds)
+    export function subtract(a: Duration, b: Duration): Duration {
+        return { milliseconds: a.milliseconds - b.milliseconds }
     }
 
-    equals(other: Duration) {
-        return this.milliseconds === other.milliseconds
+    export function equals(a: Duration, b: Duration): boolean {
+        return a.milliseconds === b.milliseconds
     }
 
 }

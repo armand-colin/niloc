@@ -1,6 +1,6 @@
 {
-  "name": "@niloc/utils",
-  "version": "0.1.6",
+  "name": "@niloc/pgquery",
+  "version": "0.0.2",
   "type": "module",
   "files": [
     "dist",
@@ -14,6 +14,10 @@
     "import": "./dist/dist.js",
     "require": "./dist/dist.umd.cjs"
   },
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc",
@@ -21,18 +25,14 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vite": "^4.0.4",
-    "vitest": "^0.34.6"
-  },
-  "directories": {
-    "lib": "lib"
+    "vite": "^6.1.1",
+    "vite-node": "^3.0.6",
+    "vitest": "^3.0.6"
   },
   "dependencies": {
-    "nanoid": "^3.3.6",
-    "zod": "^3.24.2"
+    "nanoid": "^3.3.8"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
-  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+  "description": ""
 }

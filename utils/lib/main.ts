@@ -17,6 +17,8 @@ export { FormError } from "./form/FormError"
 
 // Property
 export { Property } from "./property/Property"
+export type { PropertyPipe } from "./property/PropertyPipe"
 
 // Effect
 export { Effect } from "./effect/Effect"
+

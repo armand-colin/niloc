@@ -1,28 +1,12 @@
 import { Column } from "./Column"
 import { ColumnType } from "./ColumnType"
 import { Count } from "./Count"
-import { Insert, InsertMultiple, InsertOne } from "./Insert"
 import { And } from "./operators/And"
 import { Or } from "./operators/Or"
 import { Query } from "./QueryClass"
 import { Select } from "./Select"
 import { Statement } from "./Statement"
 import { Table } from "./Table"
-
-class Inserting<T extends Column[]> {
-
-    constructor(readonly table: Table, readonly columns: T) { }
-
-    values(values: Insert.Values<T>): InsertOne<T, []>
-    values(values: Insert.Values<T>[]): InsertMultiple<T>
-    values(values: Insert.Values<T> | Insert.Values<T>[]): InsertOne<T, []> | InsertMultiple<T> {
-        if (Array.isArray(values))
-            return new InsertMultiple(this.table, this.columns, values)
-
-        return new InsertOne(this.table, this.columns, [], values)
-    }
-
-}
 
 export namespace query {
 
@@ -44,15 +28,6 @@ export namespace query {
                 })
             }
         }
-    }
-
-    export function insert<T extends Column[]>(...columns: T): Inserting<T> {
-        if (columns.length === 0)
-            throw new Error("Cannot insert empty row")
-
-        const table = columns[0].table
-
-        return new Inserting(table, columns)
     }
 
     export function or<A extends Statement, B extends Statement>(a: A, b:B) {

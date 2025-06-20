@@ -6,7 +6,6 @@ import { Param, ParamLike } from "./Param"
 import { Table } from "./Table"
 import { Visitor } from "./Visitor"
 import { In } from "./In"
-import { Statement } from "./Statement"
 import type { Select } from "./Select"
 import { Collection } from "./Collection"
 

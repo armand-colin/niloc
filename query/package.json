@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "vite": "^6.1.1",
-    "vitest": "^3.0.6"
-  }
-}

@@ -1,5 +1,5 @@
-import { query } from "../src/query"
-import { Table } from "../src/Table"
+import { query } from "../lib/query"
+import { Table } from "../lib/Table"
 
 const organization = Table.create("organization", {
     id: query.string,
