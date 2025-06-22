@@ -1,9 +1,12 @@
 import { Result } from "../main";
 
-
 export namespace Effect {
 
-    export type Factory<Success, Error> = () => AsyncGenerator<Effect<unknown, unknown>, Result<Success, Error>>
+    type Context = {
+
+    }
+
+    export type Factory<Success, Error> = (context: Context) => AsyncGenerator<Effect<unknown, unknown>, Result<Success, Error>>
 
     export type Effect<Success, Error> = {
         factory: Factory<Success, Error>
@@ -13,8 +16,16 @@ export namespace Effect {
         return { factory }
     }
 
-    export async function run<Success = unknown, Error = unknown>(effect: Effect<Success, Error>): Promise<Result<Success, Error>> {
-        const generator = effect.factory()
+    function createContext(): Context {
+        return {
+
+        }
+    }
+
+    export async function run<Success = unknown, Error = unknown>(effect: Effect<Success, Error>, context?: Context): Promise<Result<Success, Error>> {
+        context = context ?? createContext()
+
+        const generator = effect.factory(context)
 
         while (true) {
             const result = await generator.next()
@@ -22,7 +33,7 @@ export namespace Effect {
             if (result.done) {
                 return result.value
             } else {
-                await run(result.value)
+                await run(result.value, context)
             }
         }
     }
@@ -43,8 +54,8 @@ export namespace Effect {
 
     export function map<Success, Error, Success2>(effect: Effect<Success, Error>, mapper: (value: Success) => Success2): Effect<Success2, Error> {
         return {
-            factory: async function* () {
-                const generator = effect.factory()
+            factory: async function* (context) {
+                const generator = effect.factory(context)
 
                 while (true) {
                     const result = await generator.next()
@@ -56,7 +67,7 @@ export namespace Effect {
                             return result.value
                         }
                     } else {
-                        await run(result.value)
+                        await run(result.value, context)
                     }
                 }
             }
