@@ -1,25 +1,23 @@
 import { Emitter } from "./Emitter"
 
-type AnyConstructor<T = any> = Provider.Constructor<T> | Provider.AsyncConstructor<T>
-
 type LockEvents = {
     lock: void,
     unlock: void
 }
 
-export class Provider {
+export class Provider<T = any, Args extends any[] = []> {
 
-    private _types = new Map<AnyConstructor, any>()
-    private _history: AnyConstructor[] = []
+    private _types = new Map<Provider.AnyConstructor<T, Args>, any>()
+    private _history: Provider.AnyConstructor<T, Args>[] = []
 
     private _lockEmitter = new Emitter<LockEvents>()
     private _locked = false
 
-    get<T>(type: Provider.Constructor<T>): T {
-        return this._get(type)
+    get<Instance extends T>(type: Provider.Constructor<Instance, Args>, ...args: Args): Instance {
+        return this._get(type, ...args) as Instance
     }
 
-    set<T>(type: AnyConstructor<T>, instance: T) {
+    set<Instance extends T>(type: Provider.AnyConstructor<Instance, Args>, instance: Instance) {
         this._types.set(type, instance)
     }
 
@@ -48,10 +46,10 @@ export class Provider {
             }
 
             this._lockEmitter.on('unlock', onUnlock)
-        })        
+        })
     }
 
-    async getAsync<T>(type: Provider.AsyncConstructor<T>): Promise<T> {
+    async getAsync<Instance extends T>(type: Provider.AsyncConstructor<Instance, Args>, ...args: Args): Promise<Instance> {
         await this._waitForRelease()
 
         if (this._types.has(type))
@@ -59,7 +57,7 @@ export class Provider {
 
         this._addToHistory(type)
 
-        const instance = await type.asyncConstructor(this)
+        const instance = await type.asyncConstructor(...args)
         this._types.set(type, instance)
 
         this._removeFromHistory(type)
@@ -67,7 +65,7 @@ export class Provider {
         return instance
     }
 
-    private _addToHistory(type: AnyConstructor) {
+    private _addToHistory(type: Provider.AnyConstructor<T, Args>) {
         if (this._history.includes(type)) {
             const path = this._history.map(t => t.name).join(' -> ')
             throw new Error(`Circular dependency detected for ${type.name}: ${path}`)
@@ -76,19 +74,19 @@ export class Provider {
         this._history.push(type)
     }
 
-    private _removeFromHistory(type: AnyConstructor) {
+    private _removeFromHistory(type: Provider.AnyConstructor<T, Args>) {
         const index = this._history.indexOf(type)
         if (index > -1)
             this._history.splice(index, 1)
     }
 
-    private _get<T>(type: Provider.Constructor<T>): T {
+    private _get<Instance extends T>(type: Provider.Constructor<Instance, Args>, ...args: Args): Instance {
         if (this._types.has(type))
             return this._types.get(type)
 
         this._addToHistory(type)
 
-        const instance = new type(this)
+        const instance = new type(...args)
         this._types.set(type, instance)
 
         this._removeFromHistory(type)
@@ -100,20 +98,16 @@ export class Provider {
 
 export namespace Provider {
 
-    export type Constructor<T> = {
+    export type Constructor<T, Args extends any[] = []> = {
         name: string
-        new(): T
-    } | {
-        name: string
-        new(provider: Provider): T
+        new(...args: Args): T
     }
 
-    export type AsyncConstructor<T> = {
+    export type AsyncConstructor<T, Args extends any[] = []> = {
         name: string,
-        asyncConstructor(provider: Provider): Promise<T>
-    } | {
-        name: string,
-        asyncConstructor(): Promise<T>
+        asyncConstructor(...args: Args): Promise<T>
     }
+
+    export type AnyConstructor<T, Args extends any[] = []> = Constructor<T, Args> | AsyncConstructor<T, Args>
 
 }
