@@ -7,8 +7,8 @@ type LockEvents = {
 
 export class Provider<T = any, Args extends any[] = []> {
 
-    private _types = new Map<Provider.AnyConstructor<T, Args>, any>()
-    private _history: Provider.AnyConstructor<T, Args>[] = []
+    private _types = new Map<Provider.AnyConstructor<T>, T>()
+    private _history: Provider.AnyConstructor<T>[] = []
 
     private _lockEmitter = new Emitter<LockEvents>()
     private _locked = false
@@ -17,8 +17,12 @@ export class Provider<T = any, Args extends any[] = []> {
         return this._get(type, ...args) as Instance
     }
 
-    set<Instance extends T>(type: Provider.AnyConstructor<Instance, Args>, instance: Instance) {
+    set<Instance extends T>(type: Provider.AnyConstructor<Instance>, instance: Instance) {
         this._types.set(type, instance)
+    }
+
+    has(type: Provider.AnyConstructor<T>): boolean {
+        return this._types.has(type)
     }
 
     lock() {
@@ -53,7 +57,7 @@ export class Provider<T = any, Args extends any[] = []> {
         await this._waitForRelease()
 
         if (this._types.has(type))
-            return this._types.get(type)
+            return this._types.get(type) as Instance
 
         this._addToHistory(type)
 
@@ -82,7 +86,7 @@ export class Provider<T = any, Args extends any[] = []> {
 
     private _get<Instance extends T>(type: Provider.Constructor<Instance, Args>, ...args: Args): Instance {
         if (this._types.has(type))
-            return this._types.get(type)
+            return this._types.get(type) as Instance
 
         this._addToHistory(type)
 
@@ -98,16 +102,16 @@ export class Provider<T = any, Args extends any[] = []> {
 
 export namespace Provider {
 
-    export type Constructor<T, Args extends any[] = []> = {
+    export type Constructor<T, Args extends any[] = any[]> = {
         name: string
         new(...args: Args): T
     }
 
-    export type AsyncConstructor<T, Args extends any[] = []> = {
+    export type AsyncConstructor<T, Args extends any[] = any[]> = {
         name: string,
         asyncConstructor(...args: Args): Promise<T>
     }
 
-    export type AnyConstructor<T, Args extends any[] = []> = Constructor<T, Args> | AsyncConstructor<T, Args>
+    export type AnyConstructor<T, Args extends any[] = any[]> = Constructor<T, Args> | AsyncConstructor<T, Args>
 
 }
