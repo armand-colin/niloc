@@ -22,3 +22,7 @@ export type { PropertyPipe } from "./property/PropertyPipe"
 // Effect
 export { Effect } from "./effect/Effect"
 
+// Math
+export { Vec2 } from "./math/Vec2"
+export { Vec3 } from "./math/Vec3"
+export { Random, Random2D } from "./math/Random"
