@@ -1,37 +1,51 @@
-import { Provider } from "@niloc/utils";
+import type { Component } from "./Component";
+import type { ComponentConstructor, Constructor } from "./Constructor";
+import { Coroutine } from "./Coroutine";
 import type { Resource } from "./Resource";
-import { Scene } from "./Scene";
+import type { Schedule } from "./Schedule";
+import { Scheduler } from "./Scheduler";
+
+export type Initializer<T> = (engine: Engine) => T
 
 export class Engine {
 
-    private _resources = new Provider<Resource, [Engine]>()
-    private _loaders = new Map<Provider.Constructor<Resource>, (engine: Engine) => Resource>()
-    private _scene = new Scene()
+    private _resources = new Map<Constructor<Resource, [Engine]>, Resource>()
+    private _scheduler = new Scheduler()
+    private _initializers = new Map<Constructor<Resource, [Engine]>, Initializer<unknown>>()
 
-    resource<T extends Resource>(constructor: Provider.Constructor<T>): T {
+    getResource<T extends Resource>(constructor: Constructor<T, [Engine]>): T {
         if (this._resources.has(constructor))
-            return this._resources.get(constructor, this) as T
+            return this._resources.get(constructor) as T
 
-        if (this._loaders.has(constructor)) {
-            const instance = this._loaders.get(constructor)!(this)
+        if (this._initializers.has(constructor)) {
+            const instance = this._initializers.get(constructor)!(this) as T
             this._resources.set(constructor, instance)
-            return instance as T
+            return instance
         }
 
-        return this._resources.get(constructor, this)
-    }
-
-    initialize<T extends Resource>(constructor: Provider.Constructor<T>, loader: (engine: Engine) => T): void
-    initialize<T extends Resource>(constructor: Provider.Constructor<T, [Engine]>): void
-    initialize<T extends Resource>(constructor: Provider.Constructor<T>, loader?: (engine: Engine) => T) {
-        if (loader) {
-            this._loaders.set(constructor, loader)
-            return
+        if (constructor.length > 1) {
+            throw new Error("Resource has no initializer, but constructor needs more than one argument")
         }
+
+        const resource = new constructor(this)
+        this._resources.set(constructor, resource)
+
+        return resource
     }
 
-}
+    initializeResource<T extends Resource>(constructor: Constructor<T, [Engine]>, initializer: Initializer<T>) {
+        this._initializers.set(constructor, initializer)
+    }
 
-export namespace Engine {
-    export type Constructor<T> = Provider.Constructor<T, [Engine]>
+    createComponent<T extends Component, Args extends unknown[]>(constructor: ComponentConstructor<T, Args>, ...args: Args): T {
+        const component = new constructor(this, ...args)
+        return component
+    }
+
+    coroutine(coroutine: Iterator<Schedule>) {
+        const _coroutine = new Coroutine(coroutine)
+        this._scheduler.add(_coroutine)
+        return _coroutine
+    }
+
 }
