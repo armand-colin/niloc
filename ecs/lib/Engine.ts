@@ -1,5 +1,5 @@
 import type { Component } from "./Component";
-import type { ComponentConstructor, Constructor } from "./Constructor";
+import type { ComponentConstructor, ResourceConstructor } from "./Constructor";
 import { Coroutine } from "./Coroutine";
 import type { Resource } from "./Resource";
 import type { Schedule } from "./Schedule";
@@ -9,11 +9,11 @@ export type Initializer<T> = (engine: Engine) => T
 
 export class Engine {
 
-    private _resources = new Map<Constructor<Resource, [Engine]>, Resource>()
+    private _resources = new Map<ResourceConstructor, Resource>()
     private _scheduler = new Scheduler()
-    private _initializers = new Map<Constructor<Resource, [Engine]>, Initializer<unknown>>()
+    private _initializers = new Map<ResourceConstructor, Initializer<unknown>>()
 
-    getResource<T extends Resource>(constructor: Constructor<T, [Engine]>): T {
+    getResource<T extends Resource>(constructor: ResourceConstructor<T>): T {
         if (this._resources.has(constructor))
             return this._resources.get(constructor) as T
 
@@ -33,7 +33,7 @@ export class Engine {
         return resource
     }
 
-    initializeResource<T extends Resource>(constructor: Constructor<T, [Engine]>, initializer: Initializer<T>) {
+    initializeResource<T extends Resource>(constructor: ResourceConstructor<T>, initializer: Initializer<T>) {
         this._initializers.set(constructor, initializer)
     }
 
@@ -42,7 +42,7 @@ export class Engine {
         return component
     }
 
-    coroutine(coroutine: Iterator<Schedule>) {
+    startCoroutine(coroutine: Iterator<Schedule>) {
         const _coroutine = new Coroutine(coroutine)
         this._scheduler.add(_coroutine)
         return _coroutine

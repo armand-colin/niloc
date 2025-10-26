@@ -2,7 +2,7 @@ import type { Component } from "./Component"
 import type { Engine } from "./Engine"
 import type { Resource } from "./Resource"
 
-export type Constructor<T, Args extends unknown[]> = {
+type Constructor<T, Args extends unknown[]> = {
     new(...args: Args): T
 }
 

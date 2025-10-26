@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid"
-import type { Schedule } from "./Schedule"
-
+import { Schedule } from "./Schedule"
 export class Coroutine {
 
     readonly id = nanoid()
