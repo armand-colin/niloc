@@ -1,0 +1,39 @@
+{
+  "name": "@niloc/ecs-react",
+  "version": "0.0.1",
+  "description": "",
+  "license": "ISC",
+  "author": "armand-colin",
+  "type": "module",
+  "exports": {
+    "types": "./index.d.ts",
+    "import": "./dist/dist.js",
+    "require": "./dist/dist.umd.cjs"
+  },
+  "main": "./dist/dist.umd.cjs",
+  "types": "./index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc",
+    "prepare": "vite build && tsc"
+  },
+  "dependencies": {
+    "@niloc/ecs": "^0.0.1",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "typescript": "^5.8.3",
+    "vite": "^4.0.4",
+    "vitest": "^0.34.6"
+  },
+  "module": "./dist/dist.js",
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+}
