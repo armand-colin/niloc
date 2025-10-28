@@ -44,7 +44,7 @@ export class Engine {
 
     startCoroutine(coroutine: Iterator<Schedule>) {
         const _coroutine = new Coroutine(coroutine)
-        this._scheduler.add(_coroutine)
+        this._scheduler.start(_coroutine)
         return _coroutine
     }
 

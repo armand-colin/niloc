@@ -1,12 +1,15 @@
 import { nanoid } from "nanoid"
 import { Schedule } from "./Schedule"
+
+export type CoroutineIterator = Iterator<Schedule>
+
 export class Coroutine {
 
     readonly id = nanoid()
 
-    private _iterator: Iterator<Schedule>
+    private _iterator: CoroutineIterator
 
-    constructor(iterator: Iterator<Schedule>) {
+    constructor(iterator: CoroutineIterator) {
         this._iterator = iterator
     }
 

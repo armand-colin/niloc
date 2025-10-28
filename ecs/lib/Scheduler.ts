@@ -1,34 +1,29 @@
 import type { Coroutine } from "./Coroutine";
-import { Schedule } from "./Schedule";
 
 export class Scheduler {
 
-    private _coroutines: Record<Schedule, Coroutine[]> = {}
+    private _coroutines: Coroutine[] = []
 
     constructor() { }
 
-    add(coroutine: Coroutine) {
+    start(coroutine: Coroutine) {
+        this._coroutines.push(coroutine)
         this._handle(coroutine)
     }
 
     private _handle(coroutine: Coroutine) {
         const next = coroutine.next()
-        if (next.done)
+
+        if (next.done) {
+            const index = this._coroutines.indexOf(coroutine)
+            if (index !== -1)
+                this._coroutines.splice(index, 1)
+
             return
+        }
 
-        const coroutines = this._coroutines[next.value] ??= []
-        coroutines.push(coroutine)
-    }
-
-    trigger(schedule: Schedule) {
-        const coroutines = this._coroutines[schedule]
-        if (!coroutines)
-            return
-
-        this._coroutines[schedule] = []
-
-        for (const coroutine of coroutines)
-            this._handle(coroutine)
+        const schedule = next.value
+        schedule.next(() => this._handle(coroutine))
     }
 
 }
