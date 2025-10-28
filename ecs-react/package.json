@@ -1,6 +1,6 @@
 {
   "name": "@niloc/ecs-react",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "",
   "license": "ISC",
   "author": "armand-colin",
@@ -25,7 +25,7 @@
     "prepare": "vite build && tsc"
   },
   "dependencies": {
-    "@niloc/ecs": "^0.0.1",
+    "@niloc/ecs": "^0.0.4",
     "react": "^19.2.0"
   },
   "devDependencies": {
