@@ -1,4 +1,4 @@
-import { Coroutine, CoroutineIterator, Scheduler } from "@niloc/utils";
+import { Scheduler } from "@niloc/utils";
 import type { Component } from "./Component";
 import type { ComponentConstructor, ResourceConstructor } from "./Constructor";
 import type { Resource } from "./Resource";
@@ -7,8 +7,9 @@ export type Initializer<T> = (engine: Engine) => T
 
 export class Engine {
 
+    readonly scheduler = new Scheduler()
+
     private _resources = new Map<ResourceConstructor, Resource>()
-    private _scheduler = new Scheduler()
     private _initializers = new Map<ResourceConstructor, Initializer<unknown>>()
 
     getResource<T extends Resource>(constructor: ResourceConstructor<T>): T {
@@ -38,12 +39,6 @@ export class Engine {
     createComponent<T extends Component, Args extends unknown[]>(constructor: ComponentConstructor<T, Args>, ...args: Args): T {
         const component = new constructor(this, ...args)
         return component
-    }
-
-    startCoroutine(coroutine: CoroutineIterator) {
-        const _coroutine = new Coroutine(coroutine)
-        this._scheduler.add(_coroutine)
-        return _coroutine
     }
 
 }

@@ -1,4 +1,4 @@
-import type { Coroutine } from "./Coroutine";
+import { Coroutine, CoroutineIterator } from "./Coroutine";
 
 export class Scheduler {
 
@@ -6,9 +6,11 @@ export class Scheduler {
 
     constructor() { }
 
-    add(coroutine: Coroutine) {
-        this._coroutines.push(coroutine)
-        this._handle(coroutine)
+    add(coroutine: CoroutineIterator): Coroutine {
+        const coroutineInstance = new Coroutine(coroutine)
+        this._coroutines.push(coroutineInstance)
+        this._handle(coroutineInstance)
+        return coroutineInstance
     }
 
     private _handle(coroutine: Coroutine) {
