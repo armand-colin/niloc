@@ -1,7 +1,6 @@
-import { Duration } from "@niloc/utils"
+import { Duration } from "../Duration"
 
 type Callback = () => void
-
 
 export abstract class Schedule {
 

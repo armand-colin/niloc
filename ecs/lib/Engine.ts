@@ -1,9 +1,7 @@
+import { Coroutine, CoroutineIterator, Scheduler } from "@niloc/utils";
 import type { Component } from "./Component";
 import type { ComponentConstructor, ResourceConstructor } from "./Constructor";
-import { Coroutine } from "./Coroutine";
 import type { Resource } from "./Resource";
-import type { Schedule } from "./Schedule";
-import { Scheduler } from "./Scheduler";
 
 export type Initializer<T> = (engine: Engine) => T
 
@@ -42,9 +40,9 @@ export class Engine {
         return component
     }
 
-    startCoroutine(coroutine: Iterator<Schedule>) {
+    startCoroutine(coroutine: CoroutineIterator) {
         const _coroutine = new Coroutine(coroutine)
-        this._scheduler.start(_coroutine)
+        this._scheduler.add(_coroutine)
         return _coroutine
     }
 

@@ -6,7 +6,7 @@ export class Scheduler {
 
     constructor() { }
 
-    start(coroutine: Coroutine) {
+    add(coroutine: Coroutine) {
         this._coroutines.push(coroutine)
         this._handle(coroutine)
     }

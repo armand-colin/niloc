@@ -26,3 +26,9 @@ export { Effect } from "./effect/Effect"
 export { Vec2 } from "./math/Vec2"
 export { Vec3 } from "./math/Vec3"
 export { Random, Random2D } from "./math/Random"
+
+// Coroutine
+export type { CoroutineIterator } from "./coroutine/Coroutine"
+export { Coroutine } from "./coroutine/Coroutine"
+export { Schedule } from "./coroutine/Schedule"
+export { Scheduler } from "./coroutine/Scheduler"
