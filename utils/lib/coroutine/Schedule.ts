@@ -40,11 +40,9 @@ class FrameSchedule extends Schedule {
     private _running = true
     private _frameRequest: number | null = null
 
-    next(callback: Callback): void {
-        super.next(callback)
-
-        if (this._frameRequest === null && this._running)
-            this._frameRequest = requestAnimationFrame(this.trigger.bind(this))
+    constructor() {
+        super()
+        this._frameRequest = requestAnimationFrame(this.trigger.bind(this))
     }
 
     start() {
@@ -71,7 +69,11 @@ class FrameSchedule extends Schedule {
 
     trigger(): void {
         this._frameRequest = null
+
         super.trigger()
+
+        if (this._running)
+            this._frameRequest = requestAnimationFrame(this.trigger.bind(this))
     }
 
 }
@@ -141,7 +143,7 @@ class BeforeSchedule extends Schedule {
 
 export namespace Schedule {
 
-    export const Frame = new FrameSchedule()
+    export const frame = () => new FrameSchedule()
 
     export const waitForSeconds = (seconds: number) => new TimeoutSchedule(Duration.fromSeconds(seconds))
     export const waitForDuration = (duration: Duration) => new TimeoutSchedule(duration)

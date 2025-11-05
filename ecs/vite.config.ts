@@ -6,6 +6,9 @@ export default defineConfig({
       entry: './lib/main.ts',
       name: 'dist',
       fileName: 'dist'
+    },
+    rollupOptions: {
+      external: ['@niloc/utils'],
     }
   }
 })

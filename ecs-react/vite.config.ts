@@ -8,7 +8,7 @@ export default defineConfig({
       fileName: 'dist'
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime'],
+      external: ['react', 'react/jsx-runtime', '@niloc/ecs'],
     }
   }
 })
