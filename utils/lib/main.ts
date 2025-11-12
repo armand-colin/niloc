@@ -23,12 +23,17 @@ export type { PropertyPipe } from "./property/PropertyPipe"
 export { Effect } from "./effect/Effect"
 
 // Math
+export { Random, Random2D } from "./math/Random"
 export { Vec2 } from "./math/Vec2"
 export { Vec3 } from "./math/Vec3"
-export { Random, Random2D } from "./math/Random"
 
 // Coroutine
-export type { CoroutineIterator } from "./coroutine/Coroutine"
 export { Coroutine } from "./coroutine/Coroutine"
+export type { CoroutineIterator } from "./coroutine/Coroutine"
 export { Schedule } from "./coroutine/Schedule"
 export { Scheduler } from "./coroutine/Scheduler"
+
+// Animation
+export { Animation } from "./animation/Animation"
+export { AnimationCurve } from "./animation/AnimationCurve"
+
