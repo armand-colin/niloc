@@ -234,10 +234,10 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
-"@niloc/ecs@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@niloc/ecs/-/ecs-0.0.6.tgz#b369be8b967534cfe1e740ca8bbf0d6edb4e15f9"
-  integrity sha512-KjDUo6g38D5kDBFameb1frQlCsUxgrM27rreNRCLGD0YBQFVxIp2M2/rbr/pZxAGX2yF0e3jRjuDbfAqAFqaGg==
+"@niloc/ecs@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@niloc/ecs/-/ecs-0.0.7.tgz#13e8885b9c49df32955e65e2a62a935b8fe4cb2d"
+  integrity sha512-lPp8/ZiE0b8jWXSl0+6faLtNekJoH4aCNPn5bK/9hPvVrnE8XxnjK2KsEPbQ3yyX4jAQWLjjcGW5sEUJCkzc2g==
   dependencies:
     "@niloc/utils" "^0.1.14"
     nanoid "^3.3.6"

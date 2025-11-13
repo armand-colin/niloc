@@ -5,9 +5,9 @@ export function useComponent<T extends Component>(component: T) {
     const [_, forceUpdate] = useReducer(x => x + 1, 0)
     
     useEffect(() => {
-        component.on('change', forceUpdate)
+        component.onChange(forceUpdate)
         return () => {
-            component.off('change', forceUpdate)
+            component.offChange(forceUpdate)
         }
     }, [component])
 
