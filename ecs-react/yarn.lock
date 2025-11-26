@@ -234,18 +234,18 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
-"@niloc/ecs@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@niloc/ecs/-/ecs-0.0.7.tgz#13e8885b9c49df32955e65e2a62a935b8fe4cb2d"
-  integrity sha512-lPp8/ZiE0b8jWXSl0+6faLtNekJoH4aCNPn5bK/9hPvVrnE8XxnjK2KsEPbQ3yyX4jAQWLjjcGW5sEUJCkzc2g==
+"@niloc/ecs@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@niloc/ecs/-/ecs-0.0.8.tgz#503dab3ad0e1c96cd35668141f30c7b044003f8d"
+  integrity sha512-oveKpd7A/nf33mo+dBy8r6Mr4OVvnXNdBOkFM4/rXIbGnhDjeJzb38BJRRf9iuPeVE6KZQkvqVwJUQi3nTsd8Q==
   dependencies:
-    "@niloc/utils" "^0.1.14"
+    "@niloc/utils" "^0.1.15"
     nanoid "^3.3.6"
 
-"@niloc/utils@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.1.14.tgz#09ae91e1d65a6147025daf65a4fa8a08591bf196"
-  integrity sha512-b15gc57SNvT0OTNHVkJpe7miBxrDMYoEzK33XqeftmTkyBAxlMgZ+8sjW1mb+BYvsq3t8kOU0mv9mhi6ZVyyVA==
+"@niloc/utils@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@niloc/utils/-/utils-0.1.15.tgz#57758cd8cb84ed60044509d40ee53dfc4a643d48"
+  integrity sha512-F1UE0BPedD7MAmT5EdndEJPugu7ZY1hgWpQAEqqgxbO2JPoiZXdOH02s6QpQO8PCHqNzl9PX4/xsXWlUrYJNsQ==
   dependencies:
     nanoid "^3.3.6"
     zod "^3.24.2"
