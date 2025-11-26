@@ -1,6 +1,10 @@
 import { Coroutine, CoroutineIterator } from "./Coroutine";
 
-export class Scheduler {
+export interface SchedulerInterface {
+    add(coroutine: CoroutineIterator): Coroutine
+}
+
+export class Scheduler implements SchedulerInterface {
 
     private _coroutines: Coroutine[] = []
 

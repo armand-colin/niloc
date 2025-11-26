@@ -1,6 +1,6 @@
 {
   "name": "@niloc/ecs",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "license": "ISC",
   "author": "armand-colin",
@@ -25,7 +25,7 @@
     "prepare": "vite build && tsc"
   },
   "dependencies": {
-    "@niloc/utils": "^0.1.14",
+    "@niloc/utils": "^0.1.17",
     "nanoid": "^3.3.6"
   },
   "devDependencies": {

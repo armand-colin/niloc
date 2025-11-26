@@ -8,7 +8,9 @@ export default defineConfig({
       fileName: 'dist'
     },
     rollupOptions: {
-      external: ['@niloc/utils'],
+      external: [
+        '@niloc/utils'
+      ],
     }
   }
 })

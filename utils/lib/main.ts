@@ -28,10 +28,10 @@ export { Vec2 } from "./math/Vec2"
 export { Vec3 } from "./math/Vec3"
 
 // Coroutine
-export { Coroutine } from "./coroutine/Coroutine"
+export { Coroutine, type CoroutineInterface } from "./coroutine/Coroutine"
 export type { CoroutineIterator } from "./coroutine/Coroutine"
-export { Schedule } from "./coroutine/Schedule"
-export { Scheduler } from "./coroutine/Scheduler"
+export { Schedule, type ScheduleInterface } from "./coroutine/Schedule"
+export { Scheduler, type SchedulerInterface } from "./coroutine/Scheduler"
 
 // Animation
 export { Animation } from "./animation/Animation"

@@ -2,7 +2,13 @@ import { Duration } from "../Duration"
 
 type Callback = () => void
 
-export abstract class Schedule {
+export interface ScheduleInterface {
+    before(callback: Callback): void
+    next(callback: Callback): void
+    after(callback: Callback): void
+}
+
+export abstract class Schedule implements ScheduleInterface {
 
     private _callbacks: Callback[] = []
     private _before: Callback[] = []
