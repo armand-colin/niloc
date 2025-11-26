@@ -37,3 +37,6 @@ export { Scheduler, type SchedulerInterface } from "./coroutine/Scheduler"
 export { Animation } from "./animation/Animation"
 export { AnimationCurve } from "./animation/AnimationCurve"
 
+// Structures
+export { LinkedList, type LinkedListNode } from "./structures/LinkedList"
+
