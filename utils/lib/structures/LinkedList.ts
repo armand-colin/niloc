@@ -12,6 +12,14 @@ export type LinkedList<T> = {
 
 export namespace LinkedList {
 
+    export function create<T>(): LinkedList<T> {
+        return {
+            head: null,
+            tail: null,
+            size: 0
+        }
+    }
+
     export function push<T>(list: LinkedList<T>, value: T): LinkedListNode<T> {
         const node: LinkedListNode<T> = {
             value,
