@@ -1,5 +1,5 @@
+import { describe, expect, it } from "vitest"
 import { Provider } from "../lib/main"
-import { describe, it, expect } from "vitest"
 
 describe("Provider", () => {
     it("Should build simple case", () => {

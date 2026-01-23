@@ -1,30 +1,80 @@
-export type Result<T = unknown, E = unknown> = Result.Ok<T> | Result.Error<E>
+
+export type Result<T = unknown, E = unknown> = Ok<T, E> | Error<E, T>
+
+abstract class BaseResult<T, E> {
+
+    abstract ok: boolean
+
+    protected data: T | E
+
+    constructor(data: T | E) {
+        this.data = data
+    }
+
+    map<U>(mapper: (value: T) => U): Result<U, E> {
+        if (this.ok)
+            return Result.ok(mapper(this.data as T))
+
+        return Result.error(this.data as E)
+    }
+
+    unwrap(): T {
+        if (this.ok)
+            return this.data as T
+
+        throw new Error("Error unwrapping error variant: " + this.data)
+    }
+
+    mapError<F>(mapper: (error: E) => F): Result<T, F> {
+        if (this.ok)
+            return Result.ok(this.data as T)
+
+        return Result.error(mapper(this.data as E))
+    }
+
+}
+
+class Ok<T, E = unknown> extends BaseResult<T, E> {
+
+    readonly ok = true
+
+    constructor(value: T) {
+        super(value)
+    }
+
+    get value(): T {
+        return this.data as T
+    }
+
+}
+class Error<E, T = unknown> extends BaseResult<T, E> {
+
+    readonly ok = false
+
+    constructor(error: E) {
+        super(error)
+    }
+
+    get error(): E {
+        return this.data as E
+    }
+
+}
 
 export namespace Result {
 
-    export type Ok<T> = { ok: true, value: T }
-    export type Error<E> = { ok: false, error: E }
-
-    export function ok<T>(value: T): Ok<T> {
-        return { ok: true, value: value }
+    export function ok<T, E = unknown>(value: T): Result<T, E> {
+        return new Ok<T, E>(value)
     }
 
-    export function error<E>(error: E): Error<E> {
-        return { ok: false, error: error }
+    export function error<E, T = unknown>(error: E): Result<T, E> {
+        return new Error<E, T>(error)
     }
 
-    export function map<T, E, U>(result: Result<T, E>, mapper: (value: T) => U): Result<U, E> {
-        if (result.ok)
-            return Result.ok(mapper(result.value))
-
-        return result
-    }
-
-    export function unwrap<T>(result: Result<T, unknown>): T {
-        if (result.ok)
-            return result.value
-
-        throw new Error("Error unwrapping error variant: " + result.error)
+    export function promise<T, E>(promise: Promise<T>): Promise<Result<T, E>> {
+        return promise
+            .then(value => Result.ok<T, E>(value))
+            .catch(error => Result.error<E, T>(error))
     }
 
 }
