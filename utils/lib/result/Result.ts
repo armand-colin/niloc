@@ -1,4 +1,3 @@
-
 export type Result<T = unknown, E = unknown> = Ok<T, E> | Error<E, T>
 
 abstract class BaseResult<T, E> {
@@ -11,13 +10,6 @@ abstract class BaseResult<T, E> {
         this.data = data
     }
 
-    map<U>(mapper: (value: T) => U): Result<U, E> {
-        if (this.ok)
-            return Result.ok(mapper(this.data as T))
-
-        return Result.error(this.data as E)
-    }
-
     unwrap(): T {
         if (this.ok)
             return this.data as T
@@ -25,11 +17,26 @@ abstract class BaseResult<T, E> {
         throw new Error("Error unwrapping error variant: " + this.data)
     }
 
+    map<U, F>(mapper: (result: Result<T, E>) => Result<U, F>): Result<U, F> {
+        return mapper(this as unknown as Result<T, E>)
+    }
+
+    mapOk<U>(mapper: (value: T) => U): Result<U, E> {
+        if (this.ok)
+            return Result.ok(mapper(this.data as T))
+
+        return Result.error(this.data as E)
+    }
+
     mapError<F>(mapper: (error: E) => F): Result<T, F> {
         if (this.ok)
             return Result.ok(this.data as T)
 
         return Result.error(mapper(this.data as E))
+    }
+
+    async(): AsyncResult<T, E> {
+        return new AsyncResult<T, E>(Promise.resolve(this as unknown as Result<T, E>))
     }
 
 }
@@ -75,6 +82,20 @@ export namespace Result {
         return promise
             .then(value => Result.ok<T, E>(value))
             .catch(error => Result.error<E, T>(error))
+    }
+
+}
+
+export class AsyncResult<T = unknown, E = unknown> {
+
+    protected promise: Promise<Result<T, E>>
+
+    constructor(promise: Promise<Result<T, E>>) {
+        this.promise = promise
+    }
+
+    async await(): Promise<Result<T, E>> {
+        return this.promise
     }
 
 }

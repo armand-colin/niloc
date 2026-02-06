@@ -15,7 +15,7 @@ describe("Iter", () => {
             ok.error
         }
 
-        const mapped = ok.map(x => x * 2)
+        const mapped = ok.mapOk(x => x * 2)
 
         expect(mapped.unwrap()).toBe(84)
 
