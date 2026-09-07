@@ -23,16 +23,16 @@ export namespace Fetch {
 
         constructor(readonly nativeResponse: globalThis.Response) { }
 
-        json<T>(): Promise<Result<T, JSONParseError>> {
-            return Result.promise(this.nativeResponse.text())
-                .then(result => {
-                    if (result.ok)
-                        return result
+        // json<T>(): Promise<Result<T, JSONParseError>> {
+        //     // return Result.promise(this.nativeResponse.text())
+        //     //     .then(result => {
+        //     //         if (result.ok)
+        //     //             return result
 
-                    return Result.error(new JSONParseError(new JSON.ParseError(result.error)))
-                })
+        //     //         return Result.error(new JSONParseError(new JSON.ParseError(result.error)))
+        //     //     })
 
-        }
+        // }
 
     }
 

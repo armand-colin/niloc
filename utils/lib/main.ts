@@ -20,7 +20,7 @@ export { Property } from "./property/Property"
 export type { PropertyPipe } from "./property/PropertyPipe"
 
 // Effect
-export { Effect } from "./effect/Effect"
+// export { Effect } from "./effect/Effect"
 
 // Math
 export { Random, Random2D } from "./math/Random"
@@ -39,4 +39,6 @@ export { AnimationCurve } from "./animation/AnimationCurve"
 
 // Structures
 export { LinkedList, type LinkedListNode } from "./structures/LinkedList"
+
+export { Enum } from "./Enum"
 

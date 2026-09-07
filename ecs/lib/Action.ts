@@ -16,4 +16,8 @@ export class Action<T = void> {
         this._emitter.emit("event", event)
     }
 
+    getListenersCount() {
+        return this._emitter.getListenersCount('event');
+    }
+
 }

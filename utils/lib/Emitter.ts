@@ -13,6 +13,7 @@ export interface IEmitter<Events extends Record<string, any>> {
     offOnce<K extends keyof Events>(event: K, callback: Emitter.Callback<Events, K>): void
     emit<K extends keyof Events>(event: K, data: Events[K]): void
     removeAllListeners(): void
+    getListenersCount<K extends keyof Events>(event: K): number
 
 }
 
@@ -66,6 +67,10 @@ export class Emitter<Events extends Record<string, any>> implements IEmitter<Eve
     removeAllListeners(): void {
         this._listeners = {}
         this._onceListeners = {}
+    }
+
+    getListenersCount<K extends keyof Events>(event: K): number {
+        return (this._listeners[event]?.size ?? 0)
     }
 
 }
