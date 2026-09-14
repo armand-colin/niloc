@@ -19,7 +19,8 @@ export type Enum<T extends Record<string, string | number>, U> = T & U & {
 }
 
 export namespace Enum {
-    type ReservedKeys = 'values' | 'keys' | 'entries' | 'is'
+
+    type ReservedKeys = 'values' | 'keys' | 'entries' | 'is' | 'parse' | 'parseSafe'
 
     type ForbidReserved<T> =
         (keyof T) & ReservedKeys extends never
